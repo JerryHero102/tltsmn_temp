@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Search, CheckCircle, Plus, Info, X, ExternalLink, Calendar, Image as ImageIcon, Loader2 } from 'lucide-react';
+import { Search, CheckCircle, Plus, X, ExternalLink, Calendar, Image as ImageIcon, Loader2, Filter } from 'lucide-react';
 
 interface MonthData {
   receipt_id: number;
@@ -35,64 +35,226 @@ function getOptimizedImageUrl(url: string): string {
 
 export default function TuitionMatrix({ matrix, onOpenReceiptModal }: TuitionMatrixProps) {
   const [searchTerm, setSearchTerm] = useState('');
+  const [selectedMonth, setSelectedMonth] = useState('all');
+  const [scheduleFilter, setScheduleFilter] = useState('all');
   const [selectedReceipt, setSelectedReceipt] = useState<{
     fullname: string;
     month: number;
     receipt: MonthData;
   } | null>(null);
 
-  const filteredMatrix = matrix.filter((row) =>
-    row.fullname.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (row.phone_number && row.phone_number.includes(searchTerm)) ||
-    (row.schedule && row.schedule.toLowerCase().includes(searchTerm.toLowerCase()))
-  );
+  const filteredMatrix = matrix.filter((row) => {
+    const matchesSearch =
+      row.fullname.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (row.phone_number && row.phone_number.includes(searchTerm)) ||
+      (row.schedule && row.schedule.toLowerCase().includes(searchTerm.toLowerCase()));
+
+    const matchesSchedule =
+      scheduleFilter === 'all' || (row.schedule || '2-4-6') === scheduleFilter;
+
+    const matchesMonth =
+      selectedMonth === 'all' || row.months[Number(selectedMonth)] !== undefined;
+
+    return matchesSearch && matchesSchedule && matchesMonth;
+  });
+
+  const visibleMonths = selectedMonth === 'all' 
+    ? Array.from({ length: 12 }, (_, i) => i + 1)
+    : [Number(selectedMonth)];
 
   return (
-    <div className="space-y-6">
-      {/* Information Header & Explanations */}
-      <div className="bg-emerald-50/80 border border-emerald-200/60 p-4 rounded-2xl flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div className="flex items-start space-x-3 text-xs text-emerald-900 leading-relaxed">
-          <Info className="w-5 h-5 text-[#014D2F] shrink-0 mt-0.5" />
-          <div className="space-y-1">
-            <p className="font-semibold text-emerald-950 text-sm">Hướng dẫn Quản Lý Học Phí:</p>
-            <p>
-              • <strong className="font-semibold">Lưu tức thì vào Local Storage:</strong> Nhấn "Xác nhận" sẽ lập tức ghi biên lai vào bộ nhớ máy trình duyệt trước (không mất dữ liệu kể cả khi tải lại trang), sau đó tự động tải ảnh lên Cloudinary & lưu CSDL.
-            </p>
-            <p>
-              • <strong className="font-semibold">Đóng tiền học:</strong> Việc đóng tiền học vào ngày nào không phụ thuộc vào tháng đóng. Ví dụ: đóng vào ngày 11/08 có thể là nộp cho Tháng 7 hoặc Tháng 9.
-            </p>
+    <div className="space-y-4">
+      {/* Filter Header: Search + Filter by Month + Filter by Schedule */}
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 bg-white p-3.5 sm:p-4 rounded-2xl shadow-xs border border-slate-100">
+        <div className="flex flex-col sm:flex-row items-center gap-2.5 flex-1 w-full">
+          {/* Search Input */}
+          <div className="relative flex-1 w-full">
+            <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+            <input
+              type="text"
+              placeholder="Tìm theo tên học viên, SĐT..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pl-10 pr-4 py-2.5 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#014D2F] bg-slate-50/50 font-medium"
+            />
+          </div>
+
+          {/* Filter by Month Dropdown */}
+          <div className="relative w-full sm:w-44 shrink-0">
+            <Calendar className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 z-10" />
+            <select
+              value={selectedMonth}
+              onChange={(e) => setSelectedMonth(e.target.value)}
+              className="w-full pl-9 pr-3 py-2.5 text-xs sm:text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#014D2F] bg-white font-semibold text-slate-700"
+            >
+              <option value="all">Tất cả 12 tháng</option>
+              {Array.from({ length: 12 }, (_, i) => i + 1).map((m) => (
+                <option key={m} value={m.toString()}>Tháng {m}</option>
+              ))}
+            </select>
+          </div>
+
+          {/* Filter by Schedule Dropdown */}
+          <div className="relative w-full sm:w-44 shrink-0">
+            <Filter className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 z-10" />
+            <select
+              value={scheduleFilter}
+              onChange={(e) => setScheduleFilter(e.target.value)}
+              className="w-full pl-9 pr-3 py-2.5 text-xs sm:text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#014D2F] bg-white font-semibold text-slate-700"
+            >
+              <option value="all">Tất cả ca học</option>
+              <option value="2-4-6">Ca 2-4-6</option>
+              <option value="3-5-7">Ca 3-5-7</option>
+              <option value="Khác">Ca Linh hoạt / Khác</option>
+            </select>
           </div>
         </div>
-      </div>
 
-      {/* Filter Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-4 rounded-2xl shadow-xs border border-slate-100">
-        <div className="relative flex-1 max-w-md">
-          <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
-          <input
-            type="text"
-            placeholder="Tìm theo tên học viên, SĐT hoặc ca học..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#014D2F] bg-slate-50/50"
-          />
-        </div>
-
-        <div className="flex items-center space-x-4 text-xs font-semibold text-slate-600">
-          <span className="flex items-center gap-1.5">
-            <span className="w-3 h-3 rounded-full bg-emerald-600 inline-block"></span> Đã đóng (CSDL)
+        {/* Legend Badges */}
+        <div className="flex items-center space-x-3 text-[11px] font-semibold text-slate-600 shrink-0 pt-2 lg:pt-0 border-t lg:border-t-0 border-slate-100">
+          <span className="flex items-center gap-1">
+            <span className="w-2.5 h-2.5 rounded-full bg-emerald-600 inline-block"></span> Đã đóng
           </span>
-          <span className="flex items-center gap-1.5">
-            <span className="w-3 h-3 rounded-full bg-amber-500 inline-block"></span> Đã lưu máy (Chờ đồng bộ)
+          <span className="flex items-center gap-1">
+            <span className="w-2.5 h-2.5 rounded-full bg-amber-500 inline-block"></span> Lưu máy
           </span>
-          <span className="flex items-center gap-1.5">
-            <span className="w-3 h-3 rounded-full bg-slate-200 border border-slate-300 inline-block"></span> Chưa đóng
+          <span className="flex items-center gap-1">
+            <span className="w-2.5 h-2.5 rounded-full bg-slate-200 border border-slate-300 inline-block"></span> Chưa đóng
           </span>
         </div>
       </div>
 
-      {/* Matrix Table Container */}
-      <div className="bg-white rounded-2xl shadow-xs border border-slate-100 overflow-hidden">
+      {/* MOBILE VIEW (Compact student cards, no line breaks, grouped layout) */}
+      <div className="md:hidden space-y-2.5">
+        {filteredMatrix.length === 0 ? (
+          <div className="bg-white p-6 rounded-2xl text-center text-slate-400 text-sm border border-slate-100">
+            Không tìm thấy thông tin đóng học phí nào.
+          </div>
+        ) : (
+          filteredMatrix.map((row, idx) => (
+            <div
+              key={row.id_profile}
+              className="bg-white p-3.5 rounded-2xl border border-slate-100 shadow-xs flex flex-col justify-between space-y-2.5"
+            >
+              {/* Header: STT + Fullname (No wrapping line) + Schedule badge */}
+              <div className="flex items-center justify-between gap-2 border-b border-slate-50 pb-2">
+                <div className="flex items-center space-x-2 min-w-0">
+                  <span className="w-6 h-6 rounded-full bg-slate-100 text-slate-500 font-bold text-xs flex items-center justify-center shrink-0">
+                    {idx + 1}
+                  </span>
+                  <span className="font-bold text-slate-900 text-sm truncate">
+                    {row.fullname}
+                  </span>
+                </div>
+                <div className="flex items-center space-x-1.5 shrink-0">
+                  <span
+                    className={`px-2 py-0.5 rounded-md text-[11px] font-semibold ${
+                      row.schedule === '2-4-6'
+                        ? 'bg-emerald-100 text-[#014D2F]'
+                        : row.schedule === '3-5-7'
+                        ? 'bg-blue-100 text-blue-800'
+                        : 'bg-amber-100 text-amber-800'
+                    }`}
+                  >
+                    Ca {row.schedule || '2-4-6'}
+                  </span>
+                  {row.phone_number && (
+                    <span className="font-mono text-slate-400 text-[11px]">
+                      {row.phone_number}
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              {/* Month Status Display (If a single month is filtered vs All months) */}
+              {selectedMonth !== 'all' ? (
+                // Single Month Card Action
+                (() => {
+                  const m = Number(selectedMonth);
+                  const data = row.months[m];
+                  return (
+                    <div className="flex items-center justify-between bg-slate-50/80 p-2.5 rounded-xl border border-slate-100">
+                      <span className="font-bold text-xs text-slate-700">Tháng {m}:</span>
+                      {data ? (
+                        <button
+                          onClick={() =>
+                            setSelectedReceipt({
+                              fullname: row.fullname,
+                              month: m,
+                              receipt: data,
+                            })
+                          }
+                          className={`px-3 py-1.5 rounded-lg text-white font-semibold text-xs transition-all shadow-xs flex items-center gap-1.5 ${
+                            data.is_pending_local
+                              ? 'bg-amber-500 hover:bg-amber-600 animate-pulse'
+                              : 'bg-emerald-600 hover:bg-[#014D2F]'
+                          }`}
+                        >
+                          {data.is_pending_local ? (
+                            <>
+                              <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                              <span>Lưu máy (Đồng bộ)</span>
+                            </>
+                          ) : (
+                            <>
+                              <CheckCircle className="w-3.5 h-3.5" />
+                              <span>Đã đóng (Xem biên lai)</span>
+                            </>
+                          )}
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => onOpenReceiptModal(row.id_profile, m)}
+                          className="px-3 py-1.5 rounded-lg bg-[#014D2F] text-white hover:bg-[#013822] text-xs font-semibold transition-all shadow-xs flex items-center gap-1"
+                        >
+                          <Plus className="w-3.5 h-3.5" />
+                          <span>Đóng học phí T{m}</span>
+                        </button>
+                      )}
+                    </div>
+                  );
+                })()
+              ) : (
+                // Horizontal 12 Months Pill Bar
+                <div className="flex items-center gap-1 overflow-x-auto pb-1 scrollbar-none">
+                  {Array.from({ length: 12 }, (_, i) => i + 1).map((m) => {
+                    const data = row.months[m];
+                    return (
+                      <button
+                        key={m}
+                        onClick={() => {
+                          if (data) {
+                            setSelectedReceipt({
+                              fullname: row.fullname,
+                              month: m,
+                              receipt: data,
+                            });
+                          } else {
+                            onOpenReceiptModal(row.id_profile, m);
+                          }
+                        }}
+                        className={`px-2 py-1 rounded-lg font-bold text-[11px] shrink-0 transition-all ${
+                          data?.is_pending_local
+                            ? 'bg-amber-500 text-white animate-pulse'
+                            : data
+                            ? 'bg-emerald-600 text-white'
+                            : 'bg-slate-100 text-slate-500 border border-slate-200'
+                        }`}
+                        title={data ? `Tháng ${m}: Đã đóng` : `Tháng ${m}: Chưa đóng`}
+                      >
+                        T{m} {data && (data.is_pending_local ? '⌛' : '✓')}
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          ))
+        )}
+      </div>
+
+      {/* DESKTOP MATRIX TABLE VIEW */}
+      <div className="hidden md:block bg-white rounded-2xl shadow-xs border border-slate-100 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse min-w-[900px]">
             <thead>
@@ -102,9 +264,9 @@ export default function TuitionMatrix({ matrix, onOpenReceiptModal }: TuitionMat
                   Họ và Tên
                 </th>
                 <th className="py-4 px-3 text-center w-24">Ca học</th>
-                {Array.from({ length: 12 }, (_, i) => i + 1).map((m) => (
-                  <th key={m} className="py-4 px-2 text-center text-[11px] font-bold text-slate-600 w-16">
-                    T{m}
+                {visibleMonths.map((m) => (
+                  <th key={m} className="py-4 px-2 text-center text-[11px] font-bold text-slate-600 min-w-[60px]">
+                    Tháng {m}
                   </th>
                 ))}
               </tr>
@@ -112,7 +274,7 @@ export default function TuitionMatrix({ matrix, onOpenReceiptModal }: TuitionMat
             <tbody className="divide-y divide-slate-100 text-sm font-medium text-slate-800">
               {filteredMatrix.length === 0 ? (
                 <tr>
-                  <td colSpan={15} className="py-8 text-center text-slate-400 text-sm">
+                  <td colSpan={visibleMonths.length + 3} className="py-8 text-center text-slate-400 text-sm">
                     Không tìm thấy thông tin đóng học phí nào.
                   </td>
                 </tr>
@@ -136,7 +298,7 @@ export default function TuitionMatrix({ matrix, onOpenReceiptModal }: TuitionMat
                         {row.schedule || '2-4-6'}
                       </span>
                     </td>
-                    {Array.from({ length: 12 }, (_, i) => i + 1).map((m) => {
+                    {visibleMonths.map((m) => {
                       const data = row.months[m];
                       return (
                         <td key={m} className="py-3 px-1 text-center">
@@ -149,7 +311,7 @@ export default function TuitionMatrix({ matrix, onOpenReceiptModal }: TuitionMat
                                   receipt: data,
                                 })
                               }
-                              className={`w-full py-1.5 px-1 rounded-lg text-white font-semibold text-xs transition-all shadow-xs flex items-center justify-center gap-0.5 ${
+                              className={`w-full py-1.5 px-1.5 rounded-lg text-white font-semibold text-xs transition-all shadow-xs flex items-center justify-center gap-1 ${
                                 data.is_pending_local
                                   ? 'bg-amber-500 hover:bg-amber-600 animate-pulse'
                                   : 'bg-emerald-600 hover:bg-[#014D2F]'
@@ -163,22 +325,23 @@ export default function TuitionMatrix({ matrix, onOpenReceiptModal }: TuitionMat
                               {data.is_pending_local ? (
                                 <>
                                   <Loader2 className="w-3 h-3 animate-spin shrink-0" />
-                                  <span className="hidden sm:inline">Lưu máy</span>
+                                  <span>Lưu máy</span>
                                 </>
                               ) : (
                                 <>
                                   <CheckCircle className="w-3 h-3 shrink-0" />
-                                  <span className="hidden sm:inline">Đóng</span>
+                                  <span>Đóng</span>
                                 </>
                               )}
                             </button>
                           ) : (
                             <button
                               onClick={() => onOpenReceiptModal(row.id_profile, m)}
-                              className="w-full py-1.5 px-1 rounded-lg bg-slate-100 hover:bg-emerald-50 hover:text-[#014D2F] border border-slate-200 text-slate-400 text-xs font-medium transition-all flex items-center justify-center"
+                              className="w-full py-1.5 px-1.5 rounded-lg bg-slate-100 hover:bg-emerald-50 hover:text-[#014D2F] border border-slate-200 text-slate-400 text-xs font-medium transition-all flex items-center justify-center gap-1"
                               title={`Thêm biên lai cho Tháng ${m}`}
                             >
-                              <Plus className="w-3.5 h-3.5" />
+                              <Plus className="w-3.5 h-3.5 shrink-0" />
+                              <span>Tháng {m}</span>
                             </button>
                           )}
                         </td>
@@ -198,70 +361,88 @@ export default function TuitionMatrix({ matrix, onOpenReceiptModal }: TuitionMat
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden border border-slate-100">
             <div className="bg-[#014D2F] px-6 py-4 text-white flex justify-between items-center">
               <div>
-                <h4 className="font-bold text-base">Chi Tiết Biên Lai Học Phí</h4>
+                <h3 className="text-base font-bold">Biên Lai Học Phí</h3>
                 <p className="text-xs text-emerald-100">
-                  {selectedReceipt.fullname} - Học phí Tháng {selectedReceipt.month}
+                  {selectedReceipt.fullname} - Tháng {selectedReceipt.month}
                 </p>
               </div>
               <button
                 onClick={() => setSelectedReceipt(null)}
-                className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors"
+                className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors text-white"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             <div className="p-6 space-y-4">
-              <div className="grid grid-cols-2 gap-3 text-xs bg-slate-50 p-3 rounded-xl border border-slate-100">
-                <div>
-                  <span className="text-slate-500 block">Số tiền:</span>
+              <div className="relative aspect-4/3 rounded-xl overflow-hidden bg-slate-100 border border-slate-200 flex items-center justify-center">
+                {selectedReceipt.receipt.image_url ? (
+                  /* eslint-disable-next-line @next/next/no-img-element */
+                  <img
+                    src={getOptimizedImageUrl(selectedReceipt.receipt.image_url)}
+                    alt="Biên lai học phí"
+                    className="w-full h-full object-contain"
+                  />
+                ) : (
+                  <div className="text-slate-400 text-xs flex flex-col items-center space-y-2">
+                    <ImageIcon className="w-8 h-8 text-slate-300" />
+                    <span>Không có hình ảnh biên lai</span>
+                  </div>
+                )}
+              </div>
+
+              <div className="bg-slate-50 p-4 rounded-xl space-y-2 text-xs border border-slate-100">
+                <div className="flex justify-between">
+                  <span className="text-slate-500">Số tiền đóng:</span>
                   <span className="font-bold text-emerald-700 text-sm">
                     {Number(selectedReceipt.receipt.amount).toLocaleString('vi-VN')} VNĐ
                   </span>
                 </div>
-                <div>
-                  <span className="text-slate-500 block">Ngày nộp tiền:</span>
-                  <span className="font-semibold text-slate-800 flex items-center gap-1 mt-0.5">
-                    <Calendar className="w-3.5 h-3.5 text-[#014D2F]" />
+                <div className="flex justify-between">
+                  <span className="text-slate-500">Ngày lập biên lai:</span>
+                  <span className="font-semibold text-slate-800">
                     {selectedReceipt.receipt.receipt_date}
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-slate-500">Trạng thái đồng bộ:</span>
+                  <span
+                    className={`font-semibold ${
+                      selectedReceipt.receipt.is_pending_local
+                        ? 'text-amber-600 flex items-center gap-1'
+                        : 'text-emerald-600'
+                    }`}
+                  >
+                    {selectedReceipt.receipt.is_pending_local ? (
+                      <>
+                        <Loader2 className="w-3 h-3 animate-spin" /> Đã lưu máy (Chờ đồng bộ)
+                      </>
+                    ) : (
+                      'Đã lưu thành công vào CSDL Postgres'
+                    )}
                   </span>
                 </div>
               </div>
 
-              {/* Receipt Cloudinary Image (Optimized f_auto,q_auto) */}
-              <div className="space-y-1.5">
-                <span className="text-xs font-semibold text-slate-600 flex items-center gap-1.5">
-                  <ImageIcon className="w-4 h-4 text-[#014D2F]" /> Hình ảnh biên lai (Tối ưu f_auto,q_auto):
-                </span>
-                <div className="rounded-xl overflow-hidden border border-slate-200 bg-slate-900 max-h-80 flex items-center justify-center">
-                  <img
-                    src={getOptimizedImageUrl(selectedReceipt.receipt.image_url)}
-                    alt="Biên lai học phí tối ưu Cloudinary"
-                    className="w-full h-auto max-h-80 object-contain"
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-slate-50 px-6 py-3 border-t border-slate-100 flex items-center justify-between">
-              {selectedReceipt.receipt.image_url.startsWith('http') ? (
-                <a
-                  href={getOptimizedImageUrl(selectedReceipt.receipt.image_url)}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="text-xs font-semibold text-[#014D2F] hover:underline flex items-center gap-1"
+              <div className="flex justify-between items-center pt-2">
+                {selectedReceipt.receipt.image_url && (
+                  <a
+                    href={selectedReceipt.receipt.image_url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center space-x-1.5 text-xs text-[#014D2F] font-semibold hover:underline"
+                  >
+                    <ExternalLink className="w-3.5 h-3.5" />
+                    <span>Mở ảnh gốc trong tab mới</span>
+                  </a>
+                )}
+                <button
+                  onClick={() => setSelectedReceipt(null)}
+                  className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition-colors ml-auto"
                 >
-                  Mở link gốc Cloudinary (Optimized) <ExternalLink className="w-3.5 h-3.5" />
-                </a>
-              ) : (
-                <span className="text-xs text-amber-600 font-medium">Đang lưu bộ nhớ máy</span>
-              )}
-              <button
-                onClick={() => setSelectedReceipt(null)}
-                className="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-800 rounded-xl text-xs font-semibold transition-colors"
-              >
-                Đóng
-              </button>
+                  Đóng
+                </button>
+              </div>
             </div>
           </div>
         </div>

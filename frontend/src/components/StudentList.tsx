@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Search, UserPlus, Edit, DollarSign, Eye, X, User, Phone, Calendar, Mail, MapPin, BookOpen, FileText } from 'lucide-react';
+import { Search, UserPlus, Edit, DollarSign, Eye, X, User, Phone, Calendar, Mail, MapPin, BookOpen, FileText, Filter } from 'lucide-react';
 import StudentModal from './StudentModal';
 import { useAuth } from '@/context/AuthContext';
 
@@ -28,6 +28,7 @@ interface StudentListProps {
 
 export default function StudentList({ students, onRefresh, onOpenReceiptForStudent }: StudentListProps) {
   const [searchTerm, setSearchTerm] = useState('');
+  const [scheduleFilter, setScheduleFilter] = useState('all');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingStudent, setEditingStudent] = useState<Student | undefined>(undefined);
   const [viewingStudent, setViewingStudent] = useState<Student | null>(null);
@@ -35,12 +36,17 @@ export default function StudentList({ students, onRefresh, onOpenReceiptForStude
   const { user } = useAuth();
   const isAdmin = user?.role === 'admin';
 
-  const filteredStudents = students.filter(
-    (st) =>
+  const filteredStudents = students.filter((st) => {
+    const matchesSearch =
       st.fullname.toLowerCase().includes(searchTerm.toLowerCase()) ||
       (st.phone_number && st.phone_number.includes(searchTerm)) ||
-      (st.schedule && st.schedule.toLowerCase().includes(searchTerm.toLowerCase()))
-  );
+      (st.schedule && st.schedule.toLowerCase().includes(searchTerm.toLowerCase()));
+
+    const matchesSchedule =
+      scheduleFilter === 'all' || (st.schedule || '2-4-6') === scheduleFilter;
+
+    return matchesSearch && matchesSchedule;
+  });
 
   const handleOpenAdd = () => {
     setEditingStudent(undefined);
@@ -56,21 +62,38 @@ export default function StudentList({ students, onRefresh, onOpenReceiptForStude
     <div className="space-y-4">
       {/* Search & Add Action Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-3.5 sm:p-4 rounded-2xl shadow-xs border border-slate-100">
-        <div className="relative flex-1">
-          <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
-          <input
-            type="text"
-            placeholder="Tìm kiếm tên, số điện thoại, ca học..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#014D2F] bg-slate-50/50"
-          />
+        <div className="flex flex-col sm:flex-row items-center gap-2.5 flex-1 w-full">
+          <div className="relative flex-1 w-full">
+            <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+            <input
+              type="text"
+              placeholder="Tìm kiếm tên, số điện thoại..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pl-10 pr-4 py-2.5 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#014D2F] bg-slate-50/50 font-medium"
+            />
+          </div>
+
+          {/* Schedule Filter Dropdown */}
+          <div className="relative w-full sm:w-48 shrink-0">
+            <Filter className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 z-10" />
+            <select
+              value={scheduleFilter}
+              onChange={(e) => setScheduleFilter(e.target.value)}
+              className="w-full pl-9 pr-3 py-2.5 text-xs sm:text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#014D2F] bg-white font-semibold text-slate-700"
+            >
+              <option value="all">Tất cả ca học</option>
+              <option value="2-4-6">Ca 2-4-6</option>
+              <option value="3-5-7">Ca 3-5-7</option>
+              <option value="Khác">Ca Linh hoạt / Khác</option>
+            </select>
+          </div>
         </div>
 
         {isAdmin && (
           <button
             onClick={handleOpenAdd}
-            className="flex items-center justify-center space-x-2 px-5 py-2.5 rounded-xl bg-[#014D2F] hover:bg-[#013822] text-white font-semibold text-sm transition-all shadow-md shadow-emerald-900/10 hover:scale-[1.01]"
+            className="flex items-center justify-center space-x-2 px-5 py-2.5 rounded-xl bg-[#014D2F] hover:bg-[#013822] text-white font-semibold text-sm transition-all shadow-md shadow-emerald-900/10 hover:scale-[1.01] shrink-0"
           >
             <UserPlus className="w-4 h-4" />
             <span>Thêm Học Viên</span>
@@ -82,7 +105,7 @@ export default function StudentList({ students, onRefresh, onOpenReceiptForStude
       <div className="md:hidden space-y-2.5">
         {filteredStudents.length === 0 ? (
           <div className="bg-white p-6 rounded-2xl text-center text-slate-400 text-sm border border-slate-100">
-            Không tìm thấy thông tin học viên nào trong CSDL.
+            Không tìm thấy học viên nào phù hợp.
           </div>
         ) : (
           filteredStudents.map((st, idx) => (
