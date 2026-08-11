@@ -61,6 +61,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       } catch (err) {
         if (isMounted) {
           setUser(null);
+          if (typeof window !== 'undefined') {
+            localStorage.removeItem('access_token');
+          }
           if (pathname !== '/login') {
             router.replace('/login');
           }
@@ -81,11 +84,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const login = async (idSystem: string, pass: string) => {
     const res = await api.login(idSystem, pass);
+    if (res.access_token && typeof window !== 'undefined') {
+      localStorage.setItem('access_token', res.access_token);
+    }
     setUser(res.user);
     router.replace('/');
   };
 
   const logout = async () => {
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('access_token');
+    }
     await api.logout();
     setUser(null);
     router.replace('/login');
