@@ -53,10 +53,10 @@ export default function StudentList({ students, onRefresh, onOpenReceiptForStude
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* Search & Add Action Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-4 rounded-2xl shadow-xs border border-slate-100">
-        <div className="relative flex-1 max-w-md">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-3.5 sm:p-4 rounded-2xl shadow-xs border border-slate-100">
+        <div className="relative flex-1">
           <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
           <input
             type="text"
@@ -78,8 +78,94 @@ export default function StudentList({ students, onRefresh, onOpenReceiptForStude
         )}
       </div>
 
-      {/* Table Container */}
-      <div className="bg-white rounded-2xl shadow-xs border border-slate-100 overflow-hidden">
+      {/* MOBILE VIEW (Compact cards, no wrapping text) */}
+      <div className="md:hidden space-y-2.5">
+        {filteredStudents.length === 0 ? (
+          <div className="bg-white p-6 rounded-2xl text-center text-slate-400 text-sm border border-slate-100">
+            Không tìm thấy thông tin học viên nào trong CSDL.
+          </div>
+        ) : (
+          filteredStudents.map((st, idx) => (
+            <div
+              key={st.profile_id}
+              className="bg-white p-3.5 rounded-2xl border border-slate-100 shadow-xs flex flex-col justify-between space-y-2"
+            >
+              {/* Header row: STT + Fullname (Single line, no line break) + Actions */}
+              <div className="flex items-center justify-between gap-2">
+                <div className="flex items-center space-x-2 min-w-0">
+                  <span className="w-6 h-6 rounded-full bg-slate-100 text-slate-500 font-bold text-xs flex items-center justify-center shrink-0">
+                    {idx + 1}
+                  </span>
+                  <button
+                    onClick={() => setViewingStudent(st)}
+                    className="font-bold text-slate-900 text-sm hover:text-[#014D2F] truncate text-left"
+                  >
+                    {st.fullname}
+                  </button>
+                </div>
+
+                {/* Mobile action buttons */}
+                <div className="flex items-center space-x-1 shrink-0">
+                  <button
+                    onClick={() => setViewingStudent(st)}
+                    title="Xem chi tiết"
+                    className="p-1.5 rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200 transition-colors"
+                  >
+                    <Eye className="w-4 h-4" />
+                  </button>
+                  {isAdmin && (
+                    <>
+                      <button
+                        onClick={() => onOpenReceiptForStudent(st.profile_id)}
+                        title="Đóng học phí"
+                        className="p-1.5 rounded-lg bg-emerald-50 text-[#014D2F] hover:bg-[#014D2F] hover:text-white transition-colors"
+                      >
+                        <DollarSign className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={() => handleOpenEdit(st)}
+                        title="Chỉnh sửa"
+                        className="p-1.5 rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200 transition-colors"
+                      >
+                        <Edit className="w-4 h-4" />
+                      </button>
+                    </>
+                  )}
+                </div>
+              </div>
+
+              {/* Sub-row: Gộp Giới tính, Năm sinh, Ca học, SĐT trên 1 dòng duy nhất */}
+              <div className="flex items-center flex-wrap gap-1.5 text-xs text-slate-600 pt-1 border-t border-slate-50">
+                <span className="px-2 py-0.5 rounded-md bg-slate-100 font-medium text-slate-700">
+                  {st.gender || 'Nữ'}
+                </span>
+                <span className="px-2 py-0.5 rounded-md bg-slate-100 font-medium text-slate-700">
+                  {st.birth_year || (st.date_of_birth ? new Date(st.date_of_birth).getFullYear() : '2016')}
+                </span>
+                <span
+                  className={`px-2.5 py-0.5 rounded-md font-semibold ${
+                    st.schedule === '2-4-6'
+                      ? 'bg-emerald-100 text-[#014D2F]'
+                      : st.schedule === '3-5-7'
+                      ? 'bg-blue-100 text-blue-800'
+                      : 'bg-amber-100 text-amber-800'
+                  }`}
+                >
+                  Ca {st.schedule || '3-5-7'}
+                </span>
+                {st.phone_number && (
+                  <span className="font-mono text-slate-500 text-[11px] ml-auto">
+                    📞 {st.phone_number}
+                  </span>
+                )}
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+
+      {/* DESKTOP TABLE VIEW */}
+      <div className="hidden md:block bg-white rounded-2xl shadow-xs border border-slate-100 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
