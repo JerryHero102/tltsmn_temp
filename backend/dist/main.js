@@ -13,8 +13,12 @@ async function bootstrap() {
     app.use((0, express_1.json)({ limit: '50mb' }));
     app.use((0, express_1.urlencoded)({ extended: true, limit: '50mb' }));
     app.enableCors({
-        origin: true,
+        origin: (origin, callback) => {
+            callback(null, true);
+        },
         credentials: true,
+        methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+        allowedHeaders: ['Content-Type', 'Authorization', 'Cookie', 'bypass-tunnel-reminder', 'x-requested-with'],
     });
     const port = process.env.PORT || 4000;
     await app.listen(port);

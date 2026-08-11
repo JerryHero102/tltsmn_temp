@@ -3,6 +3,7 @@ const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api';
 export async function apiRequest(path: string, options: RequestInit = {}) {
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
+    'bypass-tunnel-reminder': 'true',
     ...(options.headers as Record<string, string>),
   };
 

@@ -28,8 +28,8 @@ let AuthController = class AuthController {
         const data = await this.authService.login(user);
         res.cookie('access_token', data.access_token, {
             httpOnly: true,
-            secure: false,
-            sameSite: 'lax',
+            secure: true,
+            sameSite: 'none',
             maxAge: 7 * 24 * 60 * 60 * 1000,
             path: '/',
         });
@@ -41,8 +41,9 @@ let AuthController = class AuthController {
     async logout(res) {
         res.clearCookie('access_token', {
             httpOnly: true,
+            secure: true,
+            sameSite: 'none',
             path: '/',
-            sameSite: 'lax',
         });
         return { message: 'Đã đăng xuất thành công' };
     }

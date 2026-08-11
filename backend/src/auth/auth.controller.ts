@@ -29,11 +29,11 @@ export class AuthController {
     const user = await this.authService.validateUser(idSys, pass);
     const data = await this.authService.login(user);
 
-    // Secure HttpOnly cookie: JS cannot read/access JWT from localStorage or document.cookie
+    // Cross-origin HttpOnly cookie settings for Vercel -> Cloudflare Tunnel (sameSite: 'none', secure: true)
     res.cookie('access_token', data.access_token, {
       httpOnly: true,
-      secure: false, // set true in production HTTPS
-      sameSite: 'lax',
+      secure: true,
+      sameSite: 'none',
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
       path: '/',
     });
@@ -52,8 +52,9 @@ export class AuthController {
   async logout(@Res({ passthrough: true }) res: Response) {
     res.clearCookie('access_token', {
       httpOnly: true,
+      secure: true,
+      sameSite: 'none',
       path: '/',
-      sameSite: 'lax',
     });
     return { message: 'Đã đăng xuất thành công' };
   }
