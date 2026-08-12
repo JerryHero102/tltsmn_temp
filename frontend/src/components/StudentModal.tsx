@@ -21,6 +21,8 @@ export default function StudentModal({ isOpen, onClose, student, onSuccess }: St
   const [email, setEmail] = useState('');
   const [address, setAddress] = useState('');
   const [notes, setNotes] = useState('');
+  const [dateOfJoin, setDateOfJoin] = useState('2026-01-10');
+  const [currentLevel, setCurrentLevel] = useState('Cấp 1 - Đai Trắng');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
@@ -33,6 +35,8 @@ export default function StudentModal({ isOpen, onClose, student, onSuccess }: St
       setEmail(student.email || '');
       setAddress(student.current_address || student.address || '');
       setNotes(student.notes || '');
+      setDateOfJoin(student.date_of_join ? student.date_of_join.split('T')[0] : '2026-01-10');
+      setCurrentLevel(student.current_level || 'Cấp 1 - Đai Trắng');
     } else {
       setFullname('');
       setPhoneNumber('');
@@ -42,6 +46,8 @@ export default function StudentModal({ isOpen, onClose, student, onSuccess }: St
       setEmail('');
       setAddress('');
       setNotes('');
+      setDateOfJoin('2026-01-10');
+      setCurrentLevel('Cấp 1 - Đai Trắng');
     }
   }, [student, isOpen]);
 
@@ -67,6 +73,8 @@ export default function StudentModal({ isOpen, onClose, student, onSuccess }: St
           email,
           current_address: address,
           notes,
+          date_of_join: dateOfJoin,
+          current_level: currentLevel,
         });
         toast.success('Cập nhật thông tin học viên thành công!');
       } else {
@@ -79,6 +87,8 @@ export default function StudentModal({ isOpen, onClose, student, onSuccess }: St
           email,
           current_address: address,
           notes,
+          date_of_join: dateOfJoin,
+          current_level: currentLevel,
         });
         toast.success('Thêm học viên mới thành công!');
       }
@@ -188,6 +198,33 @@ export default function StudentModal({ isOpen, onClose, student, onSuccess }: St
                 <option value="3-5-7">3-5-7 (Thứ 3, 5, 7)</option>
                 <option value="Khác">Khác (Lịch linh hoạt)</option>
               </select>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-1.5">
+              <label className="block text-xs font-semibold text-slate-600 uppercase tracking-wider">
+                Ngày Nhập Học
+              </label>
+              <input
+                type="date"
+                value={dateOfJoin}
+                onChange={(e) => setDateOfJoin(e.target.value)}
+                className="w-full px-3.5 py-2.5 text-base sm:text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#014D2F] font-medium bg-white"
+              />
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="block text-xs font-semibold text-slate-600 uppercase tracking-wider">
+                Cấp Đai / Trình Độ
+              </label>
+              <input
+                type="text"
+                placeholder="Cấp 1 - Đai Trắng, Đai Vàng..."
+                value={currentLevel}
+                onChange={(e) => setCurrentLevel(e.target.value)}
+                className="w-full px-3.5 py-2.5 text-base sm:text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#014D2F] font-medium"
+              />
             </div>
           </div>
 

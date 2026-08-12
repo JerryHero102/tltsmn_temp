@@ -30,7 +30,8 @@ let StudentsService = class StudentsService {
         p.current_address,
         p.permanent_address,
         p.notes,
-        p.date_of_join,
+        TO_CHAR(p.date_of_join, 'YYYY-MM-DD') as date_of_join,
+        p.current_level,
         a.id_system
        FROM profile p
        LEFT JOIN auth_sys a ON a.id = p.id_auth
@@ -51,7 +52,8 @@ let StudentsService = class StudentsService {
         p.current_address,
         p.permanent_address,
         p.notes,
-        p.date_of_join,
+        TO_CHAR(p.date_of_join, 'YYYY-MM-DD') as date_of_join,
+        p.current_level,
         a.id_system
        FROM profile p
        LEFT JOIN auth_sys a ON a.id = p.id_auth
@@ -62,8 +64,8 @@ let StudentsService = class StudentsService {
         return res.rows[0];
     }
     async create(createStudentDto) {
-        const res = await this.dbService.query(`INSERT INTO profile (fullname, birth_year, phone_number, gender, schedule, notes, email, current_address)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+        const res = await this.dbService.query(`INSERT INTO profile (fullname, birth_year, phone_number, gender, schedule, notes, email, current_address, date_of_join, current_level)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
        RETURNING *, id as profile_id`, [
             createStudentDto.fullname,
             createStudentDto.birth_year || 2000,
@@ -73,6 +75,8 @@ let StudentsService = class StudentsService {
             createStudentDto.notes || '',
             createStudentDto.email || '',
             createStudentDto.current_address || '',
+            createStudentDto.date_of_join || '2026-01-10',
+            createStudentDto.current_level || '',
         ]);
         return res.rows[0];
     }
@@ -85,8 +89,10 @@ let StudentsService = class StudentsService {
            schedule = COALESCE($5, schedule),
            notes = COALESCE($6, notes),
            email = COALESCE($7, email),
-           current_address = COALESCE($8, current_address)
-       WHERE id = $9
+           current_address = COALESCE($8, current_address),
+           date_of_join = COALESCE($9, date_of_join),
+           current_level = COALESCE($10, current_level)
+       WHERE id = $11
        RETURNING *, id as profile_id`, [
             updateStudentDto.fullname,
             updateStudentDto.birth_year,
@@ -96,6 +102,8 @@ let StudentsService = class StudentsService {
             updateStudentDto.notes,
             updateStudentDto.email,
             updateStudentDto.current_address,
+            updateStudentDto.date_of_join,
+            updateStudentDto.current_level,
             id,
         ]);
         if (res.rows.length === 0) {

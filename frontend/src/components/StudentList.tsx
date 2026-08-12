@@ -18,6 +18,7 @@ interface Student {
   email?: string;
   current_address?: string;
   date_of_join?: string;
+  current_level?: string;
   id_system: string;
 }
 
@@ -233,6 +234,8 @@ export default function StudentList({ students, onRefresh, onOpenReceiptForStude
                 <th className="py-3 px-6">Họ và Tên</th>
                 <th className="py-3 px-4 text-center">Năm sinh</th>
                 <th className="py-3 px-4 text-center">Ca học</th>
+                <th className="py-3 px-4 text-center">Ngày nhập học</th>
+                <th className="py-3 px-4">Cấp đai / Trình độ</th>
                 <th className="py-3 px-4">SĐT</th>
                 <th className="py-3 px-6">Ghi chú</th>
                 <th className="py-3 px-4 text-right">Thao tác</th>
@@ -241,7 +244,7 @@ export default function StudentList({ students, onRefresh, onOpenReceiptForStude
             <tbody className="divide-y divide-slate-100 text-sm font-medium text-slate-800">
               {filteredStudents.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="py-8 text-center text-slate-400 text-sm">
+                  <td colSpan={9} className="py-8 text-center text-slate-400 text-sm">
                     Không tìm thấy thông tin học viên nào trong CSDL.
                   </td>
                 </tr>
@@ -274,6 +277,14 @@ export default function StudentList({ students, onRefresh, onOpenReceiptForStude
                         }`}
                       >
                         {st.schedule || '2-4-6'}
+                      </span>
+                    </td>
+                    <td className="py-4 px-4 text-center font-semibold text-slate-700">
+                      {st.date_of_join ? st.date_of_join.split('-').reverse().join('/') : '10/01/2026'}
+                    </td>
+                    <td className="py-4 px-4 text-slate-700 font-medium">
+                      <span className="px-2.5 py-1 rounded-lg bg-slate-100 text-slate-800 text-xs font-semibold">
+                        {st.current_level || 'Cấp 1 - Đai Trắng'}
                       </span>
                     </td>
                     <td className="py-4 px-4 font-mono text-slate-700">{st.phone_number || '---'}</td>
@@ -366,6 +377,24 @@ export default function StudentList({ students, onRefresh, onOpenReceiptForStude
                   </span>
                   <span className="font-semibold text-[#014D2F] bg-emerald-100 px-2 py-0.5 rounded-full text-xs">
                     {viewingStudent.schedule || '2-4-6'}
+                  </span>
+                </div>
+
+                <div className="flex justify-between py-1 border-b border-slate-200/60">
+                  <span className="text-slate-500 flex items-center gap-2">
+                    <Calendar className="w-4 h-4 text-[#014D2F]" /> Ngày nhập học:
+                  </span>
+                  <span className="font-semibold text-slate-900">
+                    {viewingStudent.date_of_join ? viewingStudent.date_of_join.split('-').reverse().join('/') : '10/01/2026'}
+                  </span>
+                </div>
+
+                <div className="flex justify-between py-1 border-b border-slate-200/60">
+                  <span className="text-slate-500 flex items-center gap-2">
+                    <BookOpen className="w-4 h-4 text-[#014D2F]" /> Cấp đai / Trình độ:
+                  </span>
+                  <span className="font-semibold text-slate-900">
+                    {viewingStudent.current_level || 'Cấp 1 - Đai Trắng'}
                   </span>
                 </div>
 

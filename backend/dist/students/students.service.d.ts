@@ -13,6 +13,8 @@ export declare class StudentsService {
         notes?: string;
         email?: string;
         current_address?: string;
+        date_of_join?: string;
+        current_level?: string;
     }): Promise<any>;
     update(id: string, updateStudentDto: {
         fullname?: string;
@@ -23,6 +25,8 @@ export declare class StudentsService {
         notes?: string;
         email?: string;
         current_address?: string;
+        date_of_join?: string;
+        current_level?: string;
     }): Promise<any>;
     remove(id: string): Promise<{
         message: string;
