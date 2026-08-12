@@ -8,7 +8,7 @@ import StudentList from '@/components/StudentList';
 import TuitionMatrix from '@/components/TuitionMatrix';
 import ReceiptModal from '@/components/ReceiptModal';
 import { api } from '@/lib/api';
-import { Loader2, RefreshCw, Users, Receipt as ReceiptIcon } from 'lucide-react';
+import { Loader2, RefreshCw, Users, Receipt as ReceiptIcon, ArrowUp } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function DashboardPage() {
@@ -19,6 +19,23 @@ export default function DashboardPage() {
   const [students, setStudents] = useState<any[]>([]);
   const [tuitionMatrix, setTuitionMatrix] = useState<any[]>([]);
   const [loadingData, setLoadingData] = useState(true);
+  const [showScrollTop, setShowScrollTop] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 150) {
+        setShowScrollTop(true);
+      } else {
+        setShowScrollTop(false);
+      }
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   // Receipt Modal State
   const [isReceiptModalOpen, setIsReceiptModalOpen] = useState(false);
@@ -189,6 +206,18 @@ export default function DashboardPage() {
         existingReceipt={editingReceiptData}
         onSuccess={fetchData}
       />
+
+      {/* Floating Scroll-To-Top Button (Fixed Bottom-Right for all tabs on Laptop & Mobile) */}
+      {showScrollTop && (
+        <button
+          onClick={scrollToTop}
+          className="fixed bottom-6 right-6 z-50 p-3 sm:p-3.5 rounded-full bg-[#014D2F] text-white shadow-2xl hover:bg-[#013822] hover:scale-110 active:scale-95 transition-all flex items-center justify-center border-2 border-white/20 animate-in fade-in zoom-in duration-200"
+          title="Lên đầu trang"
+          aria-label="Lên đầu trang"
+        >
+          <ArrowUp className="w-5 h-5 sm:w-6 sm:h-6" />
+        </button>
+      )}
     </div>
   );
 }

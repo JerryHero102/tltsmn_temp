@@ -169,8 +169,8 @@ export default function TuitionMatrix({
   return (
     <div className="space-y-3">
       {/* Filter Header: Search + Xóa lọc button + Filter by Month + Filter by Schedule */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 bg-white p-3 sm:p-3.5 rounded-2xl shadow-xs border border-slate-100">
-        <div className="flex flex-col sm:flex-row items-center gap-2.5 flex-1 w-full">
+      <div className="flex flex-col gap-2.5 bg-white p-3 sm:p-3.5 rounded-2xl shadow-xs border border-slate-100">
+        <div className="flex flex-col lg:flex-row items-stretch lg:items-center gap-2.5 w-full">
           {/* Shortened Search Input & Reset Filter button */}
           <div className="relative flex-1 w-full flex items-center gap-2">
             <div className="relative flex-1">
@@ -197,53 +197,60 @@ export default function TuitionMatrix({
             )}
           </div>
 
-          {/* Filter by Month Dropdown */}
-          <div className="relative w-full sm:w-44 shrink-0">
-            <Calendar className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 z-10" />
-            <select
-              value={selectedMonth}
-              onChange={(e) => setSelectedMonth(e.target.value)}
-              className="w-full pl-9 pr-3 py-2 text-xs sm:text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#014D2F] bg-white font-semibold text-slate-700"
-            >
-              <option value="all">Tất cả 12 tháng</option>
-              {Array.from({ length: 12 }, (_, i) => i + 1).map((m) => (
-                <option key={m} value={m.toString()}>
-                  Tháng {m}
-                </option>
-              ))}
-            </select>
-          </div>
+          <div className="flex flex-col sm:flex-row items-center gap-2 shrink-0">
+            {/* Filter by Month Dropdown */}
+            <div className="relative w-full sm:w-44">
+              <Calendar className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 z-10" />
+              <select
+                value={selectedMonth}
+                onChange={(e) => setSelectedMonth(e.target.value)}
+                className="w-full pl-9 pr-3 py-2 text-xs sm:text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#014D2F] bg-white font-semibold text-slate-700"
+              >
+                <option value="all">Tất cả 12 tháng</option>
+                {Array.from({ length: 12 }, (_, i) => i + 1).map((m) => (
+                  <option key={m} value={m.toString()}>
+                    Tháng {m}
+                  </option>
+                ))}
+              </select>
+            </div>
 
-          {/* Filter by Schedule Dropdown */}
-          <div className="relative w-full sm:w-44 shrink-0">
-            <Filter className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 z-10" />
-            <select
-              value={scheduleFilter}
-              onChange={(e) => setScheduleFilter(e.target.value)}
-              className="w-full pl-9 pr-3 py-2 text-xs sm:text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#014D2F] bg-white font-semibold text-slate-700"
-            >
-              <option value="all">Tất cả ca học</option>
-              <option value="2-4-6">Ca 2-4-6</option>
-              <option value="3-5-7">Ca 3-5-7</option>
-              <option value="Khác">Ca Linh hoạt / Khác</option>
-            </select>
+            {/* Filter by Schedule Dropdown */}
+            <div className="relative w-full sm:w-44">
+              <Filter className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 z-10" />
+              <select
+                value={scheduleFilter}
+                onChange={(e) => setScheduleFilter(e.target.value)}
+                className="w-full pl-9 pr-3 py-2 text-xs sm:text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#014D2F] bg-white font-semibold text-slate-700"
+              >
+                <option value="all">Tất cả ca học</option>
+                <option value="2-4-6">Ca 2-4-6</option>
+                <option value="3-5-7">Ca 3-5-7</option>
+                <option value="Khác">Ca Linh hoạt / Khác</option>
+              </select>
+            </div>
           </div>
         </div>
 
-        {/* Legend Badges */}
-        <div className="flex items-center space-x-3 text-[11px] font-semibold text-slate-600 shrink-0 pt-2 lg:pt-0 border-t lg:border-t-0 border-slate-100">
-          <span className="flex items-center gap-1">
-            <span className="w-2.5 h-2.5 rounded-full bg-emerald-600 inline-block"></span>{" "}
-            Đúng hạn
-          </span>
-          <span className="flex items-center gap-1">
-            <span className="w-2.5 h-2.5 rounded-full bg-amber-500 inline-block"></span>{" "}
-            Đóng bù / Lưu máy
-          </span>
-          <span className="flex items-center gap-1">
-            <span className="w-2.5 h-2.5 rounded-full bg-slate-200 border border-slate-300 inline-block"></span>{" "}
-            Chưa đóng
-          </span>
+        {/* Legend Badges & Mobile Scroll Hint */}
+        <div className="flex flex-wrap items-center justify-between gap-2 text-[11px] font-semibold text-slate-600 pt-2 border-t border-slate-100">
+          <div className="flex items-center space-x-3">
+            <span className="flex items-center gap-1">
+              <span className="w-2.5 h-2.5 rounded-full bg-emerald-600 inline-block"></span>{" "}
+              Đúng hạn
+            </span>
+            <span className="flex items-center gap-1">
+              <span className="w-2.5 h-2.5 rounded-full bg-amber-500 inline-block"></span>{" "}
+              Đóng bù / Lưu máy
+            </span>
+            <span className="flex items-center gap-1">
+              <span className="w-2.5 h-2.5 rounded-full bg-slate-200 border border-slate-300 inline-block"></span>{" "}
+              Chưa đóng
+            </span>
+          </div>
+          <div className="text-[11px] text-slate-400 italic md:hidden">
+            ← Vuốt cuộn sang ngang để xem 12 tháng →
+          </div>
         </div>
       </div>
 
@@ -256,16 +263,15 @@ export default function TuitionMatrix({
 
       {/* UNIFIED MATRIX TABLE VIEW (Mobile + Desktop) */}
       <div className="bg-white rounded-2xl shadow-xs border border-slate-100 overflow-hidden">
-        <div className="overflow-auto max-h-[calc(100vh-210px)] scrollbar-thin">
+        <div className="overflow-auto max-h-[calc(100vh-220px)] scrollbar-thin">
           <table className="w-full text-left border-collapse min-w-[650px]">
-            <thead className="sticky top-0 z-20 shadow-xs bg-slate-50">
-              {/* Row 1: Thống kê số lượng học sinh đóng học thực tế trong từng tháng */}
-              <tr className="bg-emerald-50 border-b border-emerald-100 text-[11px] font-extrabold text-[#014D2F]">
-                <th
-                  colSpan={2}
-                  className="py-2.5 px-3 text-left whitespace-nowrap sticky left-0 top-0 bg-emerald-100/90 z-30 font-extrabold text-[#014D2F] shadow-[2px_0_5px_-2px_rgba(0,0,0,0.08)]"
-                >
-                  Số HS đã đóng
+            <thead className="sticky top-0 z-20 shadow-xs bg-slate-100">
+              <tr className="bg-slate-100 border-b border-slate-200/90 text-xs font-bold text-slate-700 uppercase tracking-wider">
+                <th className="py-2.5 px-1 text-center w-7 sticky left-0 bg-slate-100 z-30 whitespace-nowrap border-r border-slate-200/60">
+                  STT
+                </th>
+                <th className="py-2.5 px-2.5 sticky left-7 bg-slate-100 z-30 min-w-[125px] max-w-[160px] shadow-[2px_0_5px_-2px_rgba(0,0,0,0.08)] border-r border-slate-200/60 whitespace-nowrap">
+                  Họ và Tên
                 </th>
                 {visibleMonths.map((m) => {
                   const paidCount = getActualPaidCountForMonth(
@@ -275,30 +281,24 @@ export default function TuitionMatrix({
                   return (
                     <th
                       key={m}
-                      className="py-2.5 px-1 text-center font-extrabold text-[#014D2F] whitespace-nowrap min-w-[52px] bg-emerald-50"
+                      className="py-2 px-1 text-center whitespace-nowrap min-w-[54px] bg-slate-100/95 border-r border-slate-200/40"
                     >
-                      {paidCount}
+                      <div className="text-xs font-extrabold text-slate-800">
+                        T{m}
+                      </div>
+                      <div
+                        className={`text-[10px] font-black rounded-md px-1 py-0.5 mt-0.5 inline-block ${
+                          paidCount > 0
+                            ? "bg-emerald-100 text-[#014D2F] border border-emerald-200"
+                            : "bg-slate-200/60 text-slate-500"
+                        }`}
+                        title={`Số HS đã đóng trong tháng ${m}: ${paidCount}`}
+                      >
+                        {paidCount} HS
+                      </div>
                     </th>
                   );
                 })}
-              </tr>
-
-              {/* Row 2: Cột STT, Họ và tên (Cố định 2 cột) + Các tháng T1..T12 */}
-              <tr className="bg-slate-100/90 border-b border-slate-200/80 text-xs font-bold text-slate-600 uppercase tracking-wider">
-                <th className="py-2.5 px-2 text-center w-8 sticky left-0 bg-slate-100 z-30 whitespace-nowrap">
-                  STT
-                </th>
-                <th className="py-2.5 px-3 sticky left-8 bg-slate-100 z-30 min-w-[130px] max-w-[170px] shadow-[2px_0_5px_-2px_rgba(0,0,0,0.08)] whitespace-nowrap">
-                  Họ và Tên
-                </th>
-                {visibleMonths.map((m) => (
-                  <th
-                    key={m}
-                    className="py-2.5 px-1 text-center text-xs font-bold text-slate-600 whitespace-nowrap min-w-[52px] bg-slate-100/90"
-                  >
-                    T{m}
-                  </th>
-                ))}
               </tr>
             </thead>
 
@@ -319,12 +319,12 @@ export default function TuitionMatrix({
                     className="hover:bg-slate-50/80 transition-colors"
                   >
                     {/* 1. Cố định Cột STT */}
-                    <td className="py-2.5 px-2 text-center font-bold text-slate-400 text-xs sticky left-0 bg-white z-10 whitespace-nowrap">
+                    <td className="py-2.5 px-1 text-center font-bold text-slate-400 text-xs sticky left-0 bg-white z-10 whitespace-nowrap w-7 border-r border-slate-100">
                       {idx + 1}
                     </td>
 
                     {/* 2. Cố định Cột Họ và Tên + Ca học thu nhỏ ở dưới tên */}
-                    <td className="py-2.5 px-3 sticky left-8 bg-white z-10 min-w-[130px] max-w-[170px] shadow-[2px_0_5px_-2px_rgba(0,0,0,0.08)] whitespace-nowrap">
+                    <td className="py-2.5 px-2.5 sticky left-7 bg-white z-10 min-w-[125px] max-w-[160px] shadow-[2px_0_5px_-2px_rgba(0,0,0,0.08)] border-r border-slate-100 whitespace-nowrap">
                       <div className="font-bold text-slate-900 text-xs sm:text-sm truncate">
                         {row.fullname}
                       </div>
