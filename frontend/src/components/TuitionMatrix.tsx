@@ -76,7 +76,7 @@ export default function TuitionMatrix({ matrix, onOpenReceiptModal }: TuitionMat
 
   return (
     <div className="space-y-3">
-      {/* Filter Header: Shortened Search + Xóa lọc button + Filter by Month + Filter by Schedule */}
+      {/* Filter Header: Search + Xóa lọc button + Filter by Month + Filter by Schedule */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 bg-white p-3 sm:p-3.5 rounded-2xl shadow-xs border border-slate-100">
         <div className="flex flex-col sm:flex-row items-center gap-2.5 flex-1 w-full">
           {/* Shortened Search Input & Reset Filter button */}
@@ -148,200 +148,85 @@ export default function TuitionMatrix({ matrix, onOpenReceiptModal }: TuitionMat
         </div>
       </div>
 
-      {/* MOBILE VIEW (Compact student cards, single line, no line break) */}
-      <div className="md:hidden space-y-2">
-        {/* Mobile Summary Banner */}
-        <div className="bg-[#014D2F]/10 border border-emerald-200 px-3.5 py-2 rounded-xl text-xs font-bold text-[#014D2F] flex items-center justify-between">
-          <span>Học viên: {countTotal}</span>
-          <span>2-4-6: {count246}</span>
-          <span>3-5-7: {count357}</span>
-        </div>
-
-        {filteredMatrix.length === 0 ? (
-          <div className="bg-white p-6 rounded-2xl text-center text-slate-400 text-sm border border-slate-100">
-            Không tìm thấy thông tin đóng học phí nào.
-          </div>
-        ) : (
-          filteredMatrix.map((row, idx) => (
-            <div
-              key={row.id_profile}
-              className="bg-white p-3 rounded-2xl border border-slate-100 shadow-xs flex flex-col justify-between space-y-2"
-            >
-              {/* Header: STT + Fullname (No wrapping line) + Schedule badge */}
-              <div className="flex items-center justify-between gap-2 border-b border-slate-50 pb-2">
-                <div className="flex items-center space-x-2 min-w-0">
-                  <span className="w-6 h-6 rounded-full bg-slate-100 text-slate-500 font-bold text-xs flex items-center justify-center shrink-0">
-                    {idx + 1}
-                  </span>
-                  <span className="font-bold text-slate-900 text-sm truncate whitespace-nowrap">
-                    {row.fullname}
-                  </span>
-                </div>
-                <div className="flex items-center space-x-1.5 shrink-0">
-                  <span
-                    className={`px-2 py-0.5 rounded-md text-[11px] font-semibold whitespace-nowrap ${
-                      row.schedule === '2-4-6'
-                        ? 'bg-emerald-100 text-[#014D2F]'
-                        : row.schedule === '3-5-7'
-                        ? 'bg-blue-100 text-blue-800'
-                        : 'bg-amber-100 text-amber-800'
-                    }`}
-                  >
-                    Ca {row.schedule || '2-4-6'}
-                  </span>
-                </div>
-              </div>
-
-              {/* Month Status Display */}
-              {selectedMonth !== 'all' ? (
-                (() => {
-                  const m = Number(selectedMonth);
-                  const data = row.months[m];
-                  return (
-                    <div className="flex items-center justify-between bg-slate-50/80 p-2 rounded-xl border border-slate-100">
-                      <span className="font-bold text-xs text-slate-700 whitespace-nowrap">Tháng {m}:</span>
-                      {data ? (
-                        <button
-                          onClick={() =>
-                            setSelectedReceipt({
-                              fullname: row.fullname,
-                              month: m,
-                              receipt: data,
-                            })
-                          }
-                          className={`px-3 py-1.5 rounded-lg text-white font-semibold text-xs transition-all shadow-xs flex items-center gap-1.5 whitespace-nowrap ${
-                            data.is_pending_local
-                              ? 'bg-amber-500 hover:bg-amber-600 animate-pulse'
-                              : 'bg-emerald-600 hover:bg-[#014D2F]'
-                          }`}
-                        >
-                          {data.is_pending_local ? (
-                            <>
-                              <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                              <span>Lưu máy (Đồng bộ)</span>
-                            </>
-                          ) : (
-                            <>
-                              <CheckCircle className="w-3.5 h-3.5" />
-                              <span>Đã đóng (Xem biên lai)</span>
-                            </>
-                          )}
-                        </button>
-                      ) : (
-                        <button
-                          onClick={() => onOpenReceiptModal(row.id_profile, m)}
-                          className="px-3 py-1.5 rounded-lg bg-[#014D2F] text-white hover:bg-[#013822] text-xs font-semibold transition-all shadow-xs flex items-center gap-1 whitespace-nowrap"
-                        >
-                          <Plus className="w-3.5 h-3.5" />
-                          <span>Đóng học phí T{m}</span>
-                        </button>
-                      )}
-                    </div>
-                  );
-                })()
-              ) : (
-                <div className="flex items-center gap-1 overflow-x-auto pb-1 scrollbar-none">
-                  {Array.from({ length: 12 }, (_, i) => i + 1).map((m) => {
-                    const data = row.months[m];
-                    return (
-                      <button
-                        key={m}
-                        onClick={() => {
-                          if (data) {
-                            setSelectedReceipt({
-                              fullname: row.fullname,
-                              month: m,
-                              receipt: data,
-                            });
-                          } else {
-                            onOpenReceiptModal(row.id_profile, m);
-                          }
-                        }}
-                        className={`px-2 py-1 rounded-lg font-bold text-[11px] shrink-0 transition-all whitespace-nowrap ${
-                          data?.is_pending_local
-                            ? 'bg-amber-500 text-white animate-pulse'
-                            : data
-                            ? 'bg-emerald-600 text-white'
-                            : 'bg-slate-100 text-slate-500 border border-slate-200'
-                        }`}
-                        title={data ? `Tháng ${m}: Đã đóng` : `Tháng ${m}: Chưa đóng`}
-                      >
-                        T{m} {data && (data.is_pending_local ? '⌛' : '✓')}
-                      </button>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-          ))
-        )}
-      </div>
-
-      {/* DESKTOP MATRIX TABLE VIEW - Strictly 1 single row header & clean icon-only + buttons */}
-      <div className="hidden md:block bg-white rounded-2xl shadow-xs border border-slate-100 overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
+      {/* UNIFIED MATRIX TABLE VIEW (Mobile + Desktop) */}
+      <div className="bg-white rounded-2xl shadow-xs border border-slate-100 overflow-hidden">
+        <div className="overflow-x-auto scrollbar-thin">
+          <table className="w-full text-left border-collapse min-w-[650px]">
             <thead>
-              {/* Row 1: Thống kê số lượng học sinh & số lượng đóng học từng tháng */}
+              {/* Row 1: Thống kê số lượng học sinh & số lượng đóng học từng tháng (Loại bỏ chữ HS) */}
               <tr className="bg-[#014D2F]/5 border-b border-emerald-100/80 text-[11px] font-extrabold text-[#014D2F]">
-                <th colSpan={3} className="py-2.5 px-4 text-left whitespace-nowrap sticky left-0 bg-[#014D2F]/10 z-10 font-extrabold text-[#014D2F] shadow-[2px_0_5px_-2px_rgba(0,0,0,0.05)]">
+                <th
+                  colSpan={2}
+                  className="py-2.5 px-3 text-left whitespace-nowrap sticky left-0 bg-[#014D2F]/10 z-30 font-extrabold text-[#014D2F] shadow-[2px_0_5px_-2px_rgba(0,0,0,0.08)]"
+                >
                   Học viên: {countTotal} &nbsp;|&nbsp; 2-4-6: {count246} &nbsp;|&nbsp; 3-5-7: {count357}
                 </th>
                 {visibleMonths.map((m) => {
                   const paidCount = filteredMatrix.filter((r) => r.months[m] !== null).length;
                   return (
-                    <th key={m} className="py-2.5 px-1 text-center font-extrabold text-[#014D2F] whitespace-nowrap">
-                      {paidCount > 0 ? `${paidCount} HS` : '0'}
+                    <th key={m} className="py-2.5 px-1 text-center font-extrabold text-[#014D2F] whitespace-nowrap min-w-[52px]">
+                      {paidCount}
                     </th>
                   );
                 })}
               </tr>
 
-              {/* Row 2: Cột Tháng T1..T12 */}
+              {/* Row 2: Cột STT, Họ và tên (Cố định 2 cột) + Các tháng T1..T12 */}
               <tr className="bg-slate-50 border-b border-slate-200/80 text-xs font-bold text-slate-500 uppercase tracking-wider">
-                <th className="py-3 px-3 text-center w-10 whitespace-nowrap">STT</th>
-                <th className="py-3 px-4 sticky left-0 bg-slate-50 z-10 w-44 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.05)] whitespace-nowrap">
+                <th className="py-3 px-2 text-center w-8 sticky left-0 bg-slate-50 z-20 whitespace-nowrap">
+                  STT
+                </th>
+                <th className="py-3 px-3 sticky left-8 bg-slate-50 z-20 min-w-[130px] max-w-[170px] shadow-[2px_0_5px_-2px_rgba(0,0,0,0.08)] whitespace-nowrap">
                   Họ và Tên
                 </th>
-                <th className="py-3 px-3 text-center w-24 whitespace-nowrap">Ca học</th>
                 {visibleMonths.map((m) => (
-                  <th key={m} className="py-3 px-2 text-center text-xs font-bold text-slate-600 whitespace-nowrap min-w-[50px]">
+                  <th key={m} className="py-3 px-1 text-center text-xs font-bold text-slate-600 whitespace-nowrap min-w-[52px]">
                     T{m}
                   </th>
                 ))}
               </tr>
             </thead>
+
             <tbody className="divide-y divide-slate-100 text-sm font-medium text-slate-800">
               {filteredMatrix.length === 0 ? (
                 <tr>
-                  <td colSpan={visibleMonths.length + 3} className="py-8 text-center text-slate-400 text-sm">
+                  <td colSpan={visibleMonths.length + 2} className="py-8 text-center text-slate-400 text-sm">
                     Không tìm thấy thông tin đóng học phí nào.
                   </td>
                 </tr>
               ) : (
                 filteredMatrix.map((row, idx) => (
                   <tr key={row.id_profile} className="hover:bg-slate-50/80 transition-colors">
-                    <td className="py-3 px-3 text-center font-bold text-slate-400 text-xs whitespace-nowrap">{idx + 1}</td>
-                    <td className="py-3 px-4 sticky left-0 bg-white z-10 font-bold text-slate-900 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.05)] whitespace-nowrap truncate">
-                      {row.fullname}
+                    {/* 1. Cố định Cột STT */}
+                    <td className="py-2.5 px-2 text-center font-bold text-slate-400 text-xs sticky left-0 bg-white z-10 whitespace-nowrap">
+                      {idx + 1}
                     </td>
-                    <td className="py-3 px-3 text-center whitespace-nowrap">
-                      <span
-                        className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold whitespace-nowrap ${
-                          row.schedule === '2-4-6'
-                            ? 'bg-emerald-100 text-[#014D2F]'
-                            : row.schedule === '3-5-7'
-                            ? 'bg-blue-100 text-blue-800'
-                            : 'bg-amber-100 text-amber-800'
-                        }`}
-                      >
-                        {row.schedule || '2-4-6'}
-                      </span>
+
+                    {/* 2. Cố định Cột Họ và Tên + Ca học thu nhỏ ở dưới tên */}
+                    <td className="py-2.5 px-3 sticky left-8 bg-white z-10 min-w-[130px] max-w-[170px] shadow-[2px_0_5px_-2px_rgba(0,0,0,0.08)] whitespace-nowrap">
+                      <div className="font-bold text-slate-900 text-xs sm:text-sm truncate">
+                        {row.fullname}
+                      </div>
+                      <div className="mt-0.5">
+                        <span
+                          className={`text-[10px] font-semibold px-1.5 py-0.2 rounded inline-block ${
+                            row.schedule === '2-4-6'
+                              ? 'bg-emerald-100 text-[#014D2F]'
+                              : row.schedule === '3-5-7'
+                              ? 'bg-blue-100 text-blue-800'
+                              : 'bg-amber-100 text-amber-800'
+                          }`}
+                        >
+                          {row.schedule || '2-4-6'}
+                        </span>
+                      </div>
                     </td>
+
+                    {/* 3. Các cột Tháng T1..T12 */}
                     {visibleMonths.map((m) => {
                       const data = row.months[m];
                       return (
-                        <td key={m} className="py-2.5 px-1 text-center whitespace-nowrap">
+                        <td key={m} className="py-2 px-1 text-center whitespace-nowrap min-w-[52px]">
                           {data ? (
                             <button
                               onClick={() =>
@@ -375,7 +260,7 @@ export default function TuitionMatrix({ matrix, onOpenReceiptModal }: TuitionMat
                               )}
                             </button>
                           ) : (
-                            /* Icon + Only inside content table (bỏ chữ Tháng X) */
+                            /* Icon + Only inside content table */
                             <button
                               onClick={() => onOpenReceiptModal(row.id_profile, m)}
                               className="w-full py-1.5 px-1 rounded-lg bg-slate-100/90 hover:bg-emerald-100 hover:text-[#014D2F] border border-slate-200/80 text-slate-400 text-xs font-bold transition-all flex items-center justify-center"
