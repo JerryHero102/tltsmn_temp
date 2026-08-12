@@ -1,4 +1,13 @@
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api';
+function getApiBaseUrl(): string {
+  let envUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api';
+  envUrl = envUrl.replace(/\/+$/, '');
+  if (!envUrl.endsWith('/api')) {
+    envUrl = `${envUrl}/api`;
+  }
+  return envUrl;
+}
+
+const API_BASE = getApiBaseUrl();
 
 // Vietnamese Accent Normalization & Fuzzy Accent-Insensitive Matching
 export function removeVietnameseAccents(str: string): string {
