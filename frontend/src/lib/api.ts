@@ -47,83 +47,88 @@ export async function apiRequest(path: string, options: RequestInit = {}) {
     ...(options.headers as Record<string, string>),
   };
 
-  const res = await fetch(`${API_BASE}${path}`, {
-    ...options,
-    headers,
-    credentials: 'include',
-  });
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 6000);
 
-  if (res.status === 401) {
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem('access_token');
-      if (!window.location.pathname.startsWith('/login')) {
-        window.location.href = '/login';
+  try {
+    const res = await fetch(`${API_BASE}${path}`, {
+      ...options,
+      headers,
+      credentials: 'include',
+      signal: options.signal || controller.signal,
+    });
+    clearTimeout(timeoutId);
+
+    if (res.status === 401) {
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('access_token');
+        if (!window.location.pathname.startsWith('/login')) {
+          window.location.href = '/login';
+        }
       }
+      throw new Error('Chưa đăng nhập hoặc phiên làm việc đã hết hạn');
     }
+
+    if (!res.ok) {
+      const errorData = await res.json().catch(() => ({}));
+      throw new Error(errorData.message || `Yêu cầu thất bại (${res.status})`);
+    }
+
+    return res.json();
+  } catch (err: any) {
+    clearTimeout(timeoutId);
+    if (err.name === 'AbortError') {
+      throw new Error('Kết nối tới máy chủ quá thời gian (Timeout). Vui lòng thử lại.');
+    }
+    throw err;
   }
-
-  const data = await res.json();
-  if (!res.ok) {
-    throw new Error(data.message || 'Đã có lỗi xảy ra');
-  }
-
-  return data;
 }
-
-export interface PendingReceipt {
-  id: string;
-  id_profile: string;
-  payer_name: string;
-  month: number;
-  receipt_date: string;
-  amount: number;
-  schedule_note: string;
-  payment_content: string;
-  base64Image: string;
-  created_at: string;
-  status: 'pending' | 'uploading' | 'failed';
-  error?: string;
-}
-
-let isSyncing = false;
 
 export const api = {
-  // Auth
-  login: async (id_system: string, pass: string) => {
+  // Authentication
+  login: async (id_system: string, password: string) => {
     return apiRequest('/auth/login', {
       method: 'POST',
-      body: JSON.stringify({ id_system, pass }),
+      body: JSON.stringify({ id_system, password }),
+    });
+  },
+
+  logout: async () => {
+    return apiRequest('/auth/logout', {
+      method: 'POST',
     });
   },
 
   getMe: async () => {
-    return apiRequest('/auth/me');
-  },
-
-  logout: async () => {
-    try {
-      await apiRequest('/auth/logout', { method: 'POST' });
-    } catch (e) {
-      console.warn('Logout API failed');
-    }
+    return apiRequest('/auth/me', {
+      method: 'GET',
+    });
   },
 
   // Students
   getStudents: async () => {
-    return apiRequest('/students');
-  },
-
-  createStudent: async (studentData: any) => {
     return apiRequest('/students', {
-      method: 'POST',
-      body: JSON.stringify(studentData),
+      method: 'GET',
     });
   },
 
-  updateStudent: async (id: string, studentData: any) => {
+  getStudentById: async (id: string) => {
+    return apiRequest(`/students/${id}`, {
+      method: 'GET',
+    });
+  },
+
+  createStudent: async (data: any) => {
+    return apiRequest('/students', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  },
+
+  updateStudent: async (id: string, data: any) => {
     return apiRequest(`/students/${id}`, {
       method: 'PUT',
-      body: JSON.stringify(studentData),
+      body: JSON.stringify(data),
     });
   },
 
@@ -133,100 +138,78 @@ export const api = {
     });
   },
 
-  // Receipts & Tuition
-  getTuitionMatrix: async () => {
-    return apiRequest('/receipts/matrix');
-  },
+  // Receipts & Matrix
+  getReceipts: async (params: { month?: number; year?: number; student_id?: string } = {}) => {
+    const query = new URLSearchParams();
+    if (params.month) query.append('month', params.month.toString());
+    if (params.year) query.append('year', params.year.toString());
+    if (params.student_id) query.append('student_id', params.student_id);
 
-  uploadImage: async (base64Image: string) => {
-    return apiRequest('/receipts/upload', {
-      method: 'POST',
-      body: JSON.stringify({ image: base64Image }),
+    return apiRequest(`/receipts?${query.toString()}`, {
+      method: 'GET',
     });
   },
 
-  createReceipt: async (receiptData: any) => {
+  getTuitionMatrix: async (year?: number) => {
+    const query = year ? `?year=${year}` : '';
+    return apiRequest(`/receipts/matrix${query}`, {
+      method: 'GET',
+    });
+  },
+
+  createReceipt: async (receiptData: {
+    id_profile: string;
+    payer_name: string;
+    month: number;
+    receipt_date: string;
+    amount: number;
+    schedule_note?: string;
+    payment_content?: string;
+    base64Image?: string;
+  }) => {
     return apiRequest('/receipts', {
       method: 'POST',
       body: JSON.stringify(receiptData),
     });
   },
 
-  // Instant LocalStorage Queue Helpers
-  getPendingReceipts: (): PendingReceipt[] => {
-    if (typeof window === 'undefined') return [];
-    try {
-      return JSON.parse(localStorage.getItem('pending_receipts') || '[]');
-    } catch {
-      return [];
-    }
-  },
-
-  savePendingReceiptLocally: (receiptData: Omit<PendingReceipt, 'id' | 'created_at' | 'status'>): PendingReceipt => {
-    const newItem: PendingReceipt = {
-      ...receiptData,
-      id: 'pending_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7),
-      created_at: new Date().toISOString(),
-      status: 'pending',
-    };
-
-    if (typeof window !== 'undefined') {
-      const existing = api.getPendingReceipts();
-      existing.push(newItem);
-      localStorage.setItem('pending_receipts', JSON.stringify(existing));
-    }
-
-    return newItem;
-  },
-
-  removePendingReceiptLocally: (id: string) => {
+  // Client-side Local Storage Fallback & Offline Queue
+  savePendingReceiptLocally: (receipt: any) => {
     if (typeof window === 'undefined') return;
-    const existing = api.getPendingReceipts().filter((item) => item.id !== id);
+    const existing = JSON.parse(localStorage.getItem('pending_receipts') || '[]');
+    existing.push({
+      ...receipt,
+      local_id: `local_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
+      created_at: new Date().toISOString(),
+    });
     localStorage.setItem('pending_receipts', JSON.stringify(existing));
   },
 
-  // Sync worker to process pending receipts sequentially with mutex lock
+  getPendingReceiptsLocally: (): any[] => {
+    if (typeof window === 'undefined') return [];
+    return JSON.parse(localStorage.getItem('pending_receipts') || '[]');
+  },
+
+  clearPendingReceiptLocally: (localId: string) => {
+    if (typeof window === 'undefined') return;
+    const existing = JSON.parse(localStorage.getItem('pending_receipts') || '[]');
+    const updated = existing.filter((item: any) => item.local_id !== localId);
+    localStorage.setItem('pending_receipts', JSON.stringify(updated));
+  },
+
   syncPendingReceipts: async (onProgress?: () => void) => {
     if (typeof window === 'undefined') return;
-    if (isSyncing) return; // Prevent concurrent sync loops!
+    const pending = api.getPendingReceiptsLocally();
+    if (pending.length === 0) return;
 
-    isSyncing = true;
-    try {
-      const pendingList = api.getPendingReceipts();
-      if (pendingList.length === 0) return;
-
-      for (const item of pendingList) {
-        try {
-          let imageUrl = '';
-          try {
-            const uploadRes = await api.uploadImage(item.base64Image);
-            imageUrl = (uploadRes && uploadRes.url) ? uploadRes.url : item.base64Image;
-          } catch (uploadErr) {
-            console.warn('Image upload fallback to base64 for pending receipt:', item.id, uploadErr);
-            imageUrl = item.base64Image;
-          }
-
-          // Create or update receipt in Postgres database
-          await api.createReceipt({
-            id_profile: item.id_profile,
-            payer_name: item.payer_name,
-            month: item.month,
-            receipt_date: item.receipt_date,
-            amount: item.amount,
-            schedule_note: item.schedule_note,
-            payment_content: item.payment_content,
-            image_url: imageUrl,
-          });
-
-          // Remove successfully synced receipt from Local Storage
-          api.removePendingReceiptLocally(item.id);
-          if (onProgress) onProgress();
-        } catch (err: any) {
-          console.error('Failed syncing pending receipt:', item.id, err);
-        }
+    for (const item of pending) {
+      try {
+        await api.createReceipt(item);
+        api.clearPendingReceiptLocally(item.local_id);
+        if (onProgress) onProgress();
+      } catch (err) {
+        console.error('Lỗi khi đồng bộ biên lai từ Local Storage:', err);
       }
-    } finally {
-      isSyncing = false;
     }
   },
 };
