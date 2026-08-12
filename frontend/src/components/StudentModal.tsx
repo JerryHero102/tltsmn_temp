@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import { X, UserPlus, Save, Loader2 } from 'lucide-react';
-import { api } from '@/lib/api';
-import { toast } from 'sonner';
+import React, { useState, useEffect } from "react";
+import { X, UserPlus, Save, Loader2 } from "lucide-react";
+import { api } from "@/lib/api";
+import { toast } from "sonner";
 
 interface StudentModalProps {
   isOpen: boolean;
@@ -12,41 +12,54 @@ interface StudentModalProps {
   onSuccess: () => void;
 }
 
-export default function StudentModal({ isOpen, onClose, student, onSuccess }: StudentModalProps) {
-  const [fullname, setFullname] = useState('');
-  const [phoneNumber, setPhoneNumber] = useState('');
+export default function StudentModal({
+  isOpen,
+  onClose,
+  student,
+  onSuccess,
+}: StudentModalProps) {
+  const [fullname, setFullname] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
   const [birthYear, setBirthYear] = useState<number | string>(2012);
-  const [gender, setGender] = useState('Nam');
-  const [schedule, setSchedule] = useState('2-4-6');
-  const [email, setEmail] = useState('');
-  const [address, setAddress] = useState('');
-  const [notes, setNotes] = useState('');
-  const [dateOfJoin, setDateOfJoin] = useState('2026-01-10');
+  const [gender, setGender] = useState("Nam");
+  const [schedule, setSchedule] = useState("2-4-6");
+  const [email, setEmail] = useState("");
+  const [address, setAddress] = useState("");
+  const [notes, setNotes] = useState("");
+  const [dateOfJoin, setDateOfJoin] = useState("2026-01-10");
   const [currentLevel, setCurrentLevel] = useState<number | string>(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     if (student) {
-      setFullname(student.fullname || '');
-      setPhoneNumber(student.phone_number || '');
+      setFullname(student.fullname || "");
+      setPhoneNumber(student.phone_number || "");
       setBirthYear(student.birth_year || 2012);
-      setGender(student.gender || 'Nam');
-      setSchedule(student.schedule || '2-4-6');
-      setEmail(student.email || '');
-      setAddress(student.current_address || student.address || '');
-      setNotes(student.notes || '');
-      setDateOfJoin(student.date_of_join ? student.date_of_join.split('T')[0] : '2026-01-10');
-      setCurrentLevel(student.current_level !== undefined && student.current_level !== null ? student.current_level : 0);
+      setGender(student.gender || "Nam");
+      setSchedule(student.schedule || "2-4-6");
+      setEmail(student.email || "");
+      setAddress(student.current_address || student.address || "");
+      setNotes(student.notes || "");
+      setDateOfJoin(
+        student.date_of_join
+          ? student.date_of_join.split("T")[0]
+          : "2026-01-10",
+      );
+      setCurrentLevel(
+        student.current_level !== undefined && student.current_level !== null
+          ? student.current_level
+          : 0,
+      );
     } else {
-      setFullname('');
-      setPhoneNumber('');
-      setBirthYear(2012);
-      setGender('Nam');
-      setSchedule('2-4-6');
-      setEmail('');
-      setAddress('');
-      setNotes('');
-      setDateOfJoin('2026-01-10');
+      setFullname("");
+      setPhoneNumber("");
+      setBirthYear(2000);
+      setGender("Nam");
+      setSchedule("2-4-6");
+      setEmail("");
+      setAddress("");
+      setNotes("");
+      setDateOfJoin("2026-01-10");
       setCurrentLevel(0);
     }
   }, [student, isOpen]);
@@ -57,13 +70,13 @@ export default function StudentModal({ isOpen, onClose, student, onSuccess }: St
     e.preventDefault();
 
     if (!fullname || !birthYear) {
-      toast.error('Vui lòng nhập Họ tên và Năm sinh');
+      toast.error("Vui lòng nhập Họ tên và Năm sinh");
       return;
     }
 
     try {
       setIsSubmitting(true);
-      const levelNum = currentLevel === '' ? 0 : Number(currentLevel);
+      const levelNum = currentLevel === "" ? 0 : Number(currentLevel);
       if (student) {
         await api.updateStudent(student.profile_id, {
           fullname,
@@ -77,7 +90,7 @@ export default function StudentModal({ isOpen, onClose, student, onSuccess }: St
           date_of_join: dateOfJoin,
           current_level: levelNum,
         });
-        toast.success('Cập nhật thông tin học viên thành công!');
+        toast.success("Cập nhật thông tin học viên thành công!");
       } else {
         await api.createStudent({
           fullname,
@@ -91,12 +104,12 @@ export default function StudentModal({ isOpen, onClose, student, onSuccess }: St
           date_of_join: dateOfJoin,
           current_level: levelNum,
         });
-        toast.success('Thêm học viên mới thành công!');
+        toast.success("Thêm học viên mới thành công!");
       }
       onSuccess();
       onClose();
     } catch (err: any) {
-      toast.error(err.message || 'Có lỗi xảy ra khi lưu thông tin học viên');
+      toast.error(err.message || "Có lỗi xảy ra khi lưu thông tin học viên");
     } finally {
       setIsSubmitting(false);
     }
@@ -109,7 +122,11 @@ export default function StudentModal({ isOpen, onClose, student, onSuccess }: St
         <div className="bg-[#014D2F] px-6 py-5 text-white flex justify-between items-center">
           <div className="flex items-center gap-2">
             <UserPlus className="w-5 h-5 text-emerald-200" />
-            <h3 className="text-lg font-bold">{student ? 'Chỉnh Sửa Thông Tin Học Viên' : 'Thêm Thông Tin Học Viên Mới'}</h3>
+            <h3 className="text-lg font-bold">
+              {student
+                ? "Chỉnh Sửa Thông Tin Học Viên"
+                : "Thêm Thông Tin Học Viên Mới"}
+            </h3>
           </div>
           <button
             onClick={onClose}
@@ -144,7 +161,7 @@ export default function StudentModal({ isOpen, onClose, student, onSuccess }: St
                 type="number"
                 inputMode="numeric"
                 pattern="[0-9]*"
-                placeholder="2012"
+                placeholder="2000"
                 min="1950"
                 max="2026"
                 value={birthYear}
@@ -226,7 +243,11 @@ export default function StudentModal({ isOpen, onClose, student, onSuccess }: St
                 min="0"
                 placeholder="0"
                 value={currentLevel}
-                onChange={(e) => setCurrentLevel(e.target.value === '' ? '' : Number(e.target.value))}
+                onChange={(e) =>
+                  setCurrentLevel(
+                    e.target.value === "" ? "" : Number(e.target.value),
+                  )
+                }
                 className="w-full px-3.5 py-2.5 text-base sm:text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#014D2F] font-medium"
               />
             </div>
