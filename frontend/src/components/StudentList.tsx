@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Search, UserPlus, Edit, DollarSign, Eye, X, User, Phone, Calendar, Mail, MapPin, BookOpen, FileText, Filter } from 'lucide-react';
+import { Search, UserPlus, Edit, DollarSign, Eye, X, User, Phone, Calendar, Mail, MapPin, BookOpen, FileText, Filter, RotateCcw } from 'lucide-react';
 import StudentModal from './StudentModal';
 import { useAuth } from '@/context/AuthContext';
 
@@ -58,24 +58,42 @@ export default function StudentList({ students, onRefresh, onOpenReceiptForStude
     setIsModalOpen(true);
   };
 
+  const handleResetFilters = () => {
+    setSearchTerm('');
+    setScheduleFilter('all');
+  };
+
   return (
     <div className="space-y-4">
       {/* Search & Add Action Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-3.5 sm:p-4 rounded-2xl shadow-xs border border-slate-100">
         <div className="flex flex-col sm:flex-row items-center gap-2.5 flex-1 w-full">
-          <div className="relative flex-1 w-full">
-            <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
-            <input
-              type="text"
-              placeholder="Tìm kiếm tên, số điện thoại..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#014D2F] bg-slate-50/50 font-medium"
-            />
+          {/* Search Input & Reset button */}
+          <div className="relative flex-1 w-full flex items-center gap-2">
+            <div className="relative flex-1">
+              <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+              <input
+                type="text"
+                placeholder="Tìm tên, SĐT..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full pl-10 pr-4 py-2.5 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#014D2F] bg-slate-50/50 font-medium"
+              />
+            </div>
+            {(searchTerm || scheduleFilter !== 'all') && (
+              <button
+                onClick={handleResetFilters}
+                className="px-3 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 font-semibold text-xs transition-colors shrink-0 flex items-center gap-1"
+                title="Xóa tất cả bộ lọc"
+              >
+                <RotateCcw className="w-3.5 h-3.5" />
+                <span>Xóa lọc</span>
+              </button>
+            )}
           </div>
 
           {/* Schedule Filter Dropdown */}
-          <div className="relative w-full sm:w-48 shrink-0">
+          <div className="relative w-full sm:w-44 shrink-0">
             <Filter className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 z-10" />
             <select
               value={scheduleFilter}

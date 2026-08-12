@@ -1,17 +1,7 @@
-"use client";
+'use client';
 
-import React, { useState } from "react";
-import {
-  Search,
-  CheckCircle,
-  Plus,
-  X,
-  ExternalLink,
-  Calendar,
-  Image as ImageIcon,
-  Loader2,
-  Filter,
-} from "lucide-react";
+import React, { useState } from 'react';
+import { Search, CheckCircle, Plus, X, ExternalLink, Calendar, Image as ImageIcon, Loader2, Filter, RotateCcw, Users, DollarSign, Receipt } from 'lucide-react';
 
 interface MonthData {
   receipt_id: number;
@@ -36,24 +26,17 @@ interface TuitionMatrixProps {
 }
 
 function getOptimizedImageUrl(url: string): string {
-  if (!url) return "";
-  if (
-    url.includes("res.cloudinary.com") &&
-    url.includes("/image/upload/") &&
-    !url.includes("/f_auto")
-  ) {
-    return url.replace("/image/upload/", "/image/upload/f_auto,q_auto/");
+  if (!url) return '';
+  if (url.includes('res.cloudinary.com') && url.includes('/image/upload/') && !url.includes('/f_auto')) {
+    return url.replace('/image/upload/', '/image/upload/f_auto,q_auto/');
   }
   return url;
 }
 
-export default function TuitionMatrix({
-  matrix,
-  onOpenReceiptModal,
-}: TuitionMatrixProps) {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [selectedMonth, setSelectedMonth] = useState("all");
-  const [scheduleFilter, setScheduleFilter] = useState("all");
+export default function TuitionMatrix({ matrix, onOpenReceiptModal }: TuitionMatrixProps) {
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedMonth, setSelectedMonth] = useState('all');
+  const [scheduleFilter, setScheduleFilter] = useState('all');
   const [selectedReceipt, setSelectedReceipt] = useState<{
     fullname: string;
     month: number;
@@ -64,39 +47,105 @@ export default function TuitionMatrix({
     const matchesSearch =
       row.fullname.toLowerCase().includes(searchTerm.toLowerCase()) ||
       (row.phone_number && row.phone_number.includes(searchTerm)) ||
-      (row.schedule &&
-        row.schedule.toLowerCase().includes(searchTerm.toLowerCase()));
+      (row.schedule && row.schedule.toLowerCase().includes(searchTerm.toLowerCase()));
 
     const matchesSchedule =
-      scheduleFilter === "all" || (row.schedule || "2-4-6") === scheduleFilter;
+      scheduleFilter === 'all' || (row.schedule || '2-4-6') === scheduleFilter;
 
     const matchesMonth =
-      selectedMonth === "all" ||
-      row.months[Number(selectedMonth)] !== undefined;
+      selectedMonth === 'all' || row.months[Number(selectedMonth)] !== undefined;
 
     return matchesSearch && matchesSchedule && matchesMonth;
   });
 
-  const visibleMonths =
-    selectedMonth === "all"
-      ? Array.from({ length: 12 }, (_, i) => i + 1)
-      : [Number(selectedMonth)];
+  const visibleMonths = selectedMonth === 'all' 
+    ? Array.from({ length: 12 }, (_, i) => i + 1)
+    : [Number(selectedMonth)];
+
+  const handleResetFilters = () => {
+    setSearchTerm('');
+    setSelectedMonth('all');
+    setScheduleFilter('all');
+  };
+
+  // Automatic Statistics Calculation
+  const totalStudents = matrix.length;
+  const totalPaidReceiptsCount = matrix.reduce(
+    (acc, row) => acc + Object.values(row.months).filter(Boolean).length,
+    0
+  );
+  const totalRevenueCollected = matrix.reduce(
+    (acc, row) =>
+      acc +
+      Object.values(row.months).reduce(
+        (sum, m) => sum + (m ? Number(m.amount) || 0 : 0),
+        0
+      ),
+    0
+  );
 
   return (
     <div className="space-y-3">
-      {/* Filter Header: Search + Filter by Month + Filter by Schedule */}
+      {/* Mini Auto Statistics Cards Header */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <div className="bg-white p-3.5 rounded-2xl border border-slate-100 shadow-xs flex items-center space-x-3">
+          <div className="w-9 h-9 rounded-xl bg-emerald-50 text-[#014D2F] flex items-center justify-center font-bold shrink-0">
+            <Users className="w-5 h-5" />
+          </div>
+          <div>
+            <p className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Tổng Học Viên</p>
+            <p className="text-base font-extrabold text-slate-900">{totalStudents} học sinh</p>
+          </div>
+        </div>
+
+        <div className="bg-white p-3.5 rounded-2xl border border-slate-100 shadow-xs flex items-center space-x-3">
+          <div className="w-9 h-9 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center font-bold shrink-0">
+            <Receipt className="w-5 h-5" />
+          </div>
+          <div>
+            <p className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Lượt Đóng Học Phí</p>
+            <p className="text-base font-extrabold text-slate-900">{totalPaidReceiptsCount} lượt biên lai</p>
+          </div>
+        </div>
+
+        <div className="bg-white p-3.5 rounded-2xl border border-slate-100 shadow-xs flex items-center space-x-3">
+          <div className="w-9 h-9 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center font-bold shrink-0">
+            <DollarSign className="w-5 h-5" />
+          </div>
+          <div>
+            <p className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Tổng Doanh Thu</p>
+            <p className="text-base font-extrabold text-emerald-800">
+              {totalRevenueCollected.toLocaleString('vi-VN')} VNĐ
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Filter Header: Shortened Search + Xóa lọc button + Filter by Month + Filter by Schedule */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 bg-white p-3 sm:p-3.5 rounded-2xl shadow-xs border border-slate-100">
         <div className="flex flex-col sm:flex-row items-center gap-2.5 flex-1 w-full">
-          {/* Search Input */}
-          <div className="relative flex-1 w-full">
-            <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
-            <input
-              type="text"
-              placeholder="Tìm theo tên học viên, SĐT..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#014D2F] bg-slate-50/50 font-medium"
-            />
+          {/* Shortened Search Input & Reset Filter button */}
+          <div className="relative flex-1 w-full flex items-center gap-2">
+            <div className="relative flex-1">
+              <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+              <input
+                type="text"
+                placeholder="Tìm tên, SĐT..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full pl-10 pr-4 py-2 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#014D2F] bg-slate-50/50 font-medium"
+              />
+            </div>
+            {(searchTerm || selectedMonth !== 'all' || scheduleFilter !== 'all') && (
+              <button
+                onClick={handleResetFilters}
+                className="px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 font-semibold text-xs transition-colors shrink-0 flex items-center gap-1"
+                title="Xóa tất cả bộ lọc"
+              >
+                <RotateCcw className="w-3.5 h-3.5" />
+                <span>Xóa lọc</span>
+              </button>
+            )}
           </div>
 
           {/* Filter by Month Dropdown */}
@@ -109,9 +158,7 @@ export default function TuitionMatrix({
             >
               <option value="all">Tất cả 12 tháng</option>
               {Array.from({ length: 12 }, (_, i) => i + 1).map((m) => (
-                <option key={m} value={m.toString()}>
-                  Tháng {m}
-                </option>
+                <option key={m} value={m.toString()}>Tháng {m}</option>
               ))}
             </select>
           </div>
@@ -135,16 +182,13 @@ export default function TuitionMatrix({
         {/* Legend Badges */}
         <div className="flex items-center space-x-3 text-[11px] font-semibold text-slate-600 shrink-0 pt-2 lg:pt-0 border-t lg:border-t-0 border-slate-100">
           <span className="flex items-center gap-1">
-            <span className="w-2.5 h-2.5 rounded-full bg-emerald-600 inline-block"></span>{" "}
-            Đã đóng
+            <span className="w-2.5 h-2.5 rounded-full bg-emerald-600 inline-block"></span> Đã đóng
           </span>
           <span className="flex items-center gap-1">
-            <span className="w-2.5 h-2.5 rounded-full bg-amber-500 inline-block"></span>{" "}
-            Lưu máy
+            <span className="w-2.5 h-2.5 rounded-full bg-amber-500 inline-block"></span> Lưu máy
           </span>
           <span className="flex items-center gap-1">
-            <span className="w-2.5 h-2.5 rounded-full bg-slate-200 border border-slate-300 inline-block"></span>{" "}
-            Chưa đóng
+            <span className="w-2.5 h-2.5 rounded-full bg-slate-200 border border-slate-300 inline-block"></span> Chưa đóng
           </span>
         </div>
       </div>
@@ -174,28 +218,26 @@ export default function TuitionMatrix({
                 <div className="flex items-center space-x-1.5 shrink-0">
                   <span
                     className={`px-2 py-0.5 rounded-md text-[11px] font-semibold whitespace-nowrap ${
-                      row.schedule === "2-4-6"
-                        ? "bg-emerald-100 text-[#014D2F]"
-                        : row.schedule === "3-5-7"
-                          ? "bg-blue-100 text-blue-800"
-                          : "bg-amber-100 text-amber-800"
+                      row.schedule === '2-4-6'
+                        ? 'bg-emerald-100 text-[#014D2F]'
+                        : row.schedule === '3-5-7'
+                        ? 'bg-blue-100 text-blue-800'
+                        : 'bg-amber-100 text-amber-800'
                     }`}
                   >
-                    Ca {row.schedule || "2-4-6"}
+                    Ca {row.schedule || '2-4-6'}
                   </span>
                 </div>
               </div>
 
               {/* Month Status Display */}
-              {selectedMonth !== "all" ? (
+              {selectedMonth !== 'all' ? (
                 (() => {
                   const m = Number(selectedMonth);
                   const data = row.months[m];
                   return (
                     <div className="flex items-center justify-between bg-slate-50/80 p-2 rounded-xl border border-slate-100">
-                      <span className="font-bold text-xs text-slate-700 whitespace-nowrap">
-                        Tháng {m}:
-                      </span>
+                      <span className="font-bold text-xs text-slate-700 whitespace-nowrap">Tháng {m}:</span>
                       {data ? (
                         <button
                           onClick={() =>
@@ -207,8 +249,8 @@ export default function TuitionMatrix({
                           }
                           className={`px-3 py-1.5 rounded-lg text-white font-semibold text-xs transition-all shadow-xs flex items-center gap-1.5 whitespace-nowrap ${
                             data.is_pending_local
-                              ? "bg-amber-500 hover:bg-amber-600 animate-pulse"
-                              : "bg-emerald-600 hover:bg-[#014D2F]"
+                              ? 'bg-amber-500 hover:bg-amber-600 animate-pulse'
+                              : 'bg-emerald-600 hover:bg-[#014D2F]'
                           }`}
                         >
                           {data.is_pending_local ? (
@@ -255,16 +297,14 @@ export default function TuitionMatrix({
                         }}
                         className={`px-2 py-1 rounded-lg font-bold text-[11px] shrink-0 transition-all whitespace-nowrap ${
                           data?.is_pending_local
-                            ? "bg-amber-500 text-white animate-pulse"
+                            ? 'bg-amber-500 text-white animate-pulse'
                             : data
-                              ? "bg-emerald-600 text-white"
-                              : "bg-slate-100 text-slate-500 border border-slate-200"
+                            ? 'bg-emerald-600 text-white'
+                            : 'bg-slate-100 text-slate-500 border border-slate-200'
                         }`}
-                        title={
-                          data ? `Tháng ${m}: Đã đóng` : `Tháng ${m}: Chưa đóng`
-                        }
+                        title={data ? `Tháng ${m}: Đã đóng` : `Tháng ${m}: Chưa đóng`}
                       >
-                        T{m} {data && (data.is_pending_local ? "⌛" : "✓")}
+                        T{m} {data && (data.is_pending_local ? '⌛' : '✓')}
                       </button>
                     );
                   })}
@@ -280,21 +320,32 @@ export default function TuitionMatrix({
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-slate-50 border-b border-slate-200/80 text-xs font-bold text-slate-500 uppercase tracking-wider">
-                <th className="py-3.5 px-3 text-center w-10 whitespace-nowrap">
-                  STT
+              {/* Row 1: Thống kê số lượng học sinh đóng học tự động từng tháng */}
+              <tr className="bg-[#014D2F]/5 border-b border-emerald-100/80 text-[11px] font-extrabold text-[#014D2F]">
+                <th className="py-2 px-3 text-center whitespace-nowrap">TỔNG</th>
+                <th className="py-2 px-4 sticky left-0 bg-[#014D2F]/10 z-10 font-extrabold text-[#014D2F] whitespace-nowrap shadow-[2px_0_5px_-2px_rgba(0,0,0,0.05)]">
+                  Đã Đóng Học
                 </th>
-                <th className="py-3.5 px-4 sticky left-0 bg-slate-50 z-10 w-44 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.05)] whitespace-nowrap">
+                <th className="py-2 px-3 text-center whitespace-nowrap">---</th>
+                {visibleMonths.map((m) => {
+                  const paidCount = filteredMatrix.filter((r) => r.months[m] !== null).length;
+                  return (
+                    <th key={m} className="py-2 px-1 text-center font-extrabold text-[#014D2F] whitespace-nowrap">
+                      {paidCount > 0 ? `${paidCount} HS` : '0'}
+                    </th>
+                  );
+                })}
+              </tr>
+
+              {/* Row 2: Cột Tháng T1..T12 */}
+              <tr className="bg-slate-50 border-b border-slate-200/80 text-xs font-bold text-slate-500 uppercase tracking-wider">
+                <th className="py-3 px-3 text-center w-10 whitespace-nowrap">STT</th>
+                <th className="py-3 px-4 sticky left-0 bg-slate-50 z-10 w-44 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.05)] whitespace-nowrap">
                   Họ và Tên
                 </th>
-                <th className="py-3.5 px-3 text-center w-24 whitespace-nowrap">
-                  Ca học
-                </th>
+                <th className="py-3 px-3 text-center w-24 whitespace-nowrap">Ca học</th>
                 {visibleMonths.map((m) => (
-                  <th
-                    key={m}
-                    className="py-3.5 px-2 text-center text-xs font-bold text-slate-600 whitespace-nowrap min-w-[50px]"
-                  >
+                  <th key={m} className="py-3 px-2 text-center text-xs font-bold text-slate-600 whitespace-nowrap min-w-[50px]">
                     T{m}
                   </th>
                 ))}
@@ -303,45 +354,34 @@ export default function TuitionMatrix({
             <tbody className="divide-y divide-slate-100 text-sm font-medium text-slate-800">
               {filteredMatrix.length === 0 ? (
                 <tr>
-                  <td
-                    colSpan={visibleMonths.length + 3}
-                    className="py-8 text-center text-slate-400 text-sm"
-                  >
+                  <td colSpan={visibleMonths.length + 3} className="py-8 text-center text-slate-400 text-sm">
                     Không tìm thấy thông tin đóng học phí nào.
                   </td>
                 </tr>
               ) : (
                 filteredMatrix.map((row, idx) => (
-                  <tr
-                    key={row.id_profile}
-                    className="hover:bg-slate-50/80 transition-colors"
-                  >
-                    <td className="py-3 px-3 text-center font-bold text-slate-400 text-xs whitespace-nowrap">
-                      {idx + 1}
-                    </td>
+                  <tr key={row.id_profile} className="hover:bg-slate-50/80 transition-colors">
+                    <td className="py-3 px-3 text-center font-bold text-slate-400 text-xs whitespace-nowrap">{idx + 1}</td>
                     <td className="py-3 px-4 sticky left-0 bg-white z-10 font-bold text-slate-900 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.05)] whitespace-nowrap truncate">
                       {row.fullname}
                     </td>
                     <td className="py-3 px-3 text-center whitespace-nowrap">
                       <span
                         className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold whitespace-nowrap ${
-                          row.schedule === "2-4-6"
-                            ? "bg-emerald-100 text-[#014D2F]"
-                            : row.schedule === "3-5-7"
-                              ? "bg-blue-100 text-blue-800"
-                              : "bg-amber-100 text-amber-800"
+                          row.schedule === '2-4-6'
+                            ? 'bg-emerald-100 text-[#014D2F]'
+                            : row.schedule === '3-5-7'
+                            ? 'bg-blue-100 text-blue-800'
+                            : 'bg-amber-100 text-amber-800'
                         }`}
                       >
-                        {row.schedule || "2-4-6"}
+                        {row.schedule || '2-4-6'}
                       </span>
                     </td>
                     {visibleMonths.map((m) => {
                       const data = row.months[m];
                       return (
-                        <td
-                          key={m}
-                          className="py-2.5 px-1 text-center whitespace-nowrap"
-                        >
+                        <td key={m} className="py-2.5 px-1 text-center whitespace-nowrap">
                           {data ? (
                             <button
                               onClick={() =>
@@ -353,12 +393,12 @@ export default function TuitionMatrix({
                               }
                               className={`w-full py-1.5 px-1 rounded-lg text-white font-bold text-xs transition-all shadow-xs flex items-center justify-center gap-1 whitespace-nowrap ${
                                 data.is_pending_local
-                                  ? "bg-amber-500 hover:bg-amber-600 animate-pulse"
-                                  : "bg-emerald-600 hover:bg-[#014D2F]"
+                                  ? 'bg-amber-500 hover:bg-amber-600 animate-pulse'
+                                  : 'bg-emerald-600 hover:bg-[#014D2F]'
                               }`}
                               title={
                                 data.is_pending_local
-                                  ? "Đã lưu trong máy (Đang tự động đồng bộ CSDL)"
+                                  ? 'Đã lưu trong máy (Đang tự động đồng bộ CSDL)'
                                   : `Đã đóng ngày ${data.receipt_date} - Xem biên lai`
                               }
                             >
@@ -370,16 +410,14 @@ export default function TuitionMatrix({
                               ) : (
                                 <>
                                   <CheckCircle className="w-3.5 h-3.5 shrink-0" />
-                                  {/* <span>Đóng</span> */}
+                                  <span>Đóng</span>
                                 </>
                               )}
                             </button>
                           ) : (
                             /* Icon + Only inside content table (bỏ chữ Tháng X) */
                             <button
-                              onClick={() =>
-                                onOpenReceiptModal(row.id_profile, m)
-                              }
+                              onClick={() => onOpenReceiptModal(row.id_profile, m)}
                               className="w-full py-1.5 px-1 rounded-lg bg-slate-100/90 hover:bg-emerald-100 hover:text-[#014D2F] border border-slate-200/80 text-slate-400 text-xs font-bold transition-all flex items-center justify-center"
                               title={`Thêm biên lai Tháng ${m}`}
                             >
@@ -421,9 +459,7 @@ export default function TuitionMatrix({
                 {selectedReceipt.receipt.image_url ? (
                   /* eslint-disable-next-line @next/next/no-img-element */
                   <img
-                    src={getOptimizedImageUrl(
-                      selectedReceipt.receipt.image_url,
-                    )}
+                    src={getOptimizedImageUrl(selectedReceipt.receipt.image_url)}
                     alt="Biên lai học phí"
                     className="w-full h-full object-contain"
                   />
@@ -439,10 +475,7 @@ export default function TuitionMatrix({
                 <div className="flex justify-between">
                   <span className="text-slate-500">Số tiền đóng:</span>
                   <span className="font-bold text-emerald-700 text-sm">
-                    {Number(selectedReceipt.receipt.amount).toLocaleString(
-                      "vi-VN",
-                    )}{" "}
-                    VNĐ
+                    {Number(selectedReceipt.receipt.amount).toLocaleString('vi-VN')} VNĐ
                   </span>
                 </div>
                 <div className="flex justify-between">
@@ -456,17 +489,16 @@ export default function TuitionMatrix({
                   <span
                     className={`font-semibold ${
                       selectedReceipt.receipt.is_pending_local
-                        ? "text-amber-600 flex items-center gap-1"
-                        : "text-emerald-600"
+                        ? 'text-amber-600 flex items-center gap-1'
+                        : 'text-emerald-600'
                     }`}
                   >
                     {selectedReceipt.receipt.is_pending_local ? (
                       <>
-                        <Loader2 className="w-3 h-3 animate-spin" /> Đã lưu máy
-                        (Chờ đồng bộ)
+                        <Loader2 className="w-3 h-3 animate-spin" /> Đã lưu máy (Chờ đồng bộ)
                       </>
                     ) : (
-                      "Đã lưu thành công vào CSDL Postgres"
+                      'Đã lưu thành công vào CSDL Postgres'
                     )}
                   </span>
                 </div>
