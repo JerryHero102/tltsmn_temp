@@ -133,13 +133,25 @@ export class ReceiptsService {
     amount?: number;
     payment_content?: string;
     schedule_note?: string;
-    image_url: string;
+    image_url?: string;
+    base64Image?: string;
   }) {
     const client = await this.dbService.getPool().connect();
     try {
       await client.query('BEGIN');
 
-      const formattedUrl = formatCloudinaryOptimizedUrl(dto.image_url);
+      let rawImage = dto.image_url || dto.base64Image || '';
+
+      // Upload base64 image to Cloudinary if not already uploaded
+      if (rawImage && (rawImage.startsWith('data:image') || rawImage.length > 500)) {
+        try {
+          rawImage = await this.uploadImage(rawImage);
+        } catch (uploadErr) {
+          console.error('Lỗi khi tải ảnh lên Cloudinary:', uploadErr);
+        }
+      }
+
+      const formattedUrl = formatCloudinaryOptimizedUrl(rawImage);
 
       // Check if a receipt already exists for this student and month
       const existingRes = await client.query(

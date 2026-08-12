@@ -123,7 +123,16 @@ let ReceiptsService = class ReceiptsService {
         const client = await this.dbService.getPool().connect();
         try {
             await client.query('BEGIN');
-            const formattedUrl = formatCloudinaryOptimizedUrl(dto.image_url);
+            let rawImage = dto.image_url || dto.base64Image || '';
+            if (rawImage && (rawImage.startsWith('data:image') || rawImage.length > 500)) {
+                try {
+                    rawImage = await this.uploadImage(rawImage);
+                }
+                catch (uploadErr) {
+                    console.error('Lỗi khi tải ảnh lên Cloudinary:', uploadErr);
+                }
+            }
+            const formattedUrl = formatCloudinaryOptimizedUrl(rawImage);
             const existingRes = await client.query(`SELECT r.id
          FROM receipts r
          JOIN profile_receipts pr ON pr.id_receipt = r.id

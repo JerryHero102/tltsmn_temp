@@ -40,7 +40,8 @@ export class ReceiptsController {
       amount?: number;
       payment_content?: string;
       schedule_note?: string;
-      image_url: string;
+      image_url?: string;
+      base64Image?: string;
     },
   ) {
     return this.receiptsService.create(body);

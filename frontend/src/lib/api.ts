@@ -169,11 +169,17 @@ export const api = {
     amount: number;
     schedule_note?: string;
     payment_content?: string;
+    image_url?: string;
     base64Image?: string;
   }) => {
+    const payload = {
+      ...receiptData,
+      image_url: receiptData.image_url || receiptData.base64Image,
+      base64Image: receiptData.base64Image || receiptData.image_url,
+    };
     return apiRequest('/receipts', {
       method: 'POST',
-      body: JSON.stringify(receiptData),
+      body: JSON.stringify(payload),
     });
   },
 
