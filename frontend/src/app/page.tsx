@@ -135,43 +135,42 @@ export default function DashboardPage() {
 
       {/* Main Right Content - p-4 padding around context */}
       <main className="flex-1 p-4 max-w-7xl mx-auto w-full space-y-4">
-        {/* Header Title */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200/80 pb-3">
-          <div>
-            <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2.5">
+        {/* Header Title with Sync Button on the far right of title line */}
+        <div className="border-b border-slate-200/80 pb-3">
+          <div className="flex items-center justify-between gap-3">
+            <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2.5 min-w-0">
               {activeTab === 'students' ? (
                 <>
-                  <Users className="w-7 h-7 text-[#014D2F]" />
-                  <span>Quản Lý Thông Tin Học Viên</span>
+                  <Users className="w-6 h-6 sm:w-7 sm:h-7 text-[#014D2F] shrink-0" />
+                  <span className="truncate">Quản Lý Thông Tin Học Viên</span>
                 </>
               ) : (
                 <>
-                  <ReceiptIcon className="w-7 h-7 text-[#014D2F]" />
-                  <span>Quản Lý Học Phí Hàng Tháng</span>
+                  <ReceiptIcon className="w-6 h-6 sm:w-7 sm:h-7 text-[#014D2F] shrink-0" />
+                  <span className="truncate">Quản Lý Học Phí Hàng Tháng</span>
                 </>
               )}
             </h1>
-            <p className="text-xs text-slate-500 mt-0.5">
-              {activeTab === 'students'
-                ? `Danh sách tổng hợp ${students.length} học viên đang theo học`
-                : 'Bảng theo dõi trạng thái đóng học phí 12 tháng'}
-            </p>
-          </div>
 
-          <div className="flex items-center space-x-3">
             <button
               onClick={() => {
                 fetchData();
                 api.syncPendingReceipts(fetchData);
               }}
               disabled={loadingData}
-              className="px-3 py-2 rounded-xl bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors shadow-xs flex items-center gap-1.5 text-xs font-semibold"
-              title="Làm mới & Đồng bộ"
+              className="p-2 sm:p-2.5 rounded-xl bg-white border border-slate-200 text-[#014D2F] hover:bg-emerald-50 hover:border-emerald-300 transition-all shadow-xs shrink-0 flex items-center justify-center active:scale-95"
+              title="Làm mới & Đồng bộ CSDL"
+              aria-label="Đồng bộ CSDL"
             >
-              <RefreshCw className={`w-3.5 h-3.5 ${loadingData ? 'animate-spin' : ''}`} />
-              <span>Đồng bộ CSDL</span>
+              <RefreshCw className={`w-5 h-5 sm:w-5.5 sm:h-5.5 ${loadingData ? 'animate-spin' : ''}`} />
             </button>
           </div>
+
+          <p className="text-xs text-slate-500 mt-1">
+            {activeTab === 'students'
+              ? `Danh sách tổng hợp ${students.length} học viên đang theo học`
+              : 'Bảng theo dõi trạng thái đóng học phí 12 tháng'}
+          </p>
         </div>
 
         {/* Dynamic Content View */}
