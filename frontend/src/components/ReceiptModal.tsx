@@ -66,6 +66,15 @@ function compressImage(file: File, maxWidth = 1200, quality = 0.75): Promise<str
   });
 }
 
+function cleanDateForInput(val?: string | null): string {
+  if (!val) return new Date().toISOString().split('T')[0];
+  if (val.includes('T')) {
+    const parts = val.split('T');
+    return parts[0];
+  }
+  return val;
+}
+
 export default function ReceiptModal({
   isOpen,
   onClose,
@@ -78,9 +87,7 @@ export default function ReceiptModal({
   const [selectedStudentId, setSelectedStudentId] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [month, setMonth] = useState<number>(new Date().getMonth() + 1);
-  const [receiptDate, setReceiptDate] = useState<string>(
-    new Date().toISOString().split('T')[0]
-  );
+  const [receiptDate, setReceiptDate] = useState<string>(() => new Date().toISOString().split('T')[0]);
   const [amount, setAmount] = useState<number>(300000);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [base64Image, setBase64Image] = useState<string | null>(null);
@@ -107,7 +114,7 @@ export default function ReceiptModal({
 
     if (existingReceipt) {
       if (existingReceipt.amount) setAmount(Number(existingReceipt.amount));
-      if (existingReceipt.receipt_date) setReceiptDate(existingReceipt.receipt_date);
+      setReceiptDate(cleanDateForInput(existingReceipt.receipt_date));
       if (existingReceipt.image_url) {
         setImagePreview(existingReceipt.image_url);
         setBase64Image(existingReceipt.image_url);

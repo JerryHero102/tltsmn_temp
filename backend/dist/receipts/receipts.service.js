@@ -65,7 +65,7 @@ let ReceiptsService = class ReceiptsService {
         const res = await this.dbService.query(`SELECT 
         r.id,
         r.amount,
-        r.receipt_date,
+        TO_CHAR(r.receipt_date, 'YYYY-MM-DD') as receipt_date,
         r.month,
         r.payer_name,
         r.phone_number,
@@ -87,7 +87,7 @@ let ReceiptsService = class ReceiptsService {
        FROM profile p
        WHERE p.id_auth IS NULL
        ORDER BY p.fullname ASC`);
-        const receiptsRes = await this.dbService.query(`SELECT pr.id_profile, r.id as receipt_id, r.month, r.amount, r.receipt_date, r.image_url
+        const receiptsRes = await this.dbService.query(`SELECT pr.id_profile, r.id as receipt_id, r.month, r.amount, TO_CHAR(r.receipt_date, 'YYYY-MM-DD') as receipt_date, r.image_url
        FROM profile_receipts pr
        JOIN receipts r ON r.id = pr.id_receipt`);
         const receiptsMap = new Map();

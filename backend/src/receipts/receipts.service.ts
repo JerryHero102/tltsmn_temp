@@ -58,7 +58,7 @@ export class ReceiptsService {
       `SELECT 
         r.id,
         r.amount,
-        r.receipt_date,
+        TO_CHAR(r.receipt_date, 'YYYY-MM-DD') as receipt_date,
         r.month,
         r.payer_name,
         r.phone_number,
@@ -86,7 +86,7 @@ export class ReceiptsService {
     );
 
     const receiptsRes = await this.dbService.query(
-      `SELECT pr.id_profile, r.id as receipt_id, r.month, r.amount, r.receipt_date, r.image_url
+      `SELECT pr.id_profile, r.id as receipt_id, r.month, r.amount, TO_CHAR(r.receipt_date, 'YYYY-MM-DD') as receipt_date, r.image_url
        FROM profile_receipts pr
        JOIN receipts r ON r.id = pr.id_receipt`,
     );

@@ -34,6 +34,17 @@ function getOptimizedImageUrl(url: string): string {
   return url;
 }
 
+function cleanDisplayDate(val?: string | null): string {
+  if (!val) return '';
+  const dateOnly = val.split('T')[0];
+  const parts = dateOnly.split('-');
+  if (parts.length === 3) {
+    const [y, m, d] = parts;
+    return `${d}/${m}/${y}`;
+  }
+  return dateOnly;
+}
+
 export default function TuitionMatrix({ matrix, onOpenReceiptModal }: TuitionMatrixProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedMonth, setSelectedMonth] = useState('all');
@@ -333,7 +344,7 @@ export default function TuitionMatrix({ matrix, onOpenReceiptModal }: TuitionMat
                 <div className="flex justify-between">
                   <span className="text-slate-500">Ngày lập biên lai:</span>
                   <span className="font-semibold text-slate-800">
-                    {selectedReceipt.receipt.receipt_date}
+                    {cleanDisplayDate(selectedReceipt.receipt.receipt_date)}
                   </span>
                 </div>
                 <div className="flex justify-between">
