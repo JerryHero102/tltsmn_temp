@@ -41,6 +41,9 @@ export function matchSearch(text: string, query: string): boolean {
 }
 
 export async function apiRequest(path: string, options: RequestInit = {}, isRetry = false): Promise<any> {
+  const apiBase = typeof window !== 'undefined' ? '/api' : (process.env.NEXT_PUBLIC_API_URL || 'https://api.thieulamtaysonmiennam.id.vn/api');
+  const cleanBase = apiBase.replace(/\/+$/, '');
+
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
     'bypass-tunnel-reminder': 'true',
@@ -52,7 +55,7 @@ export async function apiRequest(path: string, options: RequestInit = {}, isRetr
   const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
 
   try {
-    const res = await fetch(`${API_BASE}${path}`, {
+    const res = await fetch(`${cleanBase}${path}`, {
       ...options,
       headers,
       credentials: 'include',
