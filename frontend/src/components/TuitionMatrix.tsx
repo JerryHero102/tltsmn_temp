@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { Search, CheckCircle, Plus, X, ExternalLink, Calendar, Image as ImageIcon, Loader2, Filter, RotateCcw } from 'lucide-react';
+import { matchSearch } from '@/lib/api';
 
 interface MonthData {
   receipt_id: number;
@@ -45,9 +46,9 @@ export default function TuitionMatrix({ matrix, onOpenReceiptModal }: TuitionMat
 
   const filteredMatrix = matrix.filter((row) => {
     const matchesSearch =
-      row.fullname.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (row.phone_number && row.phone_number.includes(searchTerm)) ||
-      (row.schedule && row.schedule.toLowerCase().includes(searchTerm.toLowerCase()));
+      matchSearch(row.fullname, searchTerm) ||
+      matchSearch(row.phone_number, searchTerm) ||
+      matchSearch(row.schedule, searchTerm);
 
     const matchesSchedule =
       scheduleFilter === 'all' || (row.schedule || '2-4-6') === scheduleFilter;
@@ -84,7 +85,7 @@ export default function TuitionMatrix({ matrix, onOpenReceiptModal }: TuitionMat
               <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
               <input
                 type="text"
-                placeholder="Tìm tên, SĐT..."
+                placeholder="Tìm tên, SĐT (không dấu, dambaolinh...)..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full pl-10 pr-4 py-2 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#014D2F] bg-slate-50/50 font-medium"

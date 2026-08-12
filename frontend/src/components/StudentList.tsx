@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { Search, UserPlus, Edit, DollarSign, Eye, X, User, Phone, Calendar, Mail, MapPin, BookOpen, FileText, Filter, RotateCcw } from 'lucide-react';
 import StudentModal from './StudentModal';
 import { useAuth } from '@/context/AuthContext';
+import { matchSearch } from '@/lib/api';
 
 interface Student {
   profile_id: string;
@@ -38,9 +39,9 @@ export default function StudentList({ students, onRefresh, onOpenReceiptForStude
 
   const filteredStudents = students.filter((st) => {
     const matchesSearch =
-      st.fullname.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (st.phone_number && st.phone_number.includes(searchTerm)) ||
-      (st.schedule && st.schedule.toLowerCase().includes(searchTerm.toLowerCase()));
+      matchSearch(st.fullname, searchTerm) ||
+      matchSearch(st.phone_number, searchTerm) ||
+      matchSearch(st.schedule, searchTerm);
 
     const matchesSchedule =
       scheduleFilter === 'all' || (st.schedule || '2-4-6') === scheduleFilter;
@@ -78,7 +79,7 @@ export default function StudentList({ students, onRefresh, onOpenReceiptForStude
               <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
               <input
                 type="text"
-                placeholder="Tìm tên, SĐT..."
+                placeholder="Tìm tên, SĐT (không dấu, dambaolinh...)..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full pl-10 pr-4 py-2.5 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#014D2F] bg-slate-50/50 font-medium"

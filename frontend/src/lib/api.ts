@@ -1,5 +1,33 @@
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api';
 
+// Vietnamese Accent Normalization & Fuzzy Accent-Insensitive Matching
+export function removeVietnameseAccents(str: string): string {
+  if (!str) return '';
+  return str
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/đ/g, 'd')
+    .replace(/Đ/g, 'D')
+    .toLowerCase();
+}
+
+export function matchSearch(text: string, query: string): boolean {
+  if (!query || !query.trim()) return true;
+  if (!text) return false;
+
+  const cleanText = removeVietnameseAccents(text);
+  const cleanQuery = removeVietnameseAccents(query.trim());
+
+  // 1. Direct match or no-space match (e.g. "dambaolinh" matches "Đàm Bảo Linh")
+  const textNoSpace = cleanText.replace(/\s+/g, '');
+  const queryNoSpace = cleanQuery.replace(/\s+/g, '');
+  if (textNoSpace.includes(queryNoSpace)) return true;
+
+  // 2. Word-by-word match (e.g. "dam linh" or "dam bao" matches "Đàm Bảo Linh")
+  const queryWords = cleanQuery.split(/\s+/).filter(Boolean);
+  return queryWords.every((word) => cleanText.includes(word));
+}
+
 export async function apiRequest(path: string, options: RequestInit = {}) {
   const token = typeof window !== 'undefined' ? localStorage.getItem('access_token') : null;
 
