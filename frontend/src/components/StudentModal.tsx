@@ -22,7 +22,7 @@ export default function StudentModal({ isOpen, onClose, student, onSuccess }: St
   const [address, setAddress] = useState('');
   const [notes, setNotes] = useState('');
   const [dateOfJoin, setDateOfJoin] = useState('2026-01-10');
-  const [currentLevel, setCurrentLevel] = useState('Cấp 1 - Đai Trắng');
+  const [currentLevel, setCurrentLevel] = useState<number | string>(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
@@ -36,7 +36,7 @@ export default function StudentModal({ isOpen, onClose, student, onSuccess }: St
       setAddress(student.current_address || student.address || '');
       setNotes(student.notes || '');
       setDateOfJoin(student.date_of_join ? student.date_of_join.split('T')[0] : '2026-01-10');
-      setCurrentLevel(student.current_level || 'Cấp 1 - Đai Trắng');
+      setCurrentLevel(student.current_level !== undefined && student.current_level !== null ? student.current_level : 0);
     } else {
       setFullname('');
       setPhoneNumber('');
@@ -47,7 +47,7 @@ export default function StudentModal({ isOpen, onClose, student, onSuccess }: St
       setAddress('');
       setNotes('');
       setDateOfJoin('2026-01-10');
-      setCurrentLevel('Cấp 1 - Đai Trắng');
+      setCurrentLevel(0);
     }
   }, [student, isOpen]);
 
@@ -63,6 +63,7 @@ export default function StudentModal({ isOpen, onClose, student, onSuccess }: St
 
     try {
       setIsSubmitting(true);
+      const levelNum = currentLevel === '' ? 0 : Number(currentLevel);
       if (student) {
         await api.updateStudent(student.profile_id, {
           fullname,
@@ -74,7 +75,7 @@ export default function StudentModal({ isOpen, onClose, student, onSuccess }: St
           current_address: address,
           notes,
           date_of_join: dateOfJoin,
-          current_level: currentLevel,
+          current_level: levelNum,
         });
         toast.success('Cập nhật thông tin học viên thành công!');
       } else {
@@ -88,7 +89,7 @@ export default function StudentModal({ isOpen, onClose, student, onSuccess }: St
           current_address: address,
           notes,
           date_of_join: dateOfJoin,
-          current_level: currentLevel,
+          current_level: levelNum,
         });
         toast.success('Thêm học viên mới thành công!');
       }
@@ -216,13 +217,16 @@ export default function StudentModal({ isOpen, onClose, student, onSuccess }: St
 
             <div className="space-y-1.5">
               <label className="block text-xs font-semibold text-slate-600 uppercase tracking-wider">
-                Cấp Đai / Trình Độ
+                Cấp Đai
               </label>
               <input
-                type="text"
-                placeholder="Cấp 1 - Đai Trắng, Đai Vàng..."
+                type="number"
+                inputMode="numeric"
+                pattern="[0-9]*"
+                min="0"
+                placeholder="0"
                 value={currentLevel}
-                onChange={(e) => setCurrentLevel(e.target.value)}
+                onChange={(e) => setCurrentLevel(e.target.value === '' ? '' : Number(e.target.value))}
                 className="w-full px-3.5 py-2.5 text-base sm:text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#014D2F] font-medium"
               />
             </div>

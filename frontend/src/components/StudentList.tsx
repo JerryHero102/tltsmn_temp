@@ -18,7 +18,7 @@ interface Student {
   email?: string;
   current_address?: string;
   date_of_join?: string;
-  current_level?: string;
+  current_level?: number | string;
   id_system: string;
 }
 
@@ -242,7 +242,7 @@ export default function StudentList({ students, onRefresh, onOpenReceiptForStude
                 <th className="py-3 px-4 text-center">Năm sinh</th>
                 <th className="py-3 px-4 text-center">Ca học</th>
                 <th className="py-3 px-4 text-center">Ngày nhập học</th>
-                <th className="py-3 px-4">Cấp đai / Trình độ</th>
+                <th className="py-3 px-4 text-center">Cấp đai</th>
                 <th className="py-3 px-4">SĐT</th>
                 <th className="py-3 px-6">Ghi chú</th>
                 <th className="py-3 px-4 text-right">Thao tác</th>
@@ -290,10 +290,8 @@ export default function StudentList({ students, onRefresh, onOpenReceiptForStude
                     <td className="py-4 px-4 text-center font-semibold text-slate-700">
                       {st.date_of_join ? st.date_of_join.split('-').reverse().join('/') : '10/01/2026'}
                     </td>
-                    <td className="py-4 px-4 text-slate-700 font-medium">
-                      <span className="px-2.5 py-1 rounded-lg bg-slate-100 text-slate-800 text-xs font-semibold">
-                        {st.current_level || 'Cấp 1 - Đai Trắng'}
-                      </span>
+                    <td className="py-4 px-4 text-center font-extrabold text-slate-800">
+                      {st.current_level !== undefined && st.current_level !== null ? st.current_level : 0}
                     </td>
                     <td className="py-4 px-4 font-mono text-slate-700">{st.phone_number || '---'}</td>
                     <td className="py-4 px-6 text-slate-600 max-w-xs truncate">{st.notes || '---'}</td>
@@ -408,10 +406,10 @@ export default function StudentList({ students, onRefresh, onOpenReceiptForStude
 
                 <div className="flex justify-between py-1 border-b border-slate-200/60">
                   <span className="text-slate-500 flex items-center gap-2">
-                    <BookOpen className="w-4 h-4 text-[#014D2F]" /> Cấp đai / Trình độ:
+                    <BookOpen className="w-4 h-4 text-[#014D2F]" /> Cấp đai:
                   </span>
-                  <span className="font-semibold text-slate-900">
-                    {viewingStudent.current_level || 'Cấp 1 - Đai Trắng'}
+                  <span className="font-extrabold text-slate-900">
+                    {viewingStudent.current_level !== undefined && viewingStudent.current_level !== null ? viewingStudent.current_level : 0}
                   </span>
                 </div>
 

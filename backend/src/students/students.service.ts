@@ -71,7 +71,7 @@ export class StudentsService {
     email?: string;
     current_address?: string;
     date_of_join?: string;
-    current_level?: string;
+    current_level?: number | string;
   }) {
     // Save ALL student profile info into PostgreSQL DB profile table
     const res = await this.dbService.query(
@@ -88,7 +88,7 @@ export class StudentsService {
         createStudentDto.email || '',
         createStudentDto.current_address || '',
         createStudentDto.date_of_join || '2026-01-10',
-        createStudentDto.current_level || '',
+        createStudentDto.current_level !== undefined && createStudentDto.current_level !== null ? Number(createStudentDto.current_level) : 0,
       ],
     );
 
@@ -107,7 +107,7 @@ export class StudentsService {
       email?: string;
       current_address?: string;
       date_of_join?: string;
-      current_level?: string;
+      current_level?: number | string;
     },
   ) {
     const res = await this.dbService.query(
@@ -134,7 +134,7 @@ export class StudentsService {
         updateStudentDto.email,
         updateStudentDto.current_address,
         updateStudentDto.date_of_join,
-        updateStudentDto.current_level,
+        updateStudentDto.current_level !== undefined && updateStudentDto.current_level !== null ? Number(updateStudentDto.current_level) : undefined,
         id,
       ],
     );

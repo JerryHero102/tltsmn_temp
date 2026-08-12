@@ -76,7 +76,7 @@ let StudentsService = class StudentsService {
             createStudentDto.email || '',
             createStudentDto.current_address || '',
             createStudentDto.date_of_join || '2026-01-10',
-            createStudentDto.current_level || '',
+            createStudentDto.current_level !== undefined && createStudentDto.current_level !== null ? Number(createStudentDto.current_level) : 0,
         ]);
         return res.rows[0];
     }
@@ -103,7 +103,7 @@ let StudentsService = class StudentsService {
             updateStudentDto.email,
             updateStudentDto.current_address,
             updateStudentDto.date_of_join,
-            updateStudentDto.current_level,
+            updateStudentDto.current_level !== undefined && updateStudentDto.current_level !== null ? Number(updateStudentDto.current_level) : undefined,
             id,
         ]);
         if (res.rows.length === 0) {
