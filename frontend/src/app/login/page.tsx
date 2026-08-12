@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import { useAuth } from '@/context/AuthContext';
-import { Lock, User, ArrowRight, Loader2 } from 'lucide-react';
-import { toast } from 'sonner';
-import { useRouter } from 'next/navigation';
+import React, { useState, useEffect } from "react";
+import { useAuth } from "@/context/AuthContext";
+import { Lock, User, ArrowRight, Loader2 } from "lucide-react";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
-  const [idSystem, setIdSystem] = useState('');
-  const [password, setPassword] = useState('');
+  const [idSystem, setIdSystem] = useState("");
+  const [password, setPassword] = useState("");
   const [loadingSubmit, setLoadingSubmit] = useState(false);
 
   const { login, user, loading } = useAuth();
@@ -17,23 +17,25 @@ export default function LoginPage() {
   useEffect(() => {
     // If already logged in, redirect to dashboard immediately
     if (!loading && user) {
-      router.replace('/');
+      router.replace("/");
     }
   }, [user, loading, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!idSystem || !password) {
-      toast.error('Vui lòng nhập Mã người dùng và Mật khẩu');
+      toast.error("Vui lòng nhập Mã người dùng và Mật khẩu");
       return;
     }
 
     try {
       setLoadingSubmit(true);
       await login(idSystem, password);
-      toast.success('Đăng nhập thành công!');
+      toast.success("Đăng nhập thành công!");
     } catch (err: any) {
-      toast.error(err.message || 'Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin');
+      toast.error(
+        err.message || "Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin",
+      );
     } finally {
       setLoadingSubmit(false);
     }
@@ -66,8 +68,12 @@ export default function LoginPage() {
             />
           </div>
           <div>
-            <h2 className="text-2xl font-bold text-slate-900 tracking-tight">TLTSMN Management</h2>
-            <p className="text-xs text-slate-500 font-medium mt-0.5">Hệ Thống Quản Lý Học Viên & Học Phí</p>
+            <h2 className="text-2xl font-bold text-slate-900 tracking-tight">
+              TLTSMN Management
+            </h2>
+            <p className="text-xs text-slate-500 font-medium mt-0.5">
+              Hệ Thống Quản Lý Học Viên & Học Phí
+            </p>
           </div>
         </div>
 
@@ -75,7 +81,7 @@ export default function LoginPage() {
         <form onSubmit={handleSubmit} className="space-y-5">
           <div className="space-y-1.5">
             <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider">
-              Mã Người Dùng (id_system)
+              Mã Người Dùng
             </label>
             <div className="relative">
               <User className="w-5 h-5 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
@@ -83,7 +89,6 @@ export default function LoginPage() {
                 type="tel"
                 inputMode="numeric"
                 pattern="[0-9]*"
-                placeholder="Nhập mã id_system hoặc SĐT"
                 value={idSystem}
                 onChange={(e) => setIdSystem(e.target.value)}
                 className="w-full pl-11 pr-4 py-3 text-base sm:text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#014D2F] bg-slate-50/50 font-mono text-slate-900"
