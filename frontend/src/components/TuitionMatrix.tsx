@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Search, CheckCircle, Plus, X, ExternalLink, Calendar, Image as ImageIcon, Loader2, Filter, RotateCcw } from 'lucide-react';
+import { Search, CheckCircle, Plus, X, ExternalLink, Calendar, Image as ImageIcon, Loader2, Filter, RotateCcw, Edit3 } from 'lucide-react';
 import { matchSearch } from '@/lib/api';
 
 interface MonthData {
@@ -23,7 +23,7 @@ interface TuitionRow {
 
 interface TuitionMatrixProps {
   matrix: TuitionRow[];
-  onOpenReceiptModal: (studentId?: string, month?: number) => void;
+  onOpenReceiptModal: (studentId?: string, month?: number, existingReceipt?: MonthData | null) => void;
 }
 
 function getOptimizedImageUrl(url: string): string {
@@ -356,7 +356,7 @@ export default function TuitionMatrix({ matrix, onOpenReceiptModal }: TuitionMat
                 </div>
               </div>
 
-              <div className="flex justify-between items-center pt-2">
+              <div className="flex justify-between items-center pt-2 gap-2">
                 {selectedReceipt.receipt.image_url && (
                   <a
                     href={selectedReceipt.receipt.image_url}
@@ -365,15 +365,30 @@ export default function TuitionMatrix({ matrix, onOpenReceiptModal }: TuitionMat
                     className="inline-flex items-center space-x-1.5 text-xs text-[#014D2F] font-semibold hover:underline"
                   >
                     <ExternalLink className="w-3.5 h-3.5" />
-                    <span>Mở ảnh gốc trong tab mới</span>
+                    <span>Mở ảnh gốc</span>
                   </a>
                 )}
-                <button
-                  onClick={() => setSelectedReceipt(null)}
-                  className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition-colors ml-auto"
-                >
-                  Đóng
-                </button>
+                <div className="flex items-center gap-2 ml-auto">
+                  <button
+                    onClick={() => {
+                      const studentId = matrix.find((r) => r.fullname === selectedReceipt.fullname)?.id_profile;
+                      const receiptToEdit = selectedReceipt.receipt;
+                      const monthToEdit = selectedReceipt.month;
+                      setSelectedReceipt(null);
+                      onOpenReceiptModal(studentId, monthToEdit, receiptToEdit);
+                    }}
+                    className="px-3.5 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold transition-all shadow-xs flex items-center gap-1.5"
+                  >
+                    <Edit3 className="w-3.5 h-3.5" />
+                    <span>Chỉnh sửa biên lai</span>
+                  </button>
+                  <button
+                    onClick={() => setSelectedReceipt(null)}
+                    className="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition-colors"
+                  >
+                    Đóng
+                  </button>
+                </div>
               </div>
             </div>
           </div>

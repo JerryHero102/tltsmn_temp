@@ -12,12 +12,20 @@ interface Student {
   schedule?: string;
 }
 
+export interface ExistingReceiptData {
+  receipt_id?: number;
+  amount?: number;
+  receipt_date?: string;
+  image_url?: string;
+}
+
 interface ReceiptModalProps {
   isOpen: boolean;
   onClose: () => void;
   students: Student[];
   preselectedStudentId?: string;
   preselectedMonth?: number;
+  existingReceipt?: ExistingReceiptData | null;
   onSuccess: () => void;
 }
 
@@ -64,6 +72,7 @@ export default function ReceiptModal({
   students,
   preselectedStudentId,
   preselectedMonth,
+  existingReceipt,
   onSuccess,
 }: ReceiptModalProps) {
   const [selectedStudentId, setSelectedStudentId] = useState('');
@@ -82,6 +91,8 @@ export default function ReceiptModal({
   const cameraInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
+    if (!isOpen) return;
+
     if (preselectedStudentId) {
       setSelectedStudentId(preselectedStudentId);
     } else if (students.length > 0 && !selectedStudentId) {
@@ -93,7 +104,21 @@ export default function ReceiptModal({
     } else {
       setMonth(new Date().getMonth() + 1);
     }
-  }, [preselectedStudentId, preselectedMonth, students, isOpen]);
+
+    if (existingReceipt) {
+      if (existingReceipt.amount) setAmount(Number(existingReceipt.amount));
+      if (existingReceipt.receipt_date) setReceiptDate(existingReceipt.receipt_date);
+      if (existingReceipt.image_url) {
+        setImagePreview(existingReceipt.image_url);
+        setBase64Image(existingReceipt.image_url);
+      }
+    } else {
+      setAmount(300000);
+      setReceiptDate(new Date().toISOString().split('T')[0]);
+      setImagePreview(null);
+      setBase64Image(null);
+    }
+  }, [preselectedStudentId, preselectedMonth, existingReceipt, students, isOpen]);
 
   if (!isOpen) return null;
 
@@ -185,9 +210,13 @@ export default function ReceiptModal({
           <div>
             <h3 className="text-lg font-bold flex items-center gap-2">
               <Save className="w-5 h-5 text-emerald-200" />
-              <span>Thêm Biên Lai Học Phí (Lưu Liền LocalStorage)</span>
+              <span>{existingReceipt ? 'Chỉnh Sửa Biên Lai Học Phí' : 'Thêm Biên Lai Học Phí'}</span>
             </h3>
-            <p className="text-xs text-emerald-100 mt-0.5">Lưu tức thì vào trình duyệt & Tự động đồng bộ Cloudinary/DB</p>
+            <p className="text-xs text-emerald-100 mt-0.5">
+              {existingReceipt
+                ? 'Cập nhật lại số tiền, ngày lập hoặc hình ảnh biên lai'
+                : 'Lưu tức thì vào trình duyệt & Tự động đồng bộ Cloudinary/DB'}
+            </p>
           </div>
           <button
             onClick={onClose}

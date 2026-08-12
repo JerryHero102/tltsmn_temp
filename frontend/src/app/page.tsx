@@ -84,9 +84,12 @@ export default function DashboardPage() {
     }
   }, [user, loading, router, fetchData]);
 
-  const handleOpenReceiptModal = (studentId?: string, month?: number) => {
+  const [editingReceiptData, setEditingReceiptData] = useState<any>(null);
+
+  const handleOpenReceiptModal = (studentId?: string, month?: number, existingReceipt?: any) => {
     setPreselectedStudentId(studentId);
     setPreselectedMonth(month);
+    setEditingReceiptData(existingReceipt || null);
     setIsReceiptModalOpen(true);
   };
 
@@ -176,10 +179,14 @@ export default function DashboardPage() {
       {/* Global Receipt Dialog */}
       <ReceiptModal
         isOpen={isReceiptModalOpen}
-        onClose={() => setIsReceiptModalOpen(false)}
+        onClose={() => {
+          setIsReceiptModalOpen(false);
+          setEditingReceiptData(null);
+        }}
         students={students}
         preselectedStudentId={preselectedStudentId}
         preselectedMonth={preselectedMonth}
+        existingReceipt={editingReceiptData}
         onSuccess={fetchData}
       />
     </div>
