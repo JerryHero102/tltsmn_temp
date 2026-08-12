@@ -70,8 +70,20 @@ export default function StudentModal({
     e.preventDefault();
 
     if (!fullname || !birthYear) {
-      toast.error("Vui lòng nhập Họ tên và Năm sinh");
+      toast.error('Vui lòng nhập Họ tên và Năm sinh');
       return;
+    }
+
+    if (phoneNumber && phoneNumber.trim() !== '') {
+      const cleanPhone = phoneNumber.trim();
+      if (!cleanPhone.startsWith('0')) {
+        toast.error('Số điện thoại bắt buộc phải bắt đầu bằng số 0');
+        return;
+      }
+      if (cleanPhone.length !== 10) {
+        toast.error(`Số điện thoại phải có đúng 10 chữ số (Hiện tại: ${cleanPhone.length} số)`);
+        return;
+      }
     }
 
     try {
@@ -179,10 +191,11 @@ export default function StudentModal({
                 type="tel"
                 inputMode="numeric"
                 pattern="[0-9]*"
-                placeholder="0987654321"
+                maxLength={10}
+                placeholder="0903686779"
                 value={phoneNumber}
-                onChange={(e) => setPhoneNumber(e.target.value)}
-                className="w-full px-3.5 py-2.5 text-base sm:text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#014D2F] font-medium"
+                onChange={(e) => setPhoneNumber(e.target.value.replace(/\D/g, '').slice(0, 10))}
+                className="w-full px-3.5 py-2.5 text-base sm:text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#014D2F] font-medium font-mono"
               />
             </div>
           </div>
