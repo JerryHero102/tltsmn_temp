@@ -148,18 +148,25 @@ export default function TuitionMatrix({ matrix, onOpenReceiptModal }: TuitionMat
         </div>
       </div>
 
+      {/* Summary Banner Bar above table (always visible, no scroll overlap) */}
+      <div className="bg-[#014D2F]/10 border border-emerald-200/80 px-4 py-2.5 rounded-2xl text-xs sm:text-sm font-extrabold text-[#014D2F] flex items-center justify-between">
+        <span>Học viên: {countTotal}</span>
+        <span>2-4-6: {count246}</span>
+        <span>3-5-7: {count357}</span>
+      </div>
+
       {/* UNIFIED MATRIX TABLE VIEW (Mobile + Desktop) */}
       <div className="bg-white rounded-2xl shadow-xs border border-slate-100 overflow-hidden">
         <div className="overflow-x-auto scrollbar-thin">
           <table className="w-full text-left border-collapse min-w-[650px]">
             <thead>
-              {/* Row 1: Thống kê số lượng học sinh & số lượng đóng học từng tháng (Loại bỏ chữ HS) */}
+              {/* Row 1: Thống kê số lượng học sinh đóng học từng tháng (Cố định sticky cell gọn gàng) */}
               <tr className="bg-[#014D2F]/5 border-b border-emerald-100/80 text-[11px] font-extrabold text-[#014D2F]">
                 <th
                   colSpan={2}
-                  className="py-2.5 px-3 text-left whitespace-nowrap sticky left-0 bg-[#014D2F]/10 z-30 font-extrabold text-[#014D2F] shadow-[2px_0_5px_-2px_rgba(0,0,0,0.08)]"
+                  className="py-2.5 px-3 text-left whitespace-nowrap sticky left-0 bg-emerald-50/95 z-30 font-extrabold text-[#014D2F] shadow-[2px_0_5px_-2px_rgba(0,0,0,0.08)]"
                 >
-                  Học viên: {countTotal} &nbsp;|&nbsp; 2-4-6: {count246} &nbsp;|&nbsp; 3-5-7: {count357}
+                  Số HS đã đóng
                 </th>
                 {visibleMonths.map((m) => {
                   const paidCount = filteredMatrix.filter((r) => r.months[m] !== null).length;
