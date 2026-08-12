@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import './globals.css';
 import { AuthProvider } from '@/context/AuthContext';
 import { Toaster } from 'sonner';
@@ -6,6 +6,13 @@ import { Toaster } from 'sonner';
 export const metadata: Metadata = {
   title: 'TLTSMN Management - Quản Lý Học Viên & Học Phí',
   description: 'Web App Quản lý thông tin học viên và theo dõi đóng học phí hàng tháng',
+};
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

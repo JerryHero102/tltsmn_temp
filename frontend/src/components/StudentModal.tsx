@@ -119,7 +119,7 @@ export default function StudentModal({ isOpen, onClose, student, onSuccess }: St
               placeholder="Võ Đặng Cát Tường"
               value={fullname}
               onChange={(e) => setFullname(e.target.value)}
-              className="w-full px-3.5 py-2.5 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#014D2F] font-medium"
+              className="w-full px-3.5 py-2.5 text-base sm:text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#014D2F] font-medium"
               required
             />
           </div>
@@ -131,12 +131,14 @@ export default function StudentModal({ isOpen, onClose, student, onSuccess }: St
               </label>
               <input
                 type="number"
+                inputMode="numeric"
+                pattern="[0-9]*"
                 placeholder="2012"
                 min="1950"
                 max="2026"
                 value={birthYear}
                 onChange={(e) => setBirthYear(e.target.value)}
-                className="w-full px-3.5 py-2.5 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#014D2F] font-medium"
+                className="w-full px-3.5 py-2.5 text-base sm:text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#014D2F] font-medium"
                 required
               />
             </div>
@@ -146,11 +148,13 @@ export default function StudentModal({ isOpen, onClose, student, onSuccess }: St
                 Số Điện Thoại (SĐT)
               </label>
               <input
-                type="text"
+                type="tel"
+                inputMode="numeric"
+                pattern="[0-9]*"
                 placeholder="0987654321"
                 value={phoneNumber}
                 onChange={(e) => setPhoneNumber(e.target.value)}
-                className="w-full px-3.5 py-2.5 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#014D2F] font-medium"
+                className="w-full px-3.5 py-2.5 text-base sm:text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#014D2F] font-medium"
               />
             </div>
           </div>
@@ -163,7 +167,7 @@ export default function StudentModal({ isOpen, onClose, student, onSuccess }: St
               <select
                 value={gender}
                 onChange={(e) => setGender(e.target.value)}
-                className="w-full px-3.5 py-2.5 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#014D2F] font-medium bg-white"
+                className="w-full px-3.5 py-2.5 text-base sm:text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#014D2F] font-medium bg-white"
               >
                 <option value="Nam">Nam</option>
                 <option value="Nữ">Nữ</option>
@@ -178,7 +182,7 @@ export default function StudentModal({ isOpen, onClose, student, onSuccess }: St
               <select
                 value={schedule}
                 onChange={(e) => setSchedule(e.target.value)}
-                className="w-full px-3.5 py-2.5 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#014D2F] font-medium bg-white"
+                className="w-full px-3.5 py-2.5 text-base sm:text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#014D2F] font-medium bg-white"
               >
                 <option value="2-4-6">2-4-6 (Thứ 2, 4, 6)</option>
                 <option value="3-5-7">3-5-7 (Thứ 3, 5, 7)</option>
@@ -197,7 +201,7 @@ export default function StudentModal({ isOpen, onClose, student, onSuccess }: St
                 placeholder="hocvien@gmail.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-3.5 py-2.5 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#014D2F] font-medium"
+                className="w-full px-3.5 py-2.5 text-base sm:text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#014D2F] font-medium"
               />
             </div>
 
@@ -210,7 +214,7 @@ export default function StudentModal({ isOpen, onClose, student, onSuccess }: St
                 placeholder="Quận 1, TP.HCM"
                 value={address}
                 onChange={(e) => setAddress(e.target.value)}
-                className="w-full px-3.5 py-2.5 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#014D2F] font-medium"
+                className="w-full px-3.5 py-2.5 text-base sm:text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#014D2F] font-medium"
               />
             </div>
           </div>
@@ -224,7 +228,7 @@ export default function StudentModal({ isOpen, onClose, student, onSuccess }: St
               placeholder="Ghi chú thêm thông tin về học viên..."
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              className="w-full px-3.5 py-2.5 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#014D2F] font-medium"
+              className="w-full px-3.5 py-2.5 text-base sm:text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#014D2F] font-medium"
             />
           </div>
 

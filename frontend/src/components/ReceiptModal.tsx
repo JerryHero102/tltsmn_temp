@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { X, Upload, Camera, CheckCircle2, Loader2, Search, Save } from 'lucide-react';
-import { api } from '@/lib/api';
+import { api, matchSearch } from '@/lib/api';
 import { toast } from 'sonner';
 
 interface Student {
@@ -120,8 +120,8 @@ export default function ReceiptModal({
   };
 
   const filteredStudents = students.filter((s) =>
-    s.fullname.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    (s.phone_number && s.phone_number.includes(searchQuery))
+    matchSearch(s.fullname, searchQuery) ||
+    (s.phone_number && matchSearch(s.phone_number, searchQuery))
   );
 
   const currentSelectedStudent = students.find((s) => s.profile_id === selectedStudentId);
@@ -142,7 +142,7 @@ export default function ReceiptModal({
     try {
       setIsSubmitting(true);
 
-      // STEP 1: Save IMMEDIATELY to Browser Local Storage synchronously (zero data loss even on mobile reload)
+      // STEP 1: Save IMMEDIATELY to Browser Local Storage synchronously
       api.savePendingReceiptLocally({
         id_profile: selectedStudentId,
         payer_name: currentSelectedStudent?.fullname || 'Học viên',
@@ -213,14 +213,14 @@ export default function ReceiptModal({
                 placeholder="Tìm kiếm tên học viên hoặc SĐT..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-9 pr-3 py-2 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#014D2F] bg-slate-50"
+                className="w-full pl-9 pr-3 py-2 text-base sm:text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#014D2F] bg-slate-50"
               />
             </div>
 
             <select
               value={selectedStudentId}
               onChange={(e) => setSelectedStudentId(e.target.value)}
-              className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#014D2F] bg-white font-medium text-slate-900"
+              className="w-full px-3 py-2.5 text-base sm:text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#014D2F] bg-white font-medium text-slate-900"
               required
             >
               <option value="" disabled>-- Chọn học viên --</option>
@@ -241,7 +241,7 @@ export default function ReceiptModal({
               <select
                 value={month}
                 onChange={(e) => setMonth(Number(e.target.value))}
-                className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#014D2F] bg-white font-medium text-slate-900"
+                className="w-full px-3 py-2.5 text-base sm:text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#014D2F] bg-white font-medium text-slate-900"
                 required
               >
                 {Array.from({ length: 12 }, (_, i) => i + 1).map((m) => (
@@ -261,7 +261,7 @@ export default function ReceiptModal({
                   type="date"
                   value={receiptDate}
                   onChange={(e) => setReceiptDate(e.target.value)}
-                  className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#014D2F] bg-white font-medium text-slate-900"
+                  className="w-full px-3 py-2.5 text-base sm:text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#014D2F] bg-white font-medium text-slate-900"
                   required
                 />
               </div>
@@ -275,10 +275,12 @@ export default function ReceiptModal({
             </label>
             <input
               type="number"
+              inputMode="numeric"
+              pattern="[0-9]*"
               step="10000"
               value={amount}
               onChange={(e) => setAmount(Number(e.target.value))}
-              className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#014D2F] bg-white font-medium text-slate-900"
+              className="w-full px-3 py-2.5 text-base sm:text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#014D2F] bg-white font-medium text-slate-900"
               required
             />
           </div>
@@ -297,58 +299,58 @@ export default function ReceiptModal({
                 className="flex-1 border-2 border-dashed border-emerald-600/40 hover:border-[#014D2F] bg-emerald-50/50 hover:bg-emerald-50 text-[#014D2F] py-3 px-4 rounded-xl flex flex-col items-center justify-center gap-1 transition-all text-xs font-semibold"
               >
                 <Upload className="w-5 h-5 text-[#014D2F]" />
-                Chọn từ máy
+                <span>Chọn từ máy</span>
               </button>
+
+              {/* Camera Photo Take */}
+              <button
+                type="button"
+                onClick={() => cameraInputRef.current?.click()}
+                className="flex-1 border-2 border-dashed border-blue-600/40 hover:border-blue-700 bg-blue-50/50 hover:bg-blue-50 text-blue-700 py-3 px-4 rounded-xl flex flex-col items-center justify-center gap-1 transition-all text-xs font-semibold"
+              >
+                <Camera className="w-5 h-5 text-blue-700" />
+                <span>Chụp ảnh mới</span>
+              </button>
+
+              {/* Hidden File & Camera Inputs */}
               <input
                 ref={fileInputRef}
                 type="file"
                 accept="image/*"
-                className="hidden"
                 onChange={handleFileChange}
+                className="hidden"
               />
-
-              {/* Camera Capture */}
-              <button
-                type="button"
-                onClick={() => cameraInputRef.current?.click()}
-                className="flex-1 border-2 border-dashed border-emerald-600/40 hover:border-[#014D2F] bg-emerald-50/50 hover:bg-emerald-50 text-[#014D2F] py-3 px-4 rounded-xl flex flex-col items-center justify-center gap-1 transition-all text-xs font-semibold"
-              >
-                <Camera className="w-5 h-5 text-[#014D2F]" />
-                Chụp bằng Camera
-              </button>
               <input
                 ref={cameraInputRef}
                 type="file"
                 accept="image/*"
                 capture="environment"
-                className="hidden"
                 onChange={handleFileChange}
+                className="hidden"
               />
             </div>
 
-            {/* Compressing indicator */}
+            {/* Compressing status indicator */}
             {isCompressing && (
-              <div className="flex items-center justify-center gap-2 py-3 text-xs font-medium text-emerald-700 bg-emerald-50 rounded-xl">
-                <Loader2 className="w-4 h-4 animate-spin" /> Đang tối ưu hóa ảnh cho thiết bị di động...
+              <div className="p-3 bg-amber-50 rounded-xl text-amber-700 text-xs flex items-center justify-center gap-2">
+                <Loader2 className="w-4 h-4 animate-spin" />
+                <span>Đang tự động nén ảnh cho dung lượng siêu nhẹ...</span>
               </div>
             )}
 
             {/* Image Preview */}
-            {imagePreview && !isCompressing && (
-              <div className="mt-3 relative rounded-xl overflow-hidden border-2 border-emerald-500 bg-slate-900 group">
-                <img
-                  src={imagePreview}
-                  alt="Biên lai học phí preview"
-                  className="w-full h-44 object-cover"
-                />
-                <div className="absolute top-2 right-2 bg-emerald-600 text-white text-xs px-2.5 py-1 rounded-full flex items-center gap-1 shadow-md font-medium">
-                  <CheckCircle2 className="w-3.5 h-3.5" /> Đã tối ưu & sẵn sàng lưu máy
+            {imagePreview && (
+              <div className="relative mt-2 rounded-xl overflow-hidden border border-slate-200 aspect-16/9 bg-slate-100 flex items-center justify-center">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={imagePreview} alt="Xem trước biên lai" className="w-full h-full object-contain" />
+                <div className="absolute top-2 right-2 bg-emerald-600 text-white px-2 py-0.5 rounded-md text-[10px] font-bold flex items-center gap-1">
+                  <CheckCircle2 className="w-3 h-3" /> Đã chọn
                 </div>
               </div>
             )}
           </div>
 
-          {/* Footer Submit Buttons */}
+          {/* Action Buttons */}
           <div className="pt-4 flex items-center justify-end gap-3 border-t border-slate-100">
             <button
               type="button"
@@ -359,16 +361,16 @@ export default function ReceiptModal({
             </button>
             <button
               type="submit"
-              disabled={isSubmitting || isCompressing}
+              disabled={isSubmitting || isCompressing || !base64Image}
               className="px-6 py-2.5 rounded-xl bg-[#014D2F] hover:bg-[#013822] text-white font-semibold text-sm transition-all shadow-md shadow-emerald-900/10 flex items-center gap-2 disabled:opacity-50"
             >
               {isSubmitting ? (
                 <>
-                  <Loader2 className="w-4 h-4 animate-spin" /> Đang xử lý...
+                  <Loader2 className="w-4 h-4 animate-spin" /> Đang lưu...
                 </>
               ) : (
                 <>
-                  <Save className="w-4 h-4" /> Xác Nhận & Lưu Vào Local Storage
+                  <Save className="w-4 h-4" /> Lưu Tức Thì
                 </>
               )}
             </button>

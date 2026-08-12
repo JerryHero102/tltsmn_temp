@@ -58,6 +58,7 @@ export default function LoginPage() {
         {/* Top Branding with Image Logo */}
         <div className="text-center space-y-3">
           <div className="w-20 h-20 rounded-2xl overflow-hidden mx-auto shadow-lg shadow-emerald-900/20 border-2 border-emerald-600/30 bg-white">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src="https://res.cloudinary.com/sxotasqj/image/upload/v1786467529/logo_yyeqco.jpg"
               alt="TLTSMN Logo"
@@ -79,11 +80,13 @@ export default function LoginPage() {
             <div className="relative">
               <User className="w-5 h-5 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
               <input
-                type="text"
+                type="tel"
+                inputMode="numeric"
+                pattern="[0-9]*"
                 placeholder="Nhập mã id_system hoặc SĐT"
                 value={idSystem}
                 onChange={(e) => setIdSystem(e.target.value)}
-                className="w-full pl-11 pr-4 py-3 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#014D2F] bg-slate-50/50 font-mono text-slate-900"
+                className="w-full pl-11 pr-4 py-3 text-base sm:text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#014D2F] bg-slate-50/50 font-mono text-slate-900"
                 required
               />
             </div>
@@ -100,7 +103,7 @@ export default function LoginPage() {
                 placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full pl-11 pr-4 py-3 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#014D2F] bg-slate-50/50 text-slate-900"
+                className="w-full pl-11 pr-4 py-3 text-base sm:text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#014D2F] bg-slate-50/50 font-mono text-slate-900"
                 required
               />
             </div>
@@ -109,24 +112,26 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loadingSubmit}
-            className="w-full py-3.5 rounded-xl bg-[#014D2F] hover:bg-[#013822] text-white font-bold text-sm transition-all shadow-lg shadow-emerald-900/20 flex items-center justify-center space-x-2 group disabled:opacity-50"
+            className="w-full py-3.5 px-4 bg-[#014D2F] hover:bg-[#013822] text-white font-bold text-sm rounded-xl transition-all shadow-lg shadow-emerald-900/20 hover:scale-[1.01] active:scale-[0.99] flex items-center justify-center space-x-2 disabled:opacity-70"
           >
             {loadingSubmit ? (
               <>
                 <Loader2 className="w-5 h-5 animate-spin" />
-                <span>Đang đăng nhập...</span>
+                <span>Đang xác thực...</span>
               </>
             ) : (
               <>
                 <span>Đăng Nhập</span>
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                <ArrowRight className="w-4 h-4" />
               </>
             )}
           </button>
         </form>
 
-        <div className="text-center text-xs text-slate-400">
-          © 2026 TLTSMN Management App
+        <div className="text-center pt-2">
+          <p className="text-[11px] text-slate-400 font-medium">
+            © 2026 TLTSMN Management App
+          </p>
         </div>
       </div>
     </div>

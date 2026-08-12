@@ -82,7 +82,7 @@ export default function StudentList({ students, onRefresh, onOpenReceiptForStude
                 placeholder="Tìm tên, SĐT (không dấu, dambaolinh...)..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#014D2F] bg-slate-50/50 font-medium"
+                className="w-full pl-10 pr-4 py-2.5 text-base sm:text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#014D2F] bg-slate-50/50 font-medium"
               />
             </div>
             {(searchTerm || scheduleFilter !== 'all') && (
@@ -103,7 +103,7 @@ export default function StudentList({ students, onRefresh, onOpenReceiptForStude
             <select
               value={scheduleFilter}
               onChange={(e) => setScheduleFilter(e.target.value)}
-              className="w-full pl-9 pr-3 py-2.5 text-xs sm:text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#014D2F] bg-white font-semibold text-slate-700"
+              className="w-full pl-9 pr-3 py-2.5 text-base sm:text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#014D2F] bg-white font-semibold text-slate-700"
             >
               <option value="all">Tất cả ca học</option>
               <option value="2-4-6">Ca 2-4-6</option>
