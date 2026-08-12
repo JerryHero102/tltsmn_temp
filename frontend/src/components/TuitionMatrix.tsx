@@ -1,8 +1,21 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import { Search, CheckCircle, Plus, X, ExternalLink, Calendar, Image as ImageIcon, Loader2, Filter, RotateCcw, Edit3, Clock } from 'lucide-react';
-import { matchSearch } from '@/lib/api';
+import React, { useState } from "react";
+import {
+  Search,
+  CheckCircle,
+  Plus,
+  X,
+  ExternalLink,
+  Calendar,
+  Image as ImageIcon,
+  Loader2,
+  Filter,
+  RotateCcw,
+  Edit3,
+  Clock,
+} from "lucide-react";
+import { matchSearch } from "@/lib/api";
 
 interface MonthData {
   receipt_id: number;
@@ -23,21 +36,29 @@ interface TuitionRow {
 
 interface TuitionMatrixProps {
   matrix: TuitionRow[];
-  onOpenReceiptModal: (studentId?: string, month?: number, existingReceipt?: MonthData | null) => void;
+  onOpenReceiptModal: (
+    studentId?: string,
+    month?: number,
+    existingReceipt?: MonthData | null,
+  ) => void;
 }
 
 function getOptimizedImageUrl(url: string): string {
-  if (!url) return '';
-  if (url.includes('res.cloudinary.com') && url.includes('/image/upload/') && !url.includes('/f_auto')) {
-    return url.replace('/image/upload/', '/image/upload/f_auto,q_auto/');
+  if (!url) return "";
+  if (
+    url.includes("res.cloudinary.com") &&
+    url.includes("/image/upload/") &&
+    !url.includes("/f_auto")
+  ) {
+    return url.replace("/image/upload/", "/image/upload/f_auto,q_auto/");
   }
   return url;
 }
 
 function cleanDisplayDate(val?: string | null): string {
-  if (!val) return '';
-  const dateOnly = val.split('T')[0];
-  const parts = dateOnly.split('-');
+  if (!val) return "";
+  const dateOnly = val.split("T")[0];
+  const parts = dateOnly.split("-");
   if (parts.length === 3) {
     const [y, m, d] = parts;
     return `${d}/${m}/${y}`;
@@ -47,21 +68,27 @@ function cleanDisplayDate(val?: string | null): string {
 
 function getReceiptPaymentMonth(receiptDateStr?: string | null): number {
   if (!receiptDateStr) return 0;
-  const dateOnly = receiptDateStr.split('T')[0];
-  const parts = dateOnly.split('-');
+  const dateOnly = receiptDateStr.split("T")[0];
+  const parts = dateOnly.split("-");
   if (parts.length >= 2) {
     return parseInt(parts[1], 10);
   }
   return 0;
 }
 
-function isLatePayment(forMonth: number, receiptDateStr?: string | null): boolean {
+function isLatePayment(
+  forMonth: number,
+  receiptDateStr?: string | null,
+): boolean {
   const actualPaidMonth = getReceiptPaymentMonth(receiptDateStr);
   if (actualPaidMonth <= 0) return false;
   return actualPaidMonth > forMonth;
 }
 
-function getActualPaidCountForMonth(matrixRows: TuitionRow[], calendarMonth: number): number {
+function getActualPaidCountForMonth(
+  matrixRows: TuitionRow[],
+  calendarMonth: number,
+): number {
   let count = 0;
   for (const row of matrixRows) {
     for (const [forMonthStr, monthData] of Object.entries(row.months)) {
@@ -76,10 +103,13 @@ function getActualPaidCountForMonth(matrixRows: TuitionRow[], calendarMonth: num
   return count;
 }
 
-export default function TuitionMatrix({ matrix, onOpenReceiptModal }: TuitionMatrixProps) {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedMonth, setSelectedMonth] = useState('all');
-  const [scheduleFilter, setScheduleFilter] = useState('all');
+export default function TuitionMatrix({
+  matrix,
+  onOpenReceiptModal,
+}: TuitionMatrixProps) {
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedMonth, setSelectedMonth] = useState("all");
+  const [scheduleFilter, setScheduleFilter] = useState("all");
   const [selectedReceipt, setSelectedReceipt] = useState<{
     fullname: string;
     month: number;
@@ -93,14 +123,15 @@ export default function TuitionMatrix({ matrix, onOpenReceiptModal }: TuitionMat
       matchSearch(row.schedule, searchTerm);
 
     const matchesSchedule =
-      scheduleFilter === 'all' || (row.schedule || '2-4-6') === scheduleFilter;
+      scheduleFilter === "all" || (row.schedule || "2-4-6") === scheduleFilter;
 
     const targetMonth = Number(selectedMonth);
     const matchesMonth =
-      selectedMonth === 'all' ||
+      selectedMonth === "all" ||
       row.months[targetMonth] !== null ||
       Object.values(row.months).some(
-        (mObj) => mObj && getReceiptPaymentMonth(mObj.receipt_date) === targetMonth
+        (mObj) =>
+          mObj && getReceiptPaymentMonth(mObj.receipt_date) === targetMonth,
       );
 
     return matchesSearch && matchesSchedule && matchesMonth;
@@ -108,26 +139,32 @@ export default function TuitionMatrix({ matrix, onOpenReceiptModal }: TuitionMat
 
   const targetMonthNum = Number(selectedMonth);
 
-  const visibleMonths = selectedMonth === 'all' 
-    ? Array.from({ length: 12 }, (_, i) => i + 1)
-    : Array.from({ length: 12 }, (_, i) => i + 1).filter((m) => {
-        if (m === targetMonthNum) return true;
-        return filteredMatrix.some((row) => {
-          const mObj = row.months[m];
-          return mObj && getReceiptPaymentMonth(mObj.receipt_date) === targetMonthNum;
+  const visibleMonths =
+    selectedMonth === "all"
+      ? Array.from({ length: 12 }, (_, i) => i + 1)
+      : Array.from({ length: 12 }, (_, i) => i + 1).filter((m) => {
+          if (m === targetMonthNum) return true;
+          return filteredMatrix.some((row) => {
+            const mObj = row.months[m];
+            return (
+              mObj &&
+              getReceiptPaymentMonth(mObj.receipt_date) === targetMonthNum
+            );
+          });
         });
-      });
 
   const handleResetFilters = () => {
-    setSearchTerm('');
-    setSelectedMonth('all');
-    setScheduleFilter('all');
+    setSearchTerm("");
+    setSelectedMonth("all");
+    setScheduleFilter("all");
   };
 
   // Student Counts Calculation
   const countTotal = filteredMatrix.length;
-  const count246 = filteredMatrix.filter((r) => (r.schedule || '2-4-6') === '2-4-6').length;
-  const count357 = filteredMatrix.filter((r) => r.schedule === '3-5-7').length;
+  const count246 = filteredMatrix.filter(
+    (r) => (r.schedule || "2-4-6") === "2-4-6",
+  ).length;
+  const count357 = filteredMatrix.filter((r) => r.schedule === "3-5-7").length;
 
   return (
     <div className="space-y-3">
@@ -146,7 +183,9 @@ export default function TuitionMatrix({ matrix, onOpenReceiptModal }: TuitionMat
                 className="w-full pl-10 pr-4 py-2 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#014D2F] bg-slate-50/50 font-medium"
               />
             </div>
-            {(searchTerm || selectedMonth !== 'all' || scheduleFilter !== 'all') && (
+            {(searchTerm ||
+              selectedMonth !== "all" ||
+              scheduleFilter !== "all") && (
               <button
                 onClick={handleResetFilters}
                 className="px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 font-semibold text-xs transition-colors shrink-0 flex items-center gap-1"
@@ -168,7 +207,9 @@ export default function TuitionMatrix({ matrix, onOpenReceiptModal }: TuitionMat
             >
               <option value="all">Tất cả 12 tháng</option>
               {Array.from({ length: 12 }, (_, i) => i + 1).map((m) => (
-                <option key={m} value={m.toString()}>Tháng {m}</option>
+                <option key={m} value={m.toString()}>
+                  Tháng {m}
+                </option>
               ))}
             </select>
           </div>
@@ -192,13 +233,16 @@ export default function TuitionMatrix({ matrix, onOpenReceiptModal }: TuitionMat
         {/* Legend Badges */}
         <div className="flex items-center space-x-3 text-[11px] font-semibold text-slate-600 shrink-0 pt-2 lg:pt-0 border-t lg:border-t-0 border-slate-100">
           <span className="flex items-center gap-1">
-            <span className="w-2.5 h-2.5 rounded-full bg-emerald-600 inline-block"></span> Đúng hạn
+            <span className="w-2.5 h-2.5 rounded-full bg-emerald-600 inline-block"></span>{" "}
+            Đúng hạn
           </span>
           <span className="flex items-center gap-1">
-            <span className="w-2.5 h-2.5 rounded-full bg-amber-500 inline-block"></span> Đóng bù / Lưu máy
+            <span className="w-2.5 h-2.5 rounded-full bg-amber-500 inline-block"></span>{" "}
+            Đóng bù / Lưu máy
           </span>
           <span className="flex items-center gap-1">
-            <span className="w-2.5 h-2.5 rounded-full bg-slate-200 border border-slate-300 inline-block"></span> Chưa đóng
+            <span className="w-2.5 h-2.5 rounded-full bg-slate-200 border border-slate-300 inline-block"></span>{" "}
+            Chưa đóng
           </span>
         </div>
       </div>
@@ -224,9 +268,15 @@ export default function TuitionMatrix({ matrix, onOpenReceiptModal }: TuitionMat
                   Số HS đã đóng
                 </th>
                 {visibleMonths.map((m) => {
-                  const paidCount = getActualPaidCountForMonth(filteredMatrix, m);
+                  const paidCount = getActualPaidCountForMonth(
+                    filteredMatrix,
+                    m,
+                  );
                   return (
-                    <th key={m} className="py-2.5 px-1 text-center font-extrabold text-[#014D2F] whitespace-nowrap min-w-[52px] bg-emerald-50">
+                    <th
+                      key={m}
+                      className="py-2.5 px-1 text-center font-extrabold text-[#014D2F] whitespace-nowrap min-w-[52px] bg-emerald-50"
+                    >
                       {paidCount}
                     </th>
                   );
@@ -242,7 +292,10 @@ export default function TuitionMatrix({ matrix, onOpenReceiptModal }: TuitionMat
                   Họ và Tên
                 </th>
                 {visibleMonths.map((m) => (
-                  <th key={m} className="py-2.5 px-1 text-center text-xs font-bold text-slate-600 whitespace-nowrap min-w-[52px] bg-slate-100/90">
+                  <th
+                    key={m}
+                    className="py-2.5 px-1 text-center text-xs font-bold text-slate-600 whitespace-nowrap min-w-[52px] bg-slate-100/90"
+                  >
                     T{m}
                   </th>
                 ))}
@@ -252,13 +305,19 @@ export default function TuitionMatrix({ matrix, onOpenReceiptModal }: TuitionMat
             <tbody className="divide-y divide-slate-100 text-sm font-medium text-slate-800">
               {filteredMatrix.length === 0 ? (
                 <tr>
-                  <td colSpan={visibleMonths.length + 2} className="py-8 text-center text-slate-400 text-sm">
+                  <td
+                    colSpan={visibleMonths.length + 2}
+                    className="py-8 text-center text-slate-400 text-sm"
+                  >
                     Không tìm thấy thông tin đóng học phí nào.
                   </td>
                 </tr>
               ) : (
                 filteredMatrix.map((row, idx) => (
-                  <tr key={row.id_profile} className="hover:bg-slate-50/80 transition-colors">
+                  <tr
+                    key={row.id_profile}
+                    className="hover:bg-slate-50/80 transition-colors"
+                  >
                     {/* 1. Cố định Cột STT */}
                     <td className="py-2.5 px-2 text-center font-bold text-slate-400 text-xs sticky left-0 bg-white z-10 whitespace-nowrap">
                       {idx + 1}
@@ -272,14 +331,14 @@ export default function TuitionMatrix({ matrix, onOpenReceiptModal }: TuitionMat
                       <div className="mt-0.5">
                         <span
                           className={`text-[10px] font-semibold px-1.5 py-0.2 rounded inline-block ${
-                            row.schedule === '2-4-6'
-                              ? 'bg-emerald-100 text-[#014D2F]'
-                              : row.schedule === '3-5-7'
-                              ? 'bg-blue-100 text-blue-800'
-                              : 'bg-amber-100 text-amber-800'
+                            row.schedule === "2-4-6"
+                              ? "bg-emerald-100 text-[#014D2F]"
+                              : row.schedule === "3-5-7"
+                                ? "bg-blue-100 text-blue-800"
+                                : "bg-amber-100 text-amber-800"
                           }`}
                         >
-                          {row.schedule || '2-4-6'}
+                          {row.schedule || "2-4-6"}
                         </span>
                       </div>
                     </td>
@@ -287,9 +346,13 @@ export default function TuitionMatrix({ matrix, onOpenReceiptModal }: TuitionMat
                     {/* 3. Các cột Tháng T1..T12 */}
                     {visibleMonths.map((m) => {
                       const data = row.months[m];
-                      const isLate = data && isLatePayment(m, data.receipt_date);
+                      const isLate =
+                        data && isLatePayment(m, data.receipt_date);
                       return (
-                        <td key={m} className="py-2 px-1 text-center whitespace-nowrap min-w-[52px]">
+                        <td
+                          key={m}
+                          className="py-2 px-1 text-center whitespace-nowrap min-w-[52px]"
+                        >
                           {data ? (
                             <button
                               onClick={() =>
@@ -301,17 +364,17 @@ export default function TuitionMatrix({ matrix, onOpenReceiptModal }: TuitionMat
                               }
                               className={`w-full py-1.5 px-1 rounded-lg text-white font-bold text-xs transition-all shadow-xs flex items-center justify-center gap-1 whitespace-nowrap ${
                                 data.is_pending_local
-                                  ? 'bg-amber-500 hover:bg-amber-600 animate-pulse'
+                                  ? "bg-amber-500 hover:bg-amber-600 animate-pulse"
                                   : isLate
-                                  ? 'bg-amber-500 hover:bg-amber-600'
-                                  : 'bg-emerald-600 hover:bg-[#014D2F]'
+                                    ? "bg-amber-500 hover:bg-amber-600"
+                                    : "bg-emerald-600 hover:bg-[#014D2F]"
                               }`}
                               title={
                                 data.is_pending_local
-                                  ? 'Đã lưu trong máy (Đang tự động đồng bộ CSDL)'
+                                  ? "Đã lưu trong máy (Đang tự động đồng bộ CSDL)"
                                   : isLate
-                                  ? `Đã đóng bù vào ngày ${cleanDisplayDate(data.receipt_date)} - Xem biên lai`
-                                  : `Đã đóng ngày ${cleanDisplayDate(data.receipt_date)} - Xem biên lai`
+                                    ? `Đã đóng bù vào ngày ${cleanDisplayDate(data.receipt_date)} - Xem biên lai`
+                                    : `Đã đóng ngày ${cleanDisplayDate(data.receipt_date)} - Xem biên lai`
                               }
                             >
                               {data.is_pending_local ? (
@@ -321,8 +384,8 @@ export default function TuitionMatrix({ matrix, onOpenReceiptModal }: TuitionMat
                                 </>
                               ) : isLate ? (
                                 <>
-                                  <Clock className="w-3.5 h-3.5 shrink-0" />
-                                  <span>Đóng bù</span>
+                                  <CheckCircle className="w-3.5 h-3.5 shrink-0" />
+                                  <span>Bù</span>
                                 </>
                               ) : (
                                 <>
@@ -334,7 +397,9 @@ export default function TuitionMatrix({ matrix, onOpenReceiptModal }: TuitionMat
                           ) : (
                             /* Icon + Only inside content table */
                             <button
-                              onClick={() => onOpenReceiptModal(row.id_profile, m)}
+                              onClick={() =>
+                                onOpenReceiptModal(row.id_profile, m)
+                              }
                               className="w-full py-1.5 px-1 rounded-lg bg-slate-100/90 hover:bg-emerald-100 hover:text-[#014D2F] border border-slate-200/80 text-slate-400 text-xs font-bold transition-all flex items-center justify-center"
                               title={`Thêm biên lai Tháng ${m}`}
                             >
@@ -376,7 +441,9 @@ export default function TuitionMatrix({ matrix, onOpenReceiptModal }: TuitionMat
                 {selectedReceipt.receipt.image_url ? (
                   /* eslint-disable-next-line @next/next/no-img-element */
                   <img
-                    src={getOptimizedImageUrl(selectedReceipt.receipt.image_url)}
+                    src={getOptimizedImageUrl(
+                      selectedReceipt.receipt.image_url,
+                    )}
                     alt="Biên lai học phí"
                     className="w-full h-full object-contain"
                   />
@@ -392,7 +459,10 @@ export default function TuitionMatrix({ matrix, onOpenReceiptModal }: TuitionMat
                 <div className="flex justify-between">
                   <span className="text-slate-500">Số tiền đóng:</span>
                   <span className="font-bold text-emerald-700 text-sm">
-                    {Number(selectedReceipt.receipt.amount).toLocaleString('vi-VN')} VNĐ
+                    {Number(selectedReceipt.receipt.amount).toLocaleString(
+                      "vi-VN",
+                    )}{" "}
+                    VNĐ
                   </span>
                 </div>
                 <div className="flex justify-between">
@@ -406,16 +476,17 @@ export default function TuitionMatrix({ matrix, onOpenReceiptModal }: TuitionMat
                   <span
                     className={`font-semibold ${
                       selectedReceipt.receipt.is_pending_local
-                        ? 'text-amber-600 flex items-center gap-1'
-                        : 'text-emerald-600'
+                        ? "text-amber-600 flex items-center gap-1"
+                        : "text-emerald-600"
                     }`}
                   >
                     {selectedReceipt.receipt.is_pending_local ? (
                       <>
-                        <Loader2 className="w-3 h-3 animate-spin" /> Đã lưu máy (Chờ đồng bộ)
+                        <Loader2 className="w-3 h-3 animate-spin" /> Đã lưu máy
+                        (Chờ đồng bộ)
                       </>
                     ) : (
-                      'Đã lưu thành công vào CSDL Postgres'
+                      "Đã lưu thành công vào CSDL Postgres"
                     )}
                   </span>
                 </div>
@@ -436,7 +507,9 @@ export default function TuitionMatrix({ matrix, onOpenReceiptModal }: TuitionMat
                 <div className="flex items-center gap-2 ml-auto">
                   <button
                     onClick={() => {
-                      const studentId = matrix.find((r) => r.fullname === selectedReceipt.fullname)?.id_profile;
+                      const studentId = matrix.find(
+                        (r) => r.fullname === selectedReceipt.fullname,
+                      )?.id_profile;
                       const receiptToEdit = selectedReceipt.receipt;
                       const monthToEdit = selectedReceipt.month;
                       setSelectedReceipt(null);
