@@ -37,10 +37,10 @@ export default function DashboardPage() {
       const baseMatrix = matrixRes || [];
 
       // Merge any pending local receipts from Local Storage into matrix display
-      const pendingList = api.getPendingReceipts();
+      const pendingList = api.getPendingReceiptsLocally();
       if (pendingList.length > 0) {
         const updatedMatrix = baseMatrix.map((row: any) => {
-          const studentPending = pendingList.filter((p) => p.id_profile === row.id_profile);
+          const studentPending = pendingList.filter((p: any) => p.id_profile === row.id_profile);
           if (studentPending.length === 0) return row;
 
           const mergedMonths = { ...row.months };
