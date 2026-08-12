@@ -106,9 +106,17 @@ export default function TuitionMatrix({ matrix, onOpenReceiptModal }: TuitionMat
     return matchesSearch && matchesSchedule && matchesMonth;
   });
 
+  const targetMonthNum = Number(selectedMonth);
+
   const visibleMonths = selectedMonth === 'all' 
     ? Array.from({ length: 12 }, (_, i) => i + 1)
-    : [Number(selectedMonth)];
+    : Array.from({ length: 12 }, (_, i) => i + 1).filter((m) => {
+        if (m === targetMonthNum) return true;
+        return filteredMatrix.some((row) => {
+          const mObj = row.months[m];
+          return mObj && getReceiptPaymentMonth(mObj.receipt_date) === targetMonthNum;
+        });
+      });
 
   const handleResetFilters = () => {
     setSearchTerm('');
