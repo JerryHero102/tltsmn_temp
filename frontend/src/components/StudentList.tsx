@@ -142,7 +142,8 @@ export default function StudentList({ students, onRefresh, onOpenReceiptForStude
           filteredStudents.map((st, idx) => (
             <div
               key={st.profile_id}
-              className="bg-white p-3.5 rounded-2xl border border-slate-100 shadow-xs flex flex-col justify-between space-y-2"
+              onClick={() => setViewingStudent(st)}
+              className="bg-white p-3.5 rounded-2xl border border-slate-100 shadow-xs flex flex-col justify-between space-y-2 cursor-pointer hover:border-emerald-300 hover:shadow-sm transition-all"
             >
               {/* Header row: STT + Fullname (Single line, no line break) + Actions */}
               <div className="flex items-center justify-between gap-2">
@@ -150,18 +151,18 @@ export default function StudentList({ students, onRefresh, onOpenReceiptForStude
                   <span className="w-6 h-6 rounded-full bg-slate-100 text-slate-500 font-bold text-xs flex items-center justify-center shrink-0">
                     {idx + 1}
                   </span>
-                  <button
-                    onClick={() => setViewingStudent(st)}
-                    className="font-bold text-slate-900 text-sm hover:text-[#014D2F] truncate text-left"
-                  >
+                  <span className="font-bold text-slate-900 text-sm hover:text-[#014D2F] truncate text-left">
                     {st.fullname}
-                  </button>
+                  </span>
                 </div>
 
                 {/* Mobile action buttons */}
                 <div className="flex items-center space-x-1 shrink-0">
                   <button
-                    onClick={() => setViewingStudent(st)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setViewingStudent(st);
+                    }}
                     title="Xem chi tiết"
                     className="p-1.5 rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200 transition-colors"
                   >
@@ -170,14 +171,20 @@ export default function StudentList({ students, onRefresh, onOpenReceiptForStude
                   {isAdmin && (
                     <>
                       <button
-                        onClick={() => onOpenReceiptForStudent(st.profile_id)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onOpenReceiptForStudent(st.profile_id);
+                        }}
                         title="Đóng học phí"
                         className="p-1.5 rounded-lg bg-emerald-50 text-[#014D2F] hover:bg-[#014D2F] hover:text-white transition-colors"
                       >
                         <DollarSign className="w-4 h-4" />
                       </button>
                       <button
-                        onClick={() => handleOpenEdit(st)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleOpenEdit(st);
+                        }}
                         title="Chỉnh sửa"
                         className="p-1.5 rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200 transition-colors"
                       >
@@ -225,7 +232,7 @@ export default function StudentList({ students, onRefresh, onOpenReceiptForStude
             <thead>
               {/* Stat Summary Row on top of table header */}
               <tr className="bg-[#014D2F]/5 border-b border-emerald-100/80 text-xs font-extrabold text-[#014D2F]">
-                <th colSpan={7} className="py-2.5 px-4 text-left whitespace-nowrap">
+                <th colSpan={9} className="py-2.5 px-4 text-left whitespace-nowrap">
                   Học viên: {countTotal} &nbsp;|&nbsp; 2-4-6: {count246} &nbsp;|&nbsp; 3-5-7: {count357}
                 </th>
               </tr>
@@ -250,15 +257,16 @@ export default function StudentList({ students, onRefresh, onOpenReceiptForStude
                 </tr>
               ) : (
                 filteredStudents.map((st, idx) => (
-                  <tr key={st.profile_id} className="hover:bg-slate-50/80 transition-colors">
+                  <tr
+                    key={st.profile_id}
+                    onClick={() => setViewingStudent(st)}
+                    className="hover:bg-emerald-50/40 cursor-pointer transition-colors"
+                  >
                     <td className="py-4 px-4 text-center font-bold text-slate-400">{idx + 1}</td>
                     <td className="py-4 px-6">
-                      <button
-                        onClick={() => setViewingStudent(st)}
-                        className="font-bold text-slate-900 hover:text-[#014D2F] hover:underline text-left"
-                      >
+                      <span className="font-bold text-slate-900 hover:text-[#014D2F] hover:underline text-left">
                         {st.fullname}
-                      </button>
+                      </span>
                       <div className="text-[11px] text-slate-400 font-normal">
                         Giới tính: {st.gender || 'Nam'}
                       </div>
@@ -292,7 +300,10 @@ export default function StudentList({ students, onRefresh, onOpenReceiptForStude
                     <td className="py-4 px-4 text-right">
                       <div className="flex items-center justify-end space-x-1.5">
                         <button
-                          onClick={() => setViewingStudent(st)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setViewingStudent(st);
+                          }}
                           title="Xem chi tiết đầy đủ từ CSDL"
                           className="p-1.5 rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200 transition-colors"
                         >
@@ -301,14 +312,20 @@ export default function StudentList({ students, onRefresh, onOpenReceiptForStude
                         {isAdmin && (
                           <>
                             <button
-                              onClick={() => onOpenReceiptForStudent(st.profile_id)}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                onOpenReceiptForStudent(st.profile_id);
+                              }}
                               title="Đóng học phí"
                               className="p-1.5 rounded-lg bg-emerald-50 text-[#014D2F] hover:bg-[#014D2F] hover:text-white transition-colors"
                             >
                               <DollarSign className="w-4 h-4" />
                             </button>
                             <button
-                              onClick={() => handleOpenEdit(st)}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleOpenEdit(st);
+                              }}
                               title="Chỉnh sửa"
                               className="p-1.5 rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200 transition-colors"
                             >
