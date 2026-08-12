@@ -37,7 +37,7 @@ export function matchSearch(text: string, query: string): boolean {
   return queryWords.every((word) => cleanText.includes(word));
 }
 
-export async function apiRequest(path: string, options: RequestInit = {}) {
+export async function apiRequest(path: string, options: RequestInit = {}, isRetry = false): Promise<any> {
   const token = typeof window !== 'undefined' ? localStorage.getItem('access_token') : null;
 
   const headers: Record<string, string> = {
@@ -48,7 +48,8 @@ export async function apiRequest(path: string, options: RequestInit = {}) {
   };
 
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 6000);
+  const timeoutMs = options.method === 'POST' ? 12000 : 8000;
+  const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
 
   try {
     const res = await fetch(`${API_BASE}${path}`, {
@@ -77,6 +78,9 @@ export async function apiRequest(path: string, options: RequestInit = {}) {
     return res.json();
   } catch (err: any) {
     clearTimeout(timeoutId);
+    if ((err.name === 'AbortError' || err.name === 'TypeError' || err.message?.includes('fetch')) && !isRetry) {
+      return apiRequest(path, options, true);
+    }
     if (err.name === 'AbortError') {
       throw new Error('Kết nối tới máy chủ quá thời gian (Timeout). Vui lòng thử lại.');
     }
