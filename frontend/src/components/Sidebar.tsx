@@ -71,7 +71,7 @@ export default function Sidebar({
 
       {/* Sidebar Navigation */}
       <aside
-        className={`fixed md:static top-0 left-0 bottom-0 z-40 w-64 bg-[#014D2F] text-white flex flex-col justify-between transition-transform duration-300 ease-in-out shadow-xl md:shadow-none ${
+        className={`fixed md:sticky top-0 left-0 z-40 w-64 h-screen bg-[#014D2F] text-white flex flex-col justify-between transition-transform duration-300 ease-in-out shadow-xl md:shadow-none shrink-0 ${
           mobileMenuOpen
             ? "translate-x-0"
             : "-translate-x-full md:translate-x-0"

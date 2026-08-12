@@ -168,21 +168,21 @@ export default function TuitionMatrix({ matrix, onOpenReceiptModal }: TuitionMat
 
       {/* UNIFIED MATRIX TABLE VIEW (Mobile + Desktop) */}
       <div className="bg-white rounded-2xl shadow-xs border border-slate-100 overflow-hidden">
-        <div className="overflow-x-auto scrollbar-thin">
+        <div className="overflow-auto max-h-[calc(100vh-210px)] scrollbar-thin">
           <table className="w-full text-left border-collapse min-w-[650px]">
-            <thead>
-              {/* Row 1: Thống kê số lượng học sinh đóng học từng tháng (Cố định sticky cell gọn gàng) */}
-              <tr className="bg-[#014D2F]/5 border-b border-emerald-100/80 text-[11px] font-extrabold text-[#014D2F]">
+            <thead className="sticky top-0 z-20 shadow-xs bg-slate-50">
+              {/* Row 1: Thống kê số lượng học sinh đóng học từng tháng */}
+              <tr className="bg-emerald-50 border-b border-emerald-100 text-[11px] font-extrabold text-[#014D2F]">
                 <th
                   colSpan={2}
-                  className="py-2.5 px-3 text-left whitespace-nowrap sticky left-0 bg-emerald-50/95 z-30 font-extrabold text-[#014D2F] shadow-[2px_0_5px_-2px_rgba(0,0,0,0.08)]"
+                  className="py-2.5 px-3 text-left whitespace-nowrap sticky left-0 top-0 bg-emerald-100/90 z-30 font-extrabold text-[#014D2F] shadow-[2px_0_5px_-2px_rgba(0,0,0,0.08)]"
                 >
                   Số HS đã đóng
                 </th>
                 {visibleMonths.map((m) => {
                   const paidCount = filteredMatrix.filter((r) => r.months[m] !== null).length;
                   return (
-                    <th key={m} className="py-2.5 px-1 text-center font-extrabold text-[#014D2F] whitespace-nowrap min-w-[52px]">
+                    <th key={m} className="py-2.5 px-1 text-center font-extrabold text-[#014D2F] whitespace-nowrap min-w-[52px] bg-emerald-50">
                       {paidCount}
                     </th>
                   );
@@ -190,15 +190,15 @@ export default function TuitionMatrix({ matrix, onOpenReceiptModal }: TuitionMat
               </tr>
 
               {/* Row 2: Cột STT, Họ và tên (Cố định 2 cột) + Các tháng T1..T12 */}
-              <tr className="bg-slate-50 border-b border-slate-200/80 text-xs font-bold text-slate-500 uppercase tracking-wider">
-                <th className="py-3 px-2 text-center w-8 sticky left-0 bg-slate-50 z-20 whitespace-nowrap">
+              <tr className="bg-slate-100/90 border-b border-slate-200/80 text-xs font-bold text-slate-600 uppercase tracking-wider">
+                <th className="py-2.5 px-2 text-center w-8 sticky left-0 bg-slate-100 z-30 whitespace-nowrap">
                   STT
                 </th>
-                <th className="py-3 px-3 sticky left-8 bg-slate-50 z-20 min-w-[130px] max-w-[170px] shadow-[2px_0_5px_-2px_rgba(0,0,0,0.08)] whitespace-nowrap">
+                <th className="py-2.5 px-3 sticky left-8 bg-slate-100 z-30 min-w-[130px] max-w-[170px] shadow-[2px_0_5px_-2px_rgba(0,0,0,0.08)] whitespace-nowrap">
                   Họ và Tên
                 </th>
                 {visibleMonths.map((m) => (
-                  <th key={m} className="py-3 px-1 text-center text-xs font-bold text-slate-600 whitespace-nowrap min-w-[52px]">
+                  <th key={m} className="py-2.5 px-1 text-center text-xs font-bold text-slate-600 whitespace-nowrap min-w-[52px] bg-slate-100/90">
                     T{m}
                   </th>
                 ))}
