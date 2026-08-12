@@ -48,6 +48,10 @@ export default function StudentList({ students, onRefresh, onOpenReceiptForStude
     return matchesSearch && matchesSchedule;
   });
 
+  const countTotal = filteredStudents.length;
+  const count246 = filteredStudents.filter((st) => (st.schedule || '2-4-6') === '2-4-6').length;
+  const count357 = filteredStudents.filter((st) => st.schedule === '3-5-7').length;
+
   const handleOpenAdd = () => {
     setEditingStudent(undefined);
     setIsModalOpen(true);
@@ -121,6 +125,13 @@ export default function StudentList({ students, onRefresh, onOpenReceiptForStude
 
       {/* MOBILE VIEW (Compact cards, no wrapping text) */}
       <div className="md:hidden space-y-2.5">
+        {/* Mobile Summary Banner */}
+        <div className="bg-[#014D2F]/10 border border-emerald-200 px-3.5 py-2 rounded-xl text-xs font-bold text-[#014D2F] flex items-center justify-between">
+          <span>Học viên: {countTotal}</span>
+          <span>2-4-6: {count246}</span>
+          <span>3-5-7: {count357}</span>
+        </div>
+
         {filteredStudents.length === 0 ? (
           <div className="bg-white p-6 rounded-2xl text-center text-slate-400 text-sm border border-slate-100">
             Không tìm thấy học viên nào phù hợp.
@@ -210,14 +221,20 @@ export default function StudentList({ students, onRefresh, onOpenReceiptForStude
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
+              {/* Stat Summary Row on top of table header */}
+              <tr className="bg-[#014D2F]/5 border-b border-emerald-100/80 text-xs font-extrabold text-[#014D2F]">
+                <th colSpan={7} className="py-2.5 px-4 text-left whitespace-nowrap">
+                  Học viên: {countTotal} &nbsp;|&nbsp; 2-4-6: {count246} &nbsp;|&nbsp; 3-5-7: {count357}
+                </th>
+              </tr>
               <tr className="bg-slate-50 border-b border-slate-200/80 text-xs font-bold text-slate-500 uppercase tracking-wider">
-                <th className="py-4 px-4 text-center w-12">STT</th>
-                <th className="py-4 px-6">Họ và Tên</th>
-                <th className="py-4 px-4 text-center">Năm sinh</th>
-                <th className="py-4 px-4 text-center">Ca học</th>
-                <th className="py-4 px-4">SĐT</th>
-                <th className="py-4 px-6">Ghi chú</th>
-                <th className="py-4 px-4 text-right">Thao tác</th>
+                <th className="py-3 px-4 text-center w-12">STT</th>
+                <th className="py-3 px-6">Họ và Tên</th>
+                <th className="py-3 px-4 text-center">Năm sinh</th>
+                <th className="py-3 px-4 text-center">Ca học</th>
+                <th className="py-3 px-4">SĐT</th>
+                <th className="py-3 px-6">Ghi chú</th>
+                <th className="py-3 px-4 text-right">Thao tác</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 text-sm font-medium text-slate-800">

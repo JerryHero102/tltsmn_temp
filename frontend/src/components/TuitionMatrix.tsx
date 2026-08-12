@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Search, CheckCircle, Plus, X, ExternalLink, Calendar, Image as ImageIcon, Loader2, Filter, RotateCcw, Users, DollarSign, Receipt } from 'lucide-react';
+import { Search, CheckCircle, Plus, X, ExternalLink, Calendar, Image as ImageIcon, Loader2, Filter, RotateCcw } from 'lucide-react';
 
 interface MonthData {
   receipt_id: number;
@@ -68,59 +68,13 @@ export default function TuitionMatrix({ matrix, onOpenReceiptModal }: TuitionMat
     setScheduleFilter('all');
   };
 
-  // Automatic Statistics Calculation
-  const totalStudents = matrix.length;
-  const totalPaidReceiptsCount = matrix.reduce(
-    (acc, row) => acc + Object.values(row.months).filter(Boolean).length,
-    0
-  );
-  const totalRevenueCollected = matrix.reduce(
-    (acc, row) =>
-      acc +
-      Object.values(row.months).reduce(
-        (sum, m) => sum + (m ? Number(m.amount) || 0 : 0),
-        0
-      ),
-    0
-  );
+  // Student Counts Calculation
+  const countTotal = filteredMatrix.length;
+  const count246 = filteredMatrix.filter((r) => (r.schedule || '2-4-6') === '2-4-6').length;
+  const count357 = filteredMatrix.filter((r) => r.schedule === '3-5-7').length;
 
   return (
     <div className="space-y-3">
-      {/* Mini Auto Statistics Cards Header */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-        <div className="bg-white p-3.5 rounded-2xl border border-slate-100 shadow-xs flex items-center space-x-3">
-          <div className="w-9 h-9 rounded-xl bg-emerald-50 text-[#014D2F] flex items-center justify-center font-bold shrink-0">
-            <Users className="w-5 h-5" />
-          </div>
-          <div>
-            <p className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Tổng Học Viên</p>
-            <p className="text-base font-extrabold text-slate-900">{totalStudents} học sinh</p>
-          </div>
-        </div>
-
-        <div className="bg-white p-3.5 rounded-2xl border border-slate-100 shadow-xs flex items-center space-x-3">
-          <div className="w-9 h-9 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center font-bold shrink-0">
-            <Receipt className="w-5 h-5" />
-          </div>
-          <div>
-            <p className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Lượt Đóng Học Phí</p>
-            <p className="text-base font-extrabold text-slate-900">{totalPaidReceiptsCount} lượt biên lai</p>
-          </div>
-        </div>
-
-        <div className="bg-white p-3.5 rounded-2xl border border-slate-100 shadow-xs flex items-center space-x-3">
-          <div className="w-9 h-9 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center font-bold shrink-0">
-            <DollarSign className="w-5 h-5" />
-          </div>
-          <div>
-            <p className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Tổng Doanh Thu</p>
-            <p className="text-base font-extrabold text-emerald-800">
-              {totalRevenueCollected.toLocaleString('vi-VN')} VNĐ
-            </p>
-          </div>
-        </div>
-      </div>
-
       {/* Filter Header: Shortened Search + Xóa lọc button + Filter by Month + Filter by Schedule */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 bg-white p-3 sm:p-3.5 rounded-2xl shadow-xs border border-slate-100">
         <div className="flex flex-col sm:flex-row items-center gap-2.5 flex-1 w-full">
@@ -195,6 +149,13 @@ export default function TuitionMatrix({ matrix, onOpenReceiptModal }: TuitionMat
 
       {/* MOBILE VIEW (Compact student cards, single line, no line break) */}
       <div className="md:hidden space-y-2">
+        {/* Mobile Summary Banner */}
+        <div className="bg-[#014D2F]/10 border border-emerald-200 px-3.5 py-2 rounded-xl text-xs font-bold text-[#014D2F] flex items-center justify-between">
+          <span>Học viên: {countTotal}</span>
+          <span>2-4-6: {count246}</span>
+          <span>3-5-7: {count357}</span>
+        </div>
+
         {filteredMatrix.length === 0 ? (
           <div className="bg-white p-6 rounded-2xl text-center text-slate-400 text-sm border border-slate-100">
             Không tìm thấy thông tin đóng học phí nào.
@@ -320,17 +281,15 @@ export default function TuitionMatrix({ matrix, onOpenReceiptModal }: TuitionMat
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              {/* Row 1: Thống kê số lượng học sinh đóng học tự động từng tháng */}
+              {/* Row 1: Thống kê số lượng học sinh & số lượng đóng học từng tháng */}
               <tr className="bg-[#014D2F]/5 border-b border-emerald-100/80 text-[11px] font-extrabold text-[#014D2F]">
-                <th className="py-2 px-3 text-center whitespace-nowrap">TỔNG</th>
-                <th className="py-2 px-4 sticky left-0 bg-[#014D2F]/10 z-10 font-extrabold text-[#014D2F] whitespace-nowrap shadow-[2px_0_5px_-2px_rgba(0,0,0,0.05)]">
-                  Đã Đóng Học
+                <th colSpan={3} className="py-2.5 px-4 text-left whitespace-nowrap sticky left-0 bg-[#014D2F]/10 z-10 font-extrabold text-[#014D2F] shadow-[2px_0_5px_-2px_rgba(0,0,0,0.05)]">
+                  Học viên: {countTotal} &nbsp;|&nbsp; 2-4-6: {count246} &nbsp;|&nbsp; 3-5-7: {count357}
                 </th>
-                <th className="py-2 px-3 text-center whitespace-nowrap">---</th>
                 {visibleMonths.map((m) => {
                   const paidCount = filteredMatrix.filter((r) => r.months[m] !== null).length;
                   return (
-                    <th key={m} className="py-2 px-1 text-center font-extrabold text-[#014D2F] whitespace-nowrap">
+                    <th key={m} className="py-2.5 px-1 text-center font-extrabold text-[#014D2F] whitespace-nowrap">
                       {paidCount > 0 ? `${paidCount} HS` : '0'}
                     </th>
                   );
