@@ -1,7 +1,17 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import { Search, CheckCircle, Plus, X, ExternalLink, Calendar, Image as ImageIcon, Loader2, Filter } from 'lucide-react';
+import React, { useState } from "react";
+import {
+  Search,
+  CheckCircle,
+  Plus,
+  X,
+  ExternalLink,
+  Calendar,
+  Image as ImageIcon,
+  Loader2,
+  Filter,
+} from "lucide-react";
 
 interface MonthData {
   receipt_id: number;
@@ -26,17 +36,24 @@ interface TuitionMatrixProps {
 }
 
 function getOptimizedImageUrl(url: string): string {
-  if (!url) return '';
-  if (url.includes('res.cloudinary.com') && url.includes('/image/upload/') && !url.includes('/f_auto')) {
-    return url.replace('/image/upload/', '/image/upload/f_auto,q_auto/');
+  if (!url) return "";
+  if (
+    url.includes("res.cloudinary.com") &&
+    url.includes("/image/upload/") &&
+    !url.includes("/f_auto")
+  ) {
+    return url.replace("/image/upload/", "/image/upload/f_auto,q_auto/");
   }
   return url;
 }
 
-export default function TuitionMatrix({ matrix, onOpenReceiptModal }: TuitionMatrixProps) {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedMonth, setSelectedMonth] = useState('all');
-  const [scheduleFilter, setScheduleFilter] = useState('all');
+export default function TuitionMatrix({
+  matrix,
+  onOpenReceiptModal,
+}: TuitionMatrixProps) {
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedMonth, setSelectedMonth] = useState("all");
+  const [scheduleFilter, setScheduleFilter] = useState("all");
   const [selectedReceipt, setSelectedReceipt] = useState<{
     fullname: string;
     month: number;
@@ -47,20 +64,23 @@ export default function TuitionMatrix({ matrix, onOpenReceiptModal }: TuitionMat
     const matchesSearch =
       row.fullname.toLowerCase().includes(searchTerm.toLowerCase()) ||
       (row.phone_number && row.phone_number.includes(searchTerm)) ||
-      (row.schedule && row.schedule.toLowerCase().includes(searchTerm.toLowerCase()));
+      (row.schedule &&
+        row.schedule.toLowerCase().includes(searchTerm.toLowerCase()));
 
     const matchesSchedule =
-      scheduleFilter === 'all' || (row.schedule || '2-4-6') === scheduleFilter;
+      scheduleFilter === "all" || (row.schedule || "2-4-6") === scheduleFilter;
 
     const matchesMonth =
-      selectedMonth === 'all' || row.months[Number(selectedMonth)] !== undefined;
+      selectedMonth === "all" ||
+      row.months[Number(selectedMonth)] !== undefined;
 
     return matchesSearch && matchesSchedule && matchesMonth;
   });
 
-  const visibleMonths = selectedMonth === 'all' 
-    ? Array.from({ length: 12 }, (_, i) => i + 1)
-    : [Number(selectedMonth)];
+  const visibleMonths =
+    selectedMonth === "all"
+      ? Array.from({ length: 12 }, (_, i) => i + 1)
+      : [Number(selectedMonth)];
 
   return (
     <div className="space-y-3">
@@ -89,7 +109,9 @@ export default function TuitionMatrix({ matrix, onOpenReceiptModal }: TuitionMat
             >
               <option value="all">Tất cả 12 tháng</option>
               {Array.from({ length: 12 }, (_, i) => i + 1).map((m) => (
-                <option key={m} value={m.toString()}>Tháng {m}</option>
+                <option key={m} value={m.toString()}>
+                  Tháng {m}
+                </option>
               ))}
             </select>
           </div>
@@ -113,13 +135,16 @@ export default function TuitionMatrix({ matrix, onOpenReceiptModal }: TuitionMat
         {/* Legend Badges */}
         <div className="flex items-center space-x-3 text-[11px] font-semibold text-slate-600 shrink-0 pt-2 lg:pt-0 border-t lg:border-t-0 border-slate-100">
           <span className="flex items-center gap-1">
-            <span className="w-2.5 h-2.5 rounded-full bg-emerald-600 inline-block"></span> Đã đóng
+            <span className="w-2.5 h-2.5 rounded-full bg-emerald-600 inline-block"></span>{" "}
+            Đã đóng
           </span>
           <span className="flex items-center gap-1">
-            <span className="w-2.5 h-2.5 rounded-full bg-amber-500 inline-block"></span> Lưu máy
+            <span className="w-2.5 h-2.5 rounded-full bg-amber-500 inline-block"></span>{" "}
+            Lưu máy
           </span>
           <span className="flex items-center gap-1">
-            <span className="w-2.5 h-2.5 rounded-full bg-slate-200 border border-slate-300 inline-block"></span> Chưa đóng
+            <span className="w-2.5 h-2.5 rounded-full bg-slate-200 border border-slate-300 inline-block"></span>{" "}
+            Chưa đóng
           </span>
         </div>
       </div>
@@ -149,26 +174,28 @@ export default function TuitionMatrix({ matrix, onOpenReceiptModal }: TuitionMat
                 <div className="flex items-center space-x-1.5 shrink-0">
                   <span
                     className={`px-2 py-0.5 rounded-md text-[11px] font-semibold whitespace-nowrap ${
-                      row.schedule === '2-4-6'
-                        ? 'bg-emerald-100 text-[#014D2F]'
-                        : row.schedule === '3-5-7'
-                        ? 'bg-blue-100 text-blue-800'
-                        : 'bg-amber-100 text-amber-800'
+                      row.schedule === "2-4-6"
+                        ? "bg-emerald-100 text-[#014D2F]"
+                        : row.schedule === "3-5-7"
+                          ? "bg-blue-100 text-blue-800"
+                          : "bg-amber-100 text-amber-800"
                     }`}
                   >
-                    Ca {row.schedule || '2-4-6'}
+                    Ca {row.schedule || "2-4-6"}
                   </span>
                 </div>
               </div>
 
               {/* Month Status Display */}
-              {selectedMonth !== 'all' ? (
+              {selectedMonth !== "all" ? (
                 (() => {
                   const m = Number(selectedMonth);
                   const data = row.months[m];
                   return (
                     <div className="flex items-center justify-between bg-slate-50/80 p-2 rounded-xl border border-slate-100">
-                      <span className="font-bold text-xs text-slate-700 whitespace-nowrap">Tháng {m}:</span>
+                      <span className="font-bold text-xs text-slate-700 whitespace-nowrap">
+                        Tháng {m}:
+                      </span>
                       {data ? (
                         <button
                           onClick={() =>
@@ -180,8 +207,8 @@ export default function TuitionMatrix({ matrix, onOpenReceiptModal }: TuitionMat
                           }
                           className={`px-3 py-1.5 rounded-lg text-white font-semibold text-xs transition-all shadow-xs flex items-center gap-1.5 whitespace-nowrap ${
                             data.is_pending_local
-                              ? 'bg-amber-500 hover:bg-amber-600 animate-pulse'
-                              : 'bg-emerald-600 hover:bg-[#014D2F]'
+                              ? "bg-amber-500 hover:bg-amber-600 animate-pulse"
+                              : "bg-emerald-600 hover:bg-[#014D2F]"
                           }`}
                         >
                           {data.is_pending_local ? (
@@ -228,14 +255,16 @@ export default function TuitionMatrix({ matrix, onOpenReceiptModal }: TuitionMat
                         }}
                         className={`px-2 py-1 rounded-lg font-bold text-[11px] shrink-0 transition-all whitespace-nowrap ${
                           data?.is_pending_local
-                            ? 'bg-amber-500 text-white animate-pulse'
+                            ? "bg-amber-500 text-white animate-pulse"
                             : data
-                            ? 'bg-emerald-600 text-white'
-                            : 'bg-slate-100 text-slate-500 border border-slate-200'
+                              ? "bg-emerald-600 text-white"
+                              : "bg-slate-100 text-slate-500 border border-slate-200"
                         }`}
-                        title={data ? `Tháng ${m}: Đã đóng` : `Tháng ${m}: Chưa đóng`}
+                        title={
+                          data ? `Tháng ${m}: Đã đóng` : `Tháng ${m}: Chưa đóng`
+                        }
                       >
-                        T{m} {data && (data.is_pending_local ? '⌛' : '✓')}
+                        T{m} {data && (data.is_pending_local ? "⌛" : "✓")}
                       </button>
                     );
                   })}
@@ -252,13 +281,20 @@ export default function TuitionMatrix({ matrix, onOpenReceiptModal }: TuitionMat
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-slate-50 border-b border-slate-200/80 text-xs font-bold text-slate-500 uppercase tracking-wider">
-                <th className="py-3.5 px-3 text-center w-10 whitespace-nowrap">STT</th>
+                <th className="py-3.5 px-3 text-center w-10 whitespace-nowrap">
+                  STT
+                </th>
                 <th className="py-3.5 px-4 sticky left-0 bg-slate-50 z-10 w-44 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.05)] whitespace-nowrap">
                   Họ và Tên
                 </th>
-                <th className="py-3.5 px-3 text-center w-24 whitespace-nowrap">Ca học</th>
+                <th className="py-3.5 px-3 text-center w-24 whitespace-nowrap">
+                  Ca học
+                </th>
                 {visibleMonths.map((m) => (
-                  <th key={m} className="py-3.5 px-2 text-center text-xs font-bold text-slate-600 whitespace-nowrap min-w-[50px]">
+                  <th
+                    key={m}
+                    className="py-3.5 px-2 text-center text-xs font-bold text-slate-600 whitespace-nowrap min-w-[50px]"
+                  >
                     T{m}
                   </th>
                 ))}
@@ -267,34 +303,45 @@ export default function TuitionMatrix({ matrix, onOpenReceiptModal }: TuitionMat
             <tbody className="divide-y divide-slate-100 text-sm font-medium text-slate-800">
               {filteredMatrix.length === 0 ? (
                 <tr>
-                  <td colSpan={visibleMonths.length + 3} className="py-8 text-center text-slate-400 text-sm">
+                  <td
+                    colSpan={visibleMonths.length + 3}
+                    className="py-8 text-center text-slate-400 text-sm"
+                  >
                     Không tìm thấy thông tin đóng học phí nào.
                   </td>
                 </tr>
               ) : (
                 filteredMatrix.map((row, idx) => (
-                  <tr key={row.id_profile} className="hover:bg-slate-50/80 transition-colors">
-                    <td className="py-3 px-3 text-center font-bold text-slate-400 text-xs whitespace-nowrap">{idx + 1}</td>
+                  <tr
+                    key={row.id_profile}
+                    className="hover:bg-slate-50/80 transition-colors"
+                  >
+                    <td className="py-3 px-3 text-center font-bold text-slate-400 text-xs whitespace-nowrap">
+                      {idx + 1}
+                    </td>
                     <td className="py-3 px-4 sticky left-0 bg-white z-10 font-bold text-slate-900 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.05)] whitespace-nowrap truncate">
                       {row.fullname}
                     </td>
                     <td className="py-3 px-3 text-center whitespace-nowrap">
                       <span
                         className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold whitespace-nowrap ${
-                          row.schedule === '2-4-6'
-                            ? 'bg-emerald-100 text-[#014D2F]'
-                            : row.schedule === '3-5-7'
-                            ? 'bg-blue-100 text-blue-800'
-                            : 'bg-amber-100 text-amber-800'
+                          row.schedule === "2-4-6"
+                            ? "bg-emerald-100 text-[#014D2F]"
+                            : row.schedule === "3-5-7"
+                              ? "bg-blue-100 text-blue-800"
+                              : "bg-amber-100 text-amber-800"
                         }`}
                       >
-                        {row.schedule || '2-4-6'}
+                        {row.schedule || "2-4-6"}
                       </span>
                     </td>
                     {visibleMonths.map((m) => {
                       const data = row.months[m];
                       return (
-                        <td key={m} className="py-2.5 px-1 text-center whitespace-nowrap">
+                        <td
+                          key={m}
+                          className="py-2.5 px-1 text-center whitespace-nowrap"
+                        >
                           {data ? (
                             <button
                               onClick={() =>
@@ -306,12 +353,12 @@ export default function TuitionMatrix({ matrix, onOpenReceiptModal }: TuitionMat
                               }
                               className={`w-full py-1.5 px-1 rounded-lg text-white font-bold text-xs transition-all shadow-xs flex items-center justify-center gap-1 whitespace-nowrap ${
                                 data.is_pending_local
-                                  ? 'bg-amber-500 hover:bg-amber-600 animate-pulse'
-                                  : 'bg-emerald-600 hover:bg-[#014D2F]'
+                                  ? "bg-amber-500 hover:bg-amber-600 animate-pulse"
+                                  : "bg-emerald-600 hover:bg-[#014D2F]"
                               }`}
                               title={
                                 data.is_pending_local
-                                  ? 'Đã lưu trong máy (Đang tự động đồng bộ CSDL)'
+                                  ? "Đã lưu trong máy (Đang tự động đồng bộ CSDL)"
                                   : `Đã đóng ngày ${data.receipt_date} - Xem biên lai`
                               }
                             >
@@ -323,14 +370,16 @@ export default function TuitionMatrix({ matrix, onOpenReceiptModal }: TuitionMat
                               ) : (
                                 <>
                                   <CheckCircle className="w-3.5 h-3.5 shrink-0" />
-                                  <span>Đóng</span>
+                                  {/* <span>Đóng</span> */}
                                 </>
                               )}
                             </button>
                           ) : (
                             /* Icon + Only inside content table (bỏ chữ Tháng X) */
                             <button
-                              onClick={() => onOpenReceiptModal(row.id_profile, m)}
+                              onClick={() =>
+                                onOpenReceiptModal(row.id_profile, m)
+                              }
                               className="w-full py-1.5 px-1 rounded-lg bg-slate-100/90 hover:bg-emerald-100 hover:text-[#014D2F] border border-slate-200/80 text-slate-400 text-xs font-bold transition-all flex items-center justify-center"
                               title={`Thêm biên lai Tháng ${m}`}
                             >
@@ -372,7 +421,9 @@ export default function TuitionMatrix({ matrix, onOpenReceiptModal }: TuitionMat
                 {selectedReceipt.receipt.image_url ? (
                   /* eslint-disable-next-line @next/next/no-img-element */
                   <img
-                    src={getOptimizedImageUrl(selectedReceipt.receipt.image_url)}
+                    src={getOptimizedImageUrl(
+                      selectedReceipt.receipt.image_url,
+                    )}
                     alt="Biên lai học phí"
                     className="w-full h-full object-contain"
                   />
@@ -388,7 +439,10 @@ export default function TuitionMatrix({ matrix, onOpenReceiptModal }: TuitionMat
                 <div className="flex justify-between">
                   <span className="text-slate-500">Số tiền đóng:</span>
                   <span className="font-bold text-emerald-700 text-sm">
-                    {Number(selectedReceipt.receipt.amount).toLocaleString('vi-VN')} VNĐ
+                    {Number(selectedReceipt.receipt.amount).toLocaleString(
+                      "vi-VN",
+                    )}{" "}
+                    VNĐ
                   </span>
                 </div>
                 <div className="flex justify-between">
@@ -402,16 +456,17 @@ export default function TuitionMatrix({ matrix, onOpenReceiptModal }: TuitionMat
                   <span
                     className={`font-semibold ${
                       selectedReceipt.receipt.is_pending_local
-                        ? 'text-amber-600 flex items-center gap-1'
-                        : 'text-emerald-600'
+                        ? "text-amber-600 flex items-center gap-1"
+                        : "text-emerald-600"
                     }`}
                   >
                     {selectedReceipt.receipt.is_pending_local ? (
                       <>
-                        <Loader2 className="w-3 h-3 animate-spin" /> Đã lưu máy (Chờ đồng bộ)
+                        <Loader2 className="w-3 h-3 animate-spin" /> Đã lưu máy
+                        (Chờ đồng bộ)
                       </>
                     ) : (
-                      'Đã lưu thành công vào CSDL Postgres'
+                      "Đã lưu thành công vào CSDL Postgres"
                     )}
                   </span>
                 </div>
