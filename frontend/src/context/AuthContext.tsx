@@ -41,7 +41,17 @@ const AuthContext = createContext<AuthContextType>({
 });
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [user, setUser] = useState<UserProfile | null>(null);
+  const [user, setUser] = useState<UserProfile | null>(() => {
+    if (typeof window !== 'undefined') {
+      const cached = localStorage.getItem('user_profile');
+      if (cached) {
+        try {
+          return JSON.parse(cached);
+        } catch {}
+      }
+    }
+    return null;
+  });
   const [loading, setLoading] = useState(true);
   const router = useRouter();
   const pathname = usePathname();
@@ -50,22 +60,48 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     let isMounted = true;
 
     const checkAuth = async () => {
+      const token = typeof window !== 'undefined' ? localStorage.getItem('access_token') : null;
+      
+      if (!token) {
+        if (isMounted) {
+          setUser(null);
+          setLoading(false);
+          if (pathname !== '/login') {
+            router.replace('/login');
+          }
+        }
+        return;
+      }
+
       try {
         const userData = await api.getMe();
         if (isMounted) {
           setUser(userData);
+          if (typeof window !== 'undefined') {
+            localStorage.setItem('user_profile', JSON.stringify(userData));
+          }
           if (pathname === '/login') {
             router.replace('/');
           }
         }
-      } catch (err) {
+      } catch (err: any) {
         if (isMounted) {
-          setUser(null);
-          if (typeof window !== 'undefined') {
-            localStorage.removeItem('access_token');
-          }
-          if (pathname !== '/login') {
-            router.replace('/login');
+          // ONLY clear session if server explicitly tells us 401 Unauthorized
+          const is401 = err.message?.includes('401') || err.message?.includes('Chưa đăng nhập') || err.message?.includes('hết hạn');
+          if (is401) {
+            setUser(null);
+            if (typeof window !== 'undefined') {
+              localStorage.removeItem('access_token');
+              localStorage.removeItem('user_profile');
+            }
+            if (pathname !== '/login') {
+              router.replace('/login');
+            }
+          } else {
+            // For network glitches/timeouts, keep existing cached user if available
+            if (pathname === '/login' && user) {
+              router.replace('/');
+            }
           }
         }
       } finally {
@@ -87,6 +123,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     if (res.access_token && typeof window !== 'undefined') {
       localStorage.setItem('access_token', res.access_token);
     }
+    if (res.user && typeof window !== 'undefined') {
+      localStorage.setItem('user_profile', JSON.stringify(res.user));
+    }
     setUser(res.user);
     router.replace('/');
   };
@@ -94,8 +133,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const logout = async () => {
     if (typeof window !== 'undefined') {
       localStorage.removeItem('access_token');
+      localStorage.removeItem('user_profile');
     }
-    await api.logout();
+    try {
+      await api.logout();
+    } catch {}
     setUser(null);
     router.replace('/login');
   };
