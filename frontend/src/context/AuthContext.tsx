@@ -59,20 +59,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     let isMounted = true;
 
-    const checkAuth = async () => {
-      const token = typeof window !== 'undefined' ? localStorage.getItem('access_token') : null;
-      
-      if (!token) {
-        if (isMounted) {
-          setUser(null);
-          setLoading(false);
-          if (pathname !== '/login') {
-            router.replace('/login');
-          }
-        }
-        return;
-      }
+    // Clean up any legacy localStorage access_token
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('access_token');
+    }
 
+    const checkAuth = async () => {
       try {
         const userData = await api.getMe();
         if (isMounted) {
@@ -86,19 +78,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         }
       } catch (err: any) {
         if (isMounted) {
-          // ONLY clear session if server explicitly tells us 401 Unauthorized
           const is401 = err.message?.includes('401') || err.message?.includes('Chưa đăng nhập') || err.message?.includes('hết hạn');
           if (is401) {
             setUser(null);
             if (typeof window !== 'undefined') {
-              localStorage.removeItem('access_token');
               localStorage.removeItem('user_profile');
             }
             if (pathname !== '/login') {
               router.replace('/login');
             }
           } else {
-            // For network glitches/timeouts, keep existing cached user if available
+            // Keep existing cached user for temporary offline network hiccups
             if (pathname === '/login' && user) {
               router.replace('/');
             }
@@ -120,9 +110,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const login = async (idSystem: string, pass: string) => {
     const res = await api.login(idSystem, pass);
-    if (res.access_token && typeof window !== 'undefined') {
-      localStorage.setItem('access_token', res.access_token);
-    }
     if (res.user && typeof window !== 'undefined') {
       localStorage.setItem('user_profile', JSON.stringify(res.user));
     }
@@ -132,7 +119,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const logout = async () => {
     if (typeof window !== 'undefined') {
-      localStorage.removeItem('access_token');
       localStorage.removeItem('user_profile');
     }
     try {

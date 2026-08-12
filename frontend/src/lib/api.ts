@@ -38,12 +38,9 @@ export function matchSearch(text: string, query: string): boolean {
 }
 
 export async function apiRequest(path: string, options: RequestInit = {}, isRetry = false): Promise<any> {
-  const token = typeof window !== 'undefined' ? localStorage.getItem('access_token') : null;
-
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
     'bypass-tunnel-reminder': 'true',
-    ...(token ? { Authorization: `Bearer ${token}` } : {}),
     ...(options.headers as Record<string, string>),
   };
 
