@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Search, CheckCircle, Plus, X, ExternalLink, Calendar, Image as ImageIcon, Loader2, Filter, RotateCcw, Edit3 } from 'lucide-react';
+import { Search, CheckCircle, Plus, X, ExternalLink, Calendar, Image as ImageIcon, Loader2, Filter, RotateCcw, Edit3, Clock } from 'lucide-react';
 import { matchSearch } from '@/lib/api';
 
 interface MonthData {
@@ -45,6 +45,37 @@ function cleanDisplayDate(val?: string | null): string {
   return dateOnly;
 }
 
+function getReceiptPaymentMonth(receiptDateStr?: string | null): number {
+  if (!receiptDateStr) return 0;
+  const dateOnly = receiptDateStr.split('T')[0];
+  const parts = dateOnly.split('-');
+  if (parts.length >= 2) {
+    return parseInt(parts[1], 10);
+  }
+  return 0;
+}
+
+function isLatePayment(forMonth: number, receiptDateStr?: string | null): boolean {
+  const actualPaidMonth = getReceiptPaymentMonth(receiptDateStr);
+  if (actualPaidMonth <= 0) return false;
+  return actualPaidMonth > forMonth;
+}
+
+function getActualPaidCountForMonth(matrixRows: TuitionRow[], calendarMonth: number): number {
+  let count = 0;
+  for (const row of matrixRows) {
+    for (const [forMonthStr, monthData] of Object.entries(row.months)) {
+      if (monthData && monthData.receipt_date) {
+        const actualPaidMonth = getReceiptPaymentMonth(monthData.receipt_date);
+        if (actualPaidMonth === calendarMonth) {
+          count++;
+        }
+      }
+    }
+  }
+  return count;
+}
+
 export default function TuitionMatrix({ matrix, onOpenReceiptModal }: TuitionMatrixProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedMonth, setSelectedMonth] = useState('all');
@@ -64,8 +95,13 @@ export default function TuitionMatrix({ matrix, onOpenReceiptModal }: TuitionMat
     const matchesSchedule =
       scheduleFilter === 'all' || (row.schedule || '2-4-6') === scheduleFilter;
 
+    const targetMonth = Number(selectedMonth);
     const matchesMonth =
-      selectedMonth === 'all' || row.months[Number(selectedMonth)] !== undefined;
+      selectedMonth === 'all' ||
+      row.months[targetMonth] !== null ||
+      Object.values(row.months).some(
+        (mObj) => mObj && getReceiptPaymentMonth(mObj.receipt_date) === targetMonth
+      );
 
     return matchesSearch && matchesSchedule && matchesMonth;
   });
@@ -148,10 +184,10 @@ export default function TuitionMatrix({ matrix, onOpenReceiptModal }: TuitionMat
         {/* Legend Badges */}
         <div className="flex items-center space-x-3 text-[11px] font-semibold text-slate-600 shrink-0 pt-2 lg:pt-0 border-t lg:border-t-0 border-slate-100">
           <span className="flex items-center gap-1">
-            <span className="w-2.5 h-2.5 rounded-full bg-emerald-600 inline-block"></span> Đã đóng
+            <span className="w-2.5 h-2.5 rounded-full bg-emerald-600 inline-block"></span> Đúng hạn
           </span>
           <span className="flex items-center gap-1">
-            <span className="w-2.5 h-2.5 rounded-full bg-amber-500 inline-block"></span> Lưu máy
+            <span className="w-2.5 h-2.5 rounded-full bg-amber-500 inline-block"></span> Đóng bù / Lưu máy
           </span>
           <span className="flex items-center gap-1">
             <span className="w-2.5 h-2.5 rounded-full bg-slate-200 border border-slate-300 inline-block"></span> Chưa đóng
@@ -171,7 +207,7 @@ export default function TuitionMatrix({ matrix, onOpenReceiptModal }: TuitionMat
         <div className="overflow-auto max-h-[calc(100vh-210px)] scrollbar-thin">
           <table className="w-full text-left border-collapse min-w-[650px]">
             <thead className="sticky top-0 z-20 shadow-xs bg-slate-50">
-              {/* Row 1: Thống kê số lượng học sinh đóng học từng tháng */}
+              {/* Row 1: Thống kê số lượng học sinh đóng học thực tế trong từng tháng */}
               <tr className="bg-emerald-50 border-b border-emerald-100 text-[11px] font-extrabold text-[#014D2F]">
                 <th
                   colSpan={2}
@@ -180,7 +216,7 @@ export default function TuitionMatrix({ matrix, onOpenReceiptModal }: TuitionMat
                   Số HS đã đóng
                 </th>
                 {visibleMonths.map((m) => {
-                  const paidCount = filteredMatrix.filter((r) => r.months[m] !== null).length;
+                  const paidCount = getActualPaidCountForMonth(filteredMatrix, m);
                   return (
                     <th key={m} className="py-2.5 px-1 text-center font-extrabold text-[#014D2F] whitespace-nowrap min-w-[52px] bg-emerald-50">
                       {paidCount}
@@ -243,6 +279,7 @@ export default function TuitionMatrix({ matrix, onOpenReceiptModal }: TuitionMat
                     {/* 3. Các cột Tháng T1..T12 */}
                     {visibleMonths.map((m) => {
                       const data = row.months[m];
+                      const isLate = data && isLatePayment(m, data.receipt_date);
                       return (
                         <td key={m} className="py-2 px-1 text-center whitespace-nowrap min-w-[52px]">
                           {data ? (
@@ -257,18 +294,27 @@ export default function TuitionMatrix({ matrix, onOpenReceiptModal }: TuitionMat
                               className={`w-full py-1.5 px-1 rounded-lg text-white font-bold text-xs transition-all shadow-xs flex items-center justify-center gap-1 whitespace-nowrap ${
                                 data.is_pending_local
                                   ? 'bg-amber-500 hover:bg-amber-600 animate-pulse'
+                                  : isLate
+                                  ? 'bg-amber-500 hover:bg-amber-600'
                                   : 'bg-emerald-600 hover:bg-[#014D2F]'
                               }`}
                               title={
                                 data.is_pending_local
                                   ? 'Đã lưu trong máy (Đang tự động đồng bộ CSDL)'
-                                  : `Đã đóng ngày ${data.receipt_date} - Xem biên lai`
+                                  : isLate
+                                  ? `Đã đóng bù vào ngày ${cleanDisplayDate(data.receipt_date)} - Xem biên lai`
+                                  : `Đã đóng ngày ${cleanDisplayDate(data.receipt_date)} - Xem biên lai`
                               }
                             >
                               {data.is_pending_local ? (
                                 <>
                                   <Loader2 className="w-3.5 h-3.5 animate-spin shrink-0" />
                                   <span>Lưu máy</span>
+                                </>
+                              ) : isLate ? (
+                                <>
+                                  <Clock className="w-3.5 h-3.5 shrink-0" />
+                                  <span>Đóng bù</span>
                                 </>
                               ) : (
                                 <>
