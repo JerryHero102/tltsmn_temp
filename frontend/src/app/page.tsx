@@ -7,7 +7,7 @@ import Sidebar from '@/components/Sidebar';
 import StudentList from '@/components/StudentList';
 import TuitionMatrix from '@/components/TuitionMatrix';
 import ReceiptModal from '@/components/ReceiptModal';
-import { api, PendingReceipt } from '@/lib/api';
+import { api } from '@/lib/api';
 import { Loader2, RefreshCw, Users, Receipt as ReceiptIcon } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -113,25 +113,25 @@ export default function DashboardPage() {
         onOpenReceiptModal={() => handleOpenReceiptModal()}
       />
 
-      {/* Main Right Content */}
-      <main className="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto w-full space-y-6">
+      {/* Main Right Content - p-4 padding around context */}
+      <main className="flex-1 p-4 max-w-7xl mx-auto w-full space-y-4">
         {/* Header Title */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200/80 pb-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200/80 pb-3">
           <div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight flex items-center gap-3">
+            <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2.5">
               {activeTab === 'students' ? (
                 <>
-                  <Users className="w-8 h-8 text-[#014D2F]" />
+                  <Users className="w-7 h-7 text-[#014D2F]" />
                   <span>Quản Lý Thông Tin Học Viên</span>
                 </>
               ) : (
                 <>
-                  <ReceiptIcon className="w-8 h-8 text-[#014D2F]" />
+                  <ReceiptIcon className="w-7 h-7 text-[#014D2F]" />
                   <span>Quản Lý Học Phí Hàng Tháng</span>
                 </>
               )}
             </h1>
-            <p className="text-xs sm:text-sm text-slate-500 mt-1">
+            <p className="text-xs text-slate-500 mt-0.5">
               {activeTab === 'students'
                 ? `Danh sách tổng hợp ${students.length} học viên đang theo học`
                 : 'Bảng theo dõi trạng thái đóng học phí 12 tháng'}
@@ -145,10 +145,10 @@ export default function DashboardPage() {
                 api.syncPendingReceipts(fetchData);
               }}
               disabled={loadingData}
-              className="p-2.5 rounded-xl bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors shadow-xs flex items-center gap-1.5 text-xs font-semibold"
+              className="px-3 py-2 rounded-xl bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors shadow-xs flex items-center gap-1.5 text-xs font-semibold"
               title="Làm mới & Đồng bộ"
             >
-              <RefreshCw className={`w-4 h-4 ${loadingData ? 'animate-spin' : ''}`} />
+              <RefreshCw className={`w-3.5 h-3.5 ${loadingData ? 'animate-spin' : ''}`} />
               <span>Đồng bộ CSDL</span>
             </button>
           </div>

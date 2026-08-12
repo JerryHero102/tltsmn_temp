@@ -63,9 +63,9 @@ export default function TuitionMatrix({ matrix, onOpenReceiptModal }: TuitionMat
     : [Number(selectedMonth)];
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       {/* Filter Header: Search + Filter by Month + Filter by Schedule */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 bg-white p-3.5 sm:p-4 rounded-2xl shadow-xs border border-slate-100">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 bg-white p-3 sm:p-3.5 rounded-2xl shadow-xs border border-slate-100">
         <div className="flex flex-col sm:flex-row items-center gap-2.5 flex-1 w-full">
           {/* Search Input */}
           <div className="relative flex-1 w-full">
@@ -75,7 +75,7 @@ export default function TuitionMatrix({ matrix, onOpenReceiptModal }: TuitionMat
               placeholder="Tìm theo tên học viên, SĐT..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#014D2F] bg-slate-50/50 font-medium"
+              className="w-full pl-10 pr-4 py-2 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#014D2F] bg-slate-50/50 font-medium"
             />
           </div>
 
@@ -85,7 +85,7 @@ export default function TuitionMatrix({ matrix, onOpenReceiptModal }: TuitionMat
             <select
               value={selectedMonth}
               onChange={(e) => setSelectedMonth(e.target.value)}
-              className="w-full pl-9 pr-3 py-2.5 text-xs sm:text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#014D2F] bg-white font-semibold text-slate-700"
+              className="w-full pl-9 pr-3 py-2 text-xs sm:text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#014D2F] bg-white font-semibold text-slate-700"
             >
               <option value="all">Tất cả 12 tháng</option>
               {Array.from({ length: 12 }, (_, i) => i + 1).map((m) => (
@@ -100,7 +100,7 @@ export default function TuitionMatrix({ matrix, onOpenReceiptModal }: TuitionMat
             <select
               value={scheduleFilter}
               onChange={(e) => setScheduleFilter(e.target.value)}
-              className="w-full pl-9 pr-3 py-2.5 text-xs sm:text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#014D2F] bg-white font-semibold text-slate-700"
+              className="w-full pl-9 pr-3 py-2 text-xs sm:text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#014D2F] bg-white font-semibold text-slate-700"
             >
               <option value="all">Tất cả ca học</option>
               <option value="2-4-6">Ca 2-4-6</option>
@@ -124,8 +124,8 @@ export default function TuitionMatrix({ matrix, onOpenReceiptModal }: TuitionMat
         </div>
       </div>
 
-      {/* MOBILE VIEW (Compact student cards, no line breaks, grouped layout) */}
-      <div className="md:hidden space-y-2.5">
+      {/* MOBILE VIEW (Compact student cards, single line, no line break) */}
+      <div className="md:hidden space-y-2">
         {filteredMatrix.length === 0 ? (
           <div className="bg-white p-6 rounded-2xl text-center text-slate-400 text-sm border border-slate-100">
             Không tìm thấy thông tin đóng học phí nào.
@@ -134,7 +134,7 @@ export default function TuitionMatrix({ matrix, onOpenReceiptModal }: TuitionMat
           filteredMatrix.map((row, idx) => (
             <div
               key={row.id_profile}
-              className="bg-white p-3.5 rounded-2xl border border-slate-100 shadow-xs flex flex-col justify-between space-y-2.5"
+              className="bg-white p-3 rounded-2xl border border-slate-100 shadow-xs flex flex-col justify-between space-y-2"
             >
               {/* Header: STT + Fullname (No wrapping line) + Schedule badge */}
               <div className="flex items-center justify-between gap-2 border-b border-slate-50 pb-2">
@@ -142,13 +142,13 @@ export default function TuitionMatrix({ matrix, onOpenReceiptModal }: TuitionMat
                   <span className="w-6 h-6 rounded-full bg-slate-100 text-slate-500 font-bold text-xs flex items-center justify-center shrink-0">
                     {idx + 1}
                   </span>
-                  <span className="font-bold text-slate-900 text-sm truncate">
+                  <span className="font-bold text-slate-900 text-sm truncate whitespace-nowrap">
                     {row.fullname}
                   </span>
                 </div>
                 <div className="flex items-center space-x-1.5 shrink-0">
                   <span
-                    className={`px-2 py-0.5 rounded-md text-[11px] font-semibold ${
+                    className={`px-2 py-0.5 rounded-md text-[11px] font-semibold whitespace-nowrap ${
                       row.schedule === '2-4-6'
                         ? 'bg-emerald-100 text-[#014D2F]'
                         : row.schedule === '3-5-7'
@@ -158,23 +158,17 @@ export default function TuitionMatrix({ matrix, onOpenReceiptModal }: TuitionMat
                   >
                     Ca {row.schedule || '2-4-6'}
                   </span>
-                  {row.phone_number && (
-                    <span className="font-mono text-slate-400 text-[11px]">
-                      {row.phone_number}
-                    </span>
-                  )}
                 </div>
               </div>
 
-              {/* Month Status Display (If a single month is filtered vs All months) */}
+              {/* Month Status Display */}
               {selectedMonth !== 'all' ? (
-                // Single Month Card Action
                 (() => {
                   const m = Number(selectedMonth);
                   const data = row.months[m];
                   return (
-                    <div className="flex items-center justify-between bg-slate-50/80 p-2.5 rounded-xl border border-slate-100">
-                      <span className="font-bold text-xs text-slate-700">Tháng {m}:</span>
+                    <div className="flex items-center justify-between bg-slate-50/80 p-2 rounded-xl border border-slate-100">
+                      <span className="font-bold text-xs text-slate-700 whitespace-nowrap">Tháng {m}:</span>
                       {data ? (
                         <button
                           onClick={() =>
@@ -184,7 +178,7 @@ export default function TuitionMatrix({ matrix, onOpenReceiptModal }: TuitionMat
                               receipt: data,
                             })
                           }
-                          className={`px-3 py-1.5 rounded-lg text-white font-semibold text-xs transition-all shadow-xs flex items-center gap-1.5 ${
+                          className={`px-3 py-1.5 rounded-lg text-white font-semibold text-xs transition-all shadow-xs flex items-center gap-1.5 whitespace-nowrap ${
                             data.is_pending_local
                               ? 'bg-amber-500 hover:bg-amber-600 animate-pulse'
                               : 'bg-emerald-600 hover:bg-[#014D2F]'
@@ -205,7 +199,7 @@ export default function TuitionMatrix({ matrix, onOpenReceiptModal }: TuitionMat
                       ) : (
                         <button
                           onClick={() => onOpenReceiptModal(row.id_profile, m)}
-                          className="px-3 py-1.5 rounded-lg bg-[#014D2F] text-white hover:bg-[#013822] text-xs font-semibold transition-all shadow-xs flex items-center gap-1"
+                          className="px-3 py-1.5 rounded-lg bg-[#014D2F] text-white hover:bg-[#013822] text-xs font-semibold transition-all shadow-xs flex items-center gap-1 whitespace-nowrap"
                         >
                           <Plus className="w-3.5 h-3.5" />
                           <span>Đóng học phí T{m}</span>
@@ -215,7 +209,6 @@ export default function TuitionMatrix({ matrix, onOpenReceiptModal }: TuitionMat
                   );
                 })()
               ) : (
-                // Horizontal 12 Months Pill Bar
                 <div className="flex items-center gap-1 overflow-x-auto pb-1 scrollbar-none">
                   {Array.from({ length: 12 }, (_, i) => i + 1).map((m) => {
                     const data = row.months[m];
@@ -233,7 +226,7 @@ export default function TuitionMatrix({ matrix, onOpenReceiptModal }: TuitionMat
                             onOpenReceiptModal(row.id_profile, m);
                           }
                         }}
-                        className={`px-2 py-1 rounded-lg font-bold text-[11px] shrink-0 transition-all ${
+                        className={`px-2 py-1 rounded-lg font-bold text-[11px] shrink-0 transition-all whitespace-nowrap ${
                           data?.is_pending_local
                             ? 'bg-amber-500 text-white animate-pulse'
                             : data
@@ -253,20 +246,20 @@ export default function TuitionMatrix({ matrix, onOpenReceiptModal }: TuitionMat
         )}
       </div>
 
-      {/* DESKTOP MATRIX TABLE VIEW */}
+      {/* DESKTOP MATRIX TABLE VIEW - Strictly 1 single row header & clean icon-only + buttons */}
       <div className="hidden md:block bg-white rounded-2xl shadow-xs border border-slate-100 overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse min-w-[900px]">
+          <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-slate-50 border-b border-slate-200/80 text-xs font-bold text-slate-500 uppercase tracking-wider">
-                <th className="py-4 px-3 text-center w-10">STT</th>
-                <th className="py-4 px-4 sticky left-0 bg-slate-50 z-10 w-44 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.05)]">
+                <th className="py-3.5 px-3 text-center w-10 whitespace-nowrap">STT</th>
+                <th className="py-3.5 px-4 sticky left-0 bg-slate-50 z-10 w-44 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.05)] whitespace-nowrap">
                   Họ và Tên
                 </th>
-                <th className="py-4 px-3 text-center w-24">Ca học</th>
+                <th className="py-3.5 px-3 text-center w-24 whitespace-nowrap">Ca học</th>
                 {visibleMonths.map((m) => (
-                  <th key={m} className="py-4 px-2 text-center text-[11px] font-bold text-slate-600 min-w-[60px]">
-                    Tháng {m}
+                  <th key={m} className="py-3.5 px-2 text-center text-xs font-bold text-slate-600 whitespace-nowrap min-w-[50px]">
+                    T{m}
                   </th>
                 ))}
               </tr>
@@ -281,13 +274,13 @@ export default function TuitionMatrix({ matrix, onOpenReceiptModal }: TuitionMat
               ) : (
                 filteredMatrix.map((row, idx) => (
                   <tr key={row.id_profile} className="hover:bg-slate-50/80 transition-colors">
-                    <td className="py-3 px-3 text-center font-bold text-slate-400 text-xs">{idx + 1}</td>
-                    <td className="py-3 px-4 sticky left-0 bg-white z-10 font-bold text-slate-900 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.05)] truncate">
+                    <td className="py-3 px-3 text-center font-bold text-slate-400 text-xs whitespace-nowrap">{idx + 1}</td>
+                    <td className="py-3 px-4 sticky left-0 bg-white z-10 font-bold text-slate-900 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.05)] whitespace-nowrap truncate">
                       {row.fullname}
                     </td>
-                    <td className="py-3 px-3 text-center">
+                    <td className="py-3 px-3 text-center whitespace-nowrap">
                       <span
-                        className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold ${
+                        className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold whitespace-nowrap ${
                           row.schedule === '2-4-6'
                             ? 'bg-emerald-100 text-[#014D2F]'
                             : row.schedule === '3-5-7'
@@ -301,7 +294,7 @@ export default function TuitionMatrix({ matrix, onOpenReceiptModal }: TuitionMat
                     {visibleMonths.map((m) => {
                       const data = row.months[m];
                       return (
-                        <td key={m} className="py-3 px-1 text-center">
+                        <td key={m} className="py-2.5 px-1 text-center whitespace-nowrap">
                           {data ? (
                             <button
                               onClick={() =>
@@ -311,7 +304,7 @@ export default function TuitionMatrix({ matrix, onOpenReceiptModal }: TuitionMat
                                   receipt: data,
                                 })
                               }
-                              className={`w-full py-1.5 px-1.5 rounded-lg text-white font-semibold text-xs transition-all shadow-xs flex items-center justify-center gap-1 ${
+                              className={`w-full py-1.5 px-1 rounded-lg text-white font-bold text-xs transition-all shadow-xs flex items-center justify-center gap-1 whitespace-nowrap ${
                                 data.is_pending_local
                                   ? 'bg-amber-500 hover:bg-amber-600 animate-pulse'
                                   : 'bg-emerald-600 hover:bg-[#014D2F]'
@@ -324,24 +317,24 @@ export default function TuitionMatrix({ matrix, onOpenReceiptModal }: TuitionMat
                             >
                               {data.is_pending_local ? (
                                 <>
-                                  <Loader2 className="w-3 h-3 animate-spin shrink-0" />
+                                  <Loader2 className="w-3.5 h-3.5 animate-spin shrink-0" />
                                   <span>Lưu máy</span>
                                 </>
                               ) : (
                                 <>
-                                  <CheckCircle className="w-3 h-3 shrink-0" />
+                                  <CheckCircle className="w-3.5 h-3.5 shrink-0" />
                                   <span>Đóng</span>
                                 </>
                               )}
                             </button>
                           ) : (
+                            /* Icon + Only inside content table (bỏ chữ Tháng X) */
                             <button
                               onClick={() => onOpenReceiptModal(row.id_profile, m)}
-                              className="w-full py-1.5 px-1.5 rounded-lg bg-slate-100 hover:bg-emerald-50 hover:text-[#014D2F] border border-slate-200 text-slate-400 text-xs font-medium transition-all flex items-center justify-center gap-1"
-                              title={`Thêm biên lai cho Tháng ${m}`}
+                              className="w-full py-1.5 px-1 rounded-lg bg-slate-100/90 hover:bg-emerald-100 hover:text-[#014D2F] border border-slate-200/80 text-slate-400 text-xs font-bold transition-all flex items-center justify-center"
+                              title={`Thêm biên lai Tháng ${m}`}
                             >
-                              <Plus className="w-3.5 h-3.5 shrink-0" />
-                              <span>Tháng {m}</span>
+                              <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
                             </button>
                           )}
                         </td>
