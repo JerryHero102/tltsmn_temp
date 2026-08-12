@@ -1,5 +1,8 @@
 function getApiBaseUrl(): string {
-  let envUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api';
+  if (typeof window !== 'undefined') {
+    return '/api';
+  }
+  let envUrl = process.env.NEXT_PUBLIC_API_URL || 'https://api.thieulamtaysonmiennam.id.vn/api';
   envUrl = envUrl.replace(/\/+$/, '');
   if (!envUrl.endsWith('/api')) {
     envUrl = `${envUrl}/api`;
