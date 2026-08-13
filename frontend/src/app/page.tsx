@@ -8,7 +8,7 @@ import StudentList from '@/components/StudentList';
 import TuitionMatrix from '@/components/TuitionMatrix';
 import ReceiptModal from '@/components/ReceiptModal';
 import { api } from '@/lib/api';
-import { Loader2, RefreshCw, Users, Receipt as ReceiptIcon, ArrowUp } from 'lucide-react';
+import { Loader2, RefreshCw, Users, Receipt as ReceiptIcon, ArrowUp, UserPlus } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function DashboardPage() {
@@ -20,6 +20,7 @@ export default function DashboardPage() {
   const [tuitionMatrix, setTuitionMatrix] = useState<any[]>([]);
   const [loadingData, setLoadingData] = useState(true);
   const [showScrollTop, setShowScrollTop] = useState(false);
+  const [isAddStudentModalOpen, setIsAddStudentModalOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -135,42 +136,49 @@ export default function DashboardPage() {
 
       {/* Main Right Content - p-4 padding around context */}
       <main className="flex-1 p-4 max-w-7xl mx-auto w-full space-y-4">
-        {/* Header Title with Sync Button on the far right of title line */}
+        {/* Header Title with Sync Button & Add Student Button on the far right of title line */}
         <div className="border-b border-slate-200/80 pb-3">
           <div className="flex items-center justify-between gap-3">
-            <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2.5 min-w-0">
+            <h1 className="text-lg sm:text-xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2 min-w-0">
               {activeTab === 'students' ? (
                 <>
-                  <Users className="w-6 h-6 sm:w-7 sm:h-7 text-[#014D2F] shrink-0" />
+                  <Users className="w-5 h-5 sm:w-6 sm:h-6 text-[#014D2F] shrink-0" />
                   <span className="truncate">Quản Lý Thông Tin Học Viên</span>
                 </>
               ) : (
                 <>
-                  <ReceiptIcon className="w-6 h-6 sm:w-7 sm:h-7 text-[#014D2F] shrink-0" />
+                  <ReceiptIcon className="w-5 h-5 sm:w-6 sm:h-6 text-[#014D2F] shrink-0" />
                   <span className="truncate">Quản Lý Học Phí Hàng Tháng</span>
                 </>
               )}
             </h1>
 
-            <button
-              onClick={() => {
-                fetchData();
-                api.syncPendingReceipts(fetchData);
-              }}
-              disabled={loadingData}
-              className="p-2 sm:p-2.5 rounded-xl bg-white border border-slate-200 text-[#014D2F] hover:bg-emerald-50 hover:border-emerald-300 transition-all shadow-xs shrink-0 flex items-center justify-center active:scale-95"
-              title="Làm mới & Đồng bộ CSDL"
-              aria-label="Đồng bộ CSDL"
-            >
-              <RefreshCw className={`w-5 h-5 sm:w-5.5 sm:h-5.5 ${loadingData ? 'animate-spin' : ''}`} />
-            </button>
-          </div>
+            <div className="flex items-center gap-2 shrink-0">
+              {activeTab === 'students' && user?.role === 'admin' && (
+                <button
+                  onClick={() => setIsAddStudentModalOpen(true)}
+                  className="px-3 py-2 sm:px-3.5 sm:py-2 rounded-xl bg-[#014D2F] hover:bg-[#013822] text-white font-bold text-xs sm:text-sm transition-all shadow-xs flex items-center gap-1.5 shrink-0 active:scale-95"
+                  title="Thêm học viên mới"
+                >
+                  <UserPlus className="w-4 h-4" />
+                  <span>Thêm</span>
+                </button>
+              )}
 
-          <p className="text-xs text-slate-500 mt-1">
-            {activeTab === 'students'
-              ? `Danh sách tổng hợp ${students.length} học viên đang theo học`
-              : 'Bảng theo dõi trạng thái đóng học phí 12 tháng'}
-          </p>
+              <button
+                onClick={() => {
+                  fetchData();
+                  api.syncPendingReceipts(fetchData);
+                }}
+                disabled={loadingData}
+                className="p-2 sm:p-2.5 rounded-xl bg-white border border-slate-200 text-[#014D2F] hover:bg-emerald-50 hover:border-emerald-300 transition-all shadow-xs shrink-0 flex items-center justify-center active:scale-95"
+                title="Làm mới & Đồng bộ CSDL"
+                aria-label="Đồng bộ CSDL"
+              >
+                <RefreshCw className={`w-5 h-5 sm:w-5.5 sm:h-5.5 ${loadingData ? 'animate-spin' : ''}`} />
+              </button>
+            </div>
+          </div>
         </div>
 
         {/* Dynamic Content View */}
@@ -183,6 +191,8 @@ export default function DashboardPage() {
             students={students}
             onRefresh={fetchData}
             onOpenReceiptForStudent={(stId) => handleOpenReceiptModal(stId)}
+            isExternalAddModalOpen={isAddStudentModalOpen}
+            onCloseExternalAddModal={() => setIsAddStudentModalOpen(false)}
           />
         ) : (
           <TuitionMatrix
