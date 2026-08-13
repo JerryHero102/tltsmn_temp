@@ -13,7 +13,6 @@ import {
   Filter,
   RotateCcw,
   Edit3,
-  Clock,
 } from "lucide-react";
 import { matchSearch } from "@/lib/api";
 
@@ -83,6 +82,15 @@ function isLatePayment(
   const actualPaidMonth = getReceiptPaymentMonth(receiptDateStr);
   if (actualPaidMonth <= 0) return false;
   return actualPaidMonth > forMonth;
+}
+
+function isEarlyPayment(
+  forMonth: number,
+  receiptDateStr?: string | null,
+): boolean {
+  const actualPaidMonth = getReceiptPaymentMonth(receiptDateStr);
+  if (actualPaidMonth <= 0) return false;
+  return actualPaidMonth < forMonth;
 }
 
 function getActualPaidCountForMonth(
@@ -240,6 +248,10 @@ export default function TuitionMatrix({
               Đúng hạn
             </span>
             <span className="flex items-center gap-1">
+              <span className="w-2.5 h-2.5 rounded-full bg-blue-600 inline-block"></span>{" "}
+              Đóng sớm
+            </span>
+            <span className="flex items-center gap-1">
               <span className="w-2.5 h-2.5 rounded-full bg-amber-500 inline-block"></span>{" "}
               Đóng bù / Lưu máy
             </span>
@@ -264,7 +276,7 @@ export default function TuitionMatrix({
       {/* UNIFIED MATRIX TABLE VIEW (Mobile + Desktop) */}
       <div className="bg-white rounded-2xl shadow-xs border border-slate-100 overflow-hidden">
         <div className="overflow-auto max-h-[calc(100vh-220px)] scrollbar-thin">
-          <table className="w-full text-left border-collapse min-w-[650px]">
+          <table className="w-full text-left border-collapse min-w-162.5">
             <thead className="sticky top-0 z-20 shadow-xs bg-slate-100">
               {/* Desktop Stat Summary Row on top of table header (Matching StudentList.tsx) */}
               <tr className="hidden md:table-row bg-[#014D2F]/5 border-b border-emerald-100/80 text-xs font-extrabold text-[#014D2F]">
@@ -280,7 +292,7 @@ export default function TuitionMatrix({
                 <th className="py-2.5 px-1 text-center w-7 sticky left-0 bg-slate-100 z-30 whitespace-nowrap border-r border-slate-200/60">
                   STT
                 </th>
-                <th className="py-2.5 px-2.5 sticky left-7 bg-slate-100 z-30 min-w-[125px] max-w-[160px] shadow-[2px_0_5px_-2px_rgba(0,0,0,0.08)] border-r border-slate-200/60 whitespace-nowrap">
+                <th className="py-2.5 px-2.5 sticky left-7 bg-slate-100 z-30 min-w-31.25 max-w-40 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.08)] border-r border-slate-200/60 whitespace-nowrap">
                   Họ và Tên
                 </th>
                 {visibleMonths.map((m) => {
@@ -291,7 +303,7 @@ export default function TuitionMatrix({
                   return (
                     <th
                       key={m}
-                      className="py-2 px-1 text-center whitespace-nowrap min-w-[54px] bg-slate-100/95 border-r border-slate-200/40"
+                      className="py-2 px-1 text-center whitespace-nowrap min-w-13.5 bg-slate-100/95 border-r border-slate-200/40"
                     >
                       <div className="text-xs font-extrabold text-slate-800">
                         T{m}
@@ -334,7 +346,7 @@ export default function TuitionMatrix({
                     </td>
 
                     {/* 2. Cố định Cột Họ và Tên + Ca học thu nhỏ ở dưới tên */}
-                    <td className="py-2.5 px-2.5 sticky left-7 bg-white z-10 min-w-[125px] max-w-[160px] shadow-[2px_0_5px_-2px_rgba(0,0,0,0.08)] border-r border-slate-100 whitespace-nowrap">
+                    <td className="py-2.5 px-2.5 sticky left-7 bg-white z-10 min-w-31.25 max-w-40 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.08)] border-r border-slate-100 whitespace-nowrap">
                       <div className="font-bold text-slate-900 text-xs sm:text-sm truncate">
                         {row.fullname}
                       </div>
@@ -358,10 +370,12 @@ export default function TuitionMatrix({
                       const data = row.months[m];
                       const isLate =
                         data && isLatePayment(m, data.receipt_date);
+                      const isEarly =
+                        data && isEarlyPayment(m, data.receipt_date);
                       return (
                         <td
                           key={m}
-                          className="py-2 px-1 text-center whitespace-nowrap min-w-[52px]"
+                          className="py-2 px-1 text-center whitespace-nowrap min-w-13"
                         >
                           {data ? (
                             <button
@@ -375,22 +389,31 @@ export default function TuitionMatrix({
                               className={`w-full py-1.5 px-1 rounded-lg text-white font-bold text-xs transition-all shadow-xs flex items-center justify-center gap-1 whitespace-nowrap ${
                                 data.is_pending_local
                                   ? "bg-amber-500 hover:bg-amber-600 animate-pulse"
-                                  : isLate
-                                    ? "bg-amber-500 hover:bg-amber-600"
-                                    : "bg-emerald-600 hover:bg-[#014D2F]"
+                                  : isEarly
+                                    ? "bg-blue-600 hover:bg-blue-700"
+                                    : isLate
+                                      ? "bg-amber-500 hover:bg-amber-600"
+                                      : "bg-emerald-600 hover:bg-[#014D2F]"
                               }`}
                               title={
                                 data.is_pending_local
                                   ? "Đã lưu trong máy (Đang tự động đồng bộ CSDL)"
-                                  : isLate
-                                    ? `Đã đóng bù vào ngày ${cleanDisplayDate(data.receipt_date)} - Xem biên lai`
-                                    : `Đã đóng ngày ${cleanDisplayDate(data.receipt_date)} - Xem biên lai`
+                                  : isEarly
+                                    ? `Đã đóng sớm vào ngày ${cleanDisplayDate(data.receipt_date)} - Xem biên lai`
+                                    : isLate
+                                      ? `Đã đóng bù vào ngày ${cleanDisplayDate(data.receipt_date)} - Xem biên lai`
+                                      : `Đã đóng ngày ${cleanDisplayDate(data.receipt_date)} - Xem biên lai`
                               }
                             >
                               {data.is_pending_local ? (
                                 <>
                                   <Loader2 className="w-3.5 h-3.5 animate-spin shrink-0" />
                                   <span>Lưu máy</span>
+                                </>
+                              ) : isEarly ? (
+                                <>
+                                  <CheckCircle className="w-3.5 h-3.5 shrink-0" />
+                                  <span>Sớm</span>
                                 </>
                               ) : isLate ? (
                                 <>
