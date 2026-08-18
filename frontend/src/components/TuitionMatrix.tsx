@@ -274,7 +274,11 @@ export default function TuitionMatrix({
       {/* UNIFIED MATRIX TABLE VIEW (Mobile + Desktop) */}
       <div className="bg-white rounded-2xl shadow-xs border border-slate-100 overflow-hidden">
         <div className="overflow-auto max-h-[calc(100vh-220px)] scrollbar-thin">
-          <table className="w-full text-left border-collapse min-w-162.5">
+          <table
+            className={`w-full text-left border-collapse ${
+              selectedMonth === "all" ? "min-w-[680px]" : "w-full"
+            }`}
+          >
             <thead className="sticky top-0 z-20 shadow-xs bg-slate-100">
               {/* Desktop Stat Summary Row on top of table header (Matching StudentList.tsx) */}
               <tr className="hidden md:table-row bg-[#014D2F]/5 border-b border-emerald-100/80 text-xs font-extrabold text-[#014D2F]">
@@ -287,10 +291,20 @@ export default function TuitionMatrix({
                 </th>
               </tr>
               <tr className="bg-slate-100 border-b border-slate-200/90 text-xs font-bold text-slate-700 uppercase tracking-wider">
-                <th className="py-2.5 px-1 text-center w-7 sticky left-0 bg-slate-100 z-30 whitespace-nowrap border-r border-slate-200/60">
+                <th
+                  className={`py-2.5 px-1 text-center w-8 min-w-8 bg-slate-100 border-r border-slate-200/60 whitespace-nowrap ${
+                    selectedMonth === "all" ? "sticky left-0 z-30" : ""
+                  }`}
+                >
                   STT
                 </th>
-                <th className="py-2.5 px-2.5 sticky left-7 bg-slate-100 z-30 min-w-31.25 max-w-40 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.08)] border-r border-slate-200/60 whitespace-nowrap">
+                <th
+                  className={`py-2.5 px-2.5 bg-slate-100 border-r border-slate-200/60 whitespace-nowrap ${
+                    selectedMonth === "all"
+                      ? "sticky left-8 z-30 min-w-32 max-w-40 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.08)]"
+                      : "min-w-30 sm:min-w-44 max-w-48 sm:max-w-none"
+                  }`}
+                >
                   Họ và Tên
                 </th>
                 {visibleMonths.map((m) => {
@@ -301,7 +315,11 @@ export default function TuitionMatrix({
                   return (
                     <th
                       key={m}
-                      className="py-2 px-1 text-center whitespace-nowrap min-w-13.5 bg-slate-100/95 border-r border-slate-200/40"
+                      className={`py-2 px-1 text-center whitespace-nowrap bg-slate-100/95 border-r border-slate-200/40 ${
+                        selectedMonth === "all"
+                          ? "min-w-13.5"
+                          : "min-w-24 sm:min-w-32"
+                      }`}
                     >
                       <div className="text-xs font-extrabold text-slate-800">
                         T{m}
@@ -338,13 +356,23 @@ export default function TuitionMatrix({
                     key={row.id_profile}
                     className="hover:bg-slate-50/80 transition-colors"
                   >
-                    {/* 1. Cố định Cột STT */}
-                    <td className="py-2.5 px-1 text-center font-bold text-slate-400 text-xs sticky left-0 bg-white z-10 whitespace-nowrap w-7 border-r border-slate-100">
+                    {/* 1. Cột STT */}
+                    <td
+                      className={`py-2.5 px-1 text-center font-bold text-slate-400 text-xs bg-white whitespace-nowrap w-8 min-w-8 border-r border-slate-100 ${
+                        selectedMonth === "all" ? "sticky left-0 z-10" : ""
+                      }`}
+                    >
                       {idx + 1}
                     </td>
 
-                    {/* 2. Cố định Cột Họ và Tên + Ca học thu nhỏ ở dưới tên */}
-                    <td className="py-2.5 px-2.5 sticky left-7 bg-white z-10 min-w-31.25 max-w-40 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.08)] border-r border-slate-100 whitespace-nowrap">
+                    {/* 2. Cột Họ và Tên + Ca học thu nhỏ ở dưới tên */}
+                    <td
+                      className={`py-2.5 px-2.5 bg-white border-r border-slate-100 whitespace-nowrap ${
+                        selectedMonth === "all"
+                          ? "sticky left-8 z-10 min-w-32 max-w-40 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.08)]"
+                          : "min-w-30 sm:min-w-44 max-w-48 sm:max-w-none"
+                      }`}
+                    >
                       <div className="font-bold text-slate-900 text-xs sm:text-sm truncate">
                         {row.fullname}
                       </div>
@@ -363,7 +391,7 @@ export default function TuitionMatrix({
                       </div>
                     </td>
 
-                    {/* 3. Các cột Tháng T1..T12 */}
+                    {/* 3. Các cột Tháng */}
                     {visibleMonths.map((m) => {
                       const data = row.months[m];
                       const isLate =
@@ -373,7 +401,11 @@ export default function TuitionMatrix({
                       return (
                         <td
                           key={m}
-                          className="py-2 px-1 text-center whitespace-nowrap min-w-13"
+                          className={`py-2 px-1 text-center whitespace-nowrap ${
+                            selectedMonth === "all"
+                              ? "min-w-13"
+                              : "min-w-24 sm:min-w-32"
+                          }`}
                         >
                           {data ? (
                             <button
@@ -384,7 +416,11 @@ export default function TuitionMatrix({
                                   receipt: data,
                                 })
                               }
-                              className={`w-full py-1.5 px-1 rounded-lg text-white font-bold text-xs transition-all shadow-xs flex items-center justify-center gap-1 whitespace-nowrap ${
+                              className={`w-full ${
+                                selectedMonth === "all"
+                                  ? ""
+                                  : "max-w-35 mx-auto"
+                              } py-1.5 px-1 rounded-lg text-white font-bold text-xs transition-all shadow-xs flex items-center justify-center gap-1 whitespace-nowrap ${
                                 data.is_pending_local
                                   ? "bg-amber-500 hover:bg-amber-600 animate-pulse"
                                   : isEarly
