@@ -1,10 +1,26 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import { Search, UserPlus, Edit, DollarSign, Eye, X, User, Phone, Calendar, Mail, MapPin, BookOpen, FileText, Filter, RotateCcw } from 'lucide-react';
-import StudentModal from './StudentModal';
-import { useAuth } from '@/context/AuthContext';
-import { matchSearch } from '@/lib/api';
+import React, { useState, useEffect } from "react";
+import {
+  Search,
+  UserPlus,
+  Edit,
+  DollarSign,
+  Eye,
+  X,
+  User,
+  Phone,
+  Calendar,
+  Mail,
+  MapPin,
+  BookOpen,
+  FileText,
+  Filter,
+  RotateCcw,
+} from "lucide-react";
+import StudentModal from "./StudentModal";
+import { useAuth } from "@/context/AuthContext";
+import { matchSearch } from "@/lib/api";
 
 interface Student {
   profile_id: string;
@@ -37,14 +53,16 @@ export default function StudentList({
   isExternalAddModalOpen,
   onCloseExternalAddModal,
 }: StudentListProps) {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [scheduleFilter, setScheduleFilter] = useState('all');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [scheduleFilter, setScheduleFilter] = useState("all");
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingStudent, setEditingStudent] = useState<Student | undefined>(undefined);
+  const [editingStudent, setEditingStudent] = useState<Student | undefined>(
+    undefined,
+  );
   const [viewingStudent, setViewingStudent] = useState<Student | null>(null);
 
   const { user } = useAuth();
-  const isAdmin = user?.role === 'admin';
+  const isAdmin = user?.role === "admin";
 
   useEffect(() => {
     if (isExternalAddModalOpen) {
@@ -63,14 +81,18 @@ export default function StudentList({
       matchSearch(st.schedule, searchTerm);
 
     const matchesSchedule =
-      scheduleFilter === 'all' || (st.schedule || '2-4-6') === scheduleFilter;
+      scheduleFilter === "all" || (st.schedule || "2-4-6") === scheduleFilter;
 
     return matchesSearch && matchesSchedule;
   });
 
   const countTotal = filteredStudents.length;
-  const count246 = filteredStudents.filter((st) => (st.schedule || '2-4-6') === '2-4-6').length;
-  const count357 = filteredStudents.filter((st) => st.schedule === '3-5-7').length;
+  const count246 = filteredStudents.filter(
+    (st) => (st.schedule || "2-4-6") === "2-4-6",
+  ).length;
+  const count357 = filteredStudents.filter(
+    (st) => st.schedule === "3-5-7",
+  ).length;
 
   const handleOpenAdd = () => {
     setEditingStudent(undefined);
@@ -83,8 +105,8 @@ export default function StudentList({
   };
 
   const handleResetFilters = () => {
-    setSearchTerm('');
-    setScheduleFilter('all');
+    setSearchTerm("");
+    setScheduleFilter("all");
   };
 
   return (
@@ -104,7 +126,7 @@ export default function StudentList({
         </div>
 
         {/* Reset Filter Button */}
-        {(searchTerm || scheduleFilter !== 'all') && (
+        {(searchTerm || scheduleFilter !== "all") && (
           <button
             onClick={handleResetFilters}
             className="px-2.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 font-semibold text-xs transition-colors shrink-0 flex items-center gap-1"
@@ -123,7 +145,7 @@ export default function StudentList({
             onChange={(e) => setScheduleFilter(e.target.value)}
             className="w-full pl-8 pr-2.5 py-2 text-xs sm:text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#014D2F] bg-white font-semibold text-slate-700"
           >
-            <option value="all">Tất cả ca</option>
+            <option value="all">Tất cả</option>
             <option value="2-4-6">Ca 2-4-6</option>
             <option value="3-5-7">Ca 3-5-7</option>
             <option value="Khác">Ca Khác</option>
@@ -204,21 +226,24 @@ export default function StudentList({
               {/* Sub-row: Gộp Giới tính, Năm sinh, Ca học, SĐT trên 1 dòng duy nhất */}
               <div className="flex items-center flex-wrap gap-1.5 text-xs text-slate-600 pt-1 border-t border-slate-50">
                 <span className="px-2 py-0.5 rounded-md bg-slate-100 font-medium text-slate-700">
-                  {st.gender || 'Nữ'}
+                  {st.gender || "Nữ"}
                 </span>
                 <span className="px-2 py-0.5 rounded-md bg-slate-100 font-medium text-slate-700">
-                  {st.birth_year || (st.date_of_birth ? new Date(st.date_of_birth).getFullYear() : '2016')}
+                  {st.birth_year ||
+                    (st.date_of_birth
+                      ? new Date(st.date_of_birth).getFullYear()
+                      : "2016")}
                 </span>
                 <span
                   className={`px-2.5 py-0.5 rounded-md font-semibold ${
-                    st.schedule === '2-4-6'
-                      ? 'bg-emerald-100 text-[#014D2F]'
-                      : st.schedule === '3-5-7'
-                      ? 'bg-blue-100 text-blue-800'
-                      : 'bg-amber-100 text-amber-800'
+                    st.schedule === "2-4-6"
+                      ? "bg-emerald-100 text-[#014D2F]"
+                      : st.schedule === "3-5-7"
+                        ? "bg-blue-100 text-blue-800"
+                        : "bg-amber-100 text-amber-800"
                   }`}
                 >
-                  Ca {st.schedule || '3-5-7'}
+                  Ca {st.schedule || "3-5-7"}
                 </span>
                 {st.phone_number && (
                   <span className="font-mono text-slate-500 text-[11px] ml-auto">
@@ -238,8 +263,12 @@ export default function StudentList({
             <thead>
               {/* Stat Summary Row on top of table header */}
               <tr className="bg-[#014D2F]/5 border-b border-emerald-100/80 text-xs font-extrabold text-[#014D2F]">
-                <th colSpan={9} className="py-2.5 px-4 text-left whitespace-nowrap">
-                  Học viên: {countTotal} &nbsp;|&nbsp; 2-4-6: {count246} &nbsp;|&nbsp; 3-5-7: {count357}
+                <th
+                  colSpan={9}
+                  className="py-2.5 px-4 text-left whitespace-nowrap"
+                >
+                  Học viên: {countTotal} &nbsp;|&nbsp; 2-4-6: {count246}{" "}
+                  &nbsp;|&nbsp; 3-5-7: {count357}
                 </th>
               </tr>
               <tr className="bg-slate-50 border-b border-slate-200/80 text-xs font-bold text-slate-500 uppercase tracking-wider">
@@ -257,7 +286,10 @@ export default function StudentList({
             <tbody className="divide-y divide-slate-100 text-sm font-medium text-slate-800">
               {filteredStudents.length === 0 ? (
                 <tr>
-                  <td colSpan={9} className="py-8 text-center text-slate-400 text-sm">
+                  <td
+                    colSpan={9}
+                    className="py-8 text-center text-slate-400 text-sm"
+                  >
                     Không tìm thấy thông tin học viên nào trong CSDL.
                   </td>
                 </tr>
@@ -268,39 +300,53 @@ export default function StudentList({
                     onClick={() => setViewingStudent(st)}
                     className="hover:bg-emerald-50/40 cursor-pointer transition-colors"
                   >
-                    <td className="py-4 px-4 text-center font-bold text-slate-400">{idx + 1}</td>
+                    <td className="py-4 px-4 text-center font-bold text-slate-400">
+                      {idx + 1}
+                    </td>
                     <td className="py-4 px-6">
                       <span className="font-bold text-slate-900 hover:text-[#014D2F] hover:underline text-left">
                         {st.fullname}
                       </span>
                       <div className="text-[11px] text-slate-400 font-normal">
-                        Giới tính: {st.gender || 'Nam'}
+                        Giới tính: {st.gender || "Nam"}
                       </div>
                     </td>
                     <td className="py-4 px-4 text-center font-medium text-slate-700">
-                      {st.birth_year || (st.date_of_birth ? new Date(st.date_of_birth).getFullYear() : 'N/A')}
+                      {st.birth_year ||
+                        (st.date_of_birth
+                          ? new Date(st.date_of_birth).getFullYear()
+                          : "N/A")}
                     </td>
                     <td className="py-4 px-4 text-center">
                       <span
                         className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${
-                          st.schedule === '2-4-6'
-                            ? 'bg-emerald-100 text-[#014D2F]'
-                            : st.schedule === '3-5-7'
-                            ? 'bg-blue-100 text-blue-800'
-                            : 'bg-amber-100 text-amber-800'
+                          st.schedule === "2-4-6"
+                            ? "bg-emerald-100 text-[#014D2F]"
+                            : st.schedule === "3-5-7"
+                              ? "bg-blue-100 text-blue-800"
+                              : "bg-amber-100 text-amber-800"
                         }`}
                       >
-                        {st.schedule || '2-4-6'}
+                        {st.schedule || "2-4-6"}
                       </span>
                     </td>
                     <td className="py-4 px-4 text-center font-semibold text-slate-700">
-                      {st.date_of_join ? st.date_of_join.split('-').reverse().join('/') : '10/01/2026'}
+                      {st.date_of_join
+                        ? st.date_of_join.split("-").reverse().join("/")
+                        : "10/01/2026"}
                     </td>
                     <td className="py-4 px-4 text-center font-extrabold text-slate-800">
-                      {st.current_level !== undefined && st.current_level !== null ? st.current_level : 0}
+                      {st.current_level !== undefined &&
+                      st.current_level !== null
+                        ? st.current_level
+                        : 0}
                     </td>
-                    <td className="py-4 px-4 font-mono text-slate-700">{st.phone_number || '---'}</td>
-                    <td className="py-4 px-6 text-slate-600 max-w-xs truncate">{st.notes || '---'}</td>
+                    <td className="py-4 px-4 font-mono text-slate-700">
+                      {st.phone_number || "---"}
+                    </td>
+                    <td className="py-4 px-6 text-slate-600 max-w-xs truncate">
+                      {st.notes || "---"}
+                    </td>
                     <td className="py-4 px-4 text-right">
                       <div className="flex items-center justify-end space-x-1.5">
                         <button
@@ -357,8 +403,12 @@ export default function StudentList({
                   {viewingStudent.fullname.charAt(0).toUpperCase()}
                 </div>
                 <div>
-                  <h3 className="text-lg font-bold leading-tight">{viewingStudent.fullname}</h3>
-                  <p className="text-xs text-emerald-100">Thông tin chi tiết lưu trong CSDL Postgres</p>
+                  <h3 className="text-lg font-bold leading-tight">
+                    {viewingStudent.fullname}
+                  </h3>
+                  <p className="text-xs text-emerald-100">
+                    Thông tin chi tiết lưu trong CSDL Postgres
+                  </p>
                 </div>
               </div>
               <button
@@ -375,21 +425,27 @@ export default function StudentList({
                   <span className="text-slate-500 flex items-center gap-2">
                     <User className="w-4 h-4 text-[#014D2F]" /> Họ và tên:
                   </span>
-                  <span className="font-bold text-slate-900">{viewingStudent.fullname}</span>
+                  <span className="font-bold text-slate-900">
+                    {viewingStudent.fullname}
+                  </span>
                 </div>
 
                 <div className="flex justify-between py-1 border-b border-slate-200/60">
                   <span className="text-slate-500 flex items-center gap-2">
                     <Calendar className="w-4 h-4 text-[#014D2F]" /> Năm sinh:
                   </span>
-                  <span className="font-semibold text-slate-900">{viewingStudent.birth_year || 'N/A'}</span>
+                  <span className="font-semibold text-slate-900">
+                    {viewingStudent.birth_year || "N/A"}
+                  </span>
                 </div>
 
                 <div className="flex justify-between py-1 border-b border-slate-200/60">
                   <span className="text-slate-500 flex items-center gap-2">
                     <User className="w-4 h-4 text-[#014D2F]" /> Giới tính:
                   </span>
-                  <span className="font-semibold text-slate-900">{viewingStudent.gender || 'Nam'}</span>
+                  <span className="font-semibold text-slate-900">
+                    {viewingStudent.gender || "Nam"}
+                  </span>
                 </div>
 
                 <div className="flex justify-between py-1 border-b border-slate-200/60">
@@ -397,16 +453,22 @@ export default function StudentList({
                     <BookOpen className="w-4 h-4 text-[#014D2F]" /> Ca học:
                   </span>
                   <span className="font-semibold text-[#014D2F] bg-emerald-100 px-2 py-0.5 rounded-full text-xs">
-                    {viewingStudent.schedule || '2-4-6'}
+                    {viewingStudent.schedule || "2-4-6"}
                   </span>
                 </div>
 
                 <div className="flex justify-between py-1 border-b border-slate-200/60">
                   <span className="text-slate-500 flex items-center gap-2">
-                    <Calendar className="w-4 h-4 text-[#014D2F]" /> Ngày nhập học:
+                    <Calendar className="w-4 h-4 text-[#014D2F]" /> Ngày nhập
+                    học:
                   </span>
                   <span className="font-semibold text-slate-900">
-                    {viewingStudent.date_of_join ? viewingStudent.date_of_join.split('-').reverse().join('/') : '10/01/2026'}
+                    {viewingStudent.date_of_join
+                      ? viewingStudent.date_of_join
+                          .split("-")
+                          .reverse()
+                          .join("/")
+                      : "10/01/2026"}
                   </span>
                 </div>
 
@@ -415,7 +477,10 @@ export default function StudentList({
                     <BookOpen className="w-4 h-4 text-[#014D2F]" /> Cấp đai:
                   </span>
                   <span className="font-extrabold text-slate-900">
-                    {viewingStudent.current_level !== undefined && viewingStudent.current_level !== null ? viewingStudent.current_level : 0}
+                    {viewingStudent.current_level !== undefined &&
+                    viewingStudent.current_level !== null
+                      ? viewingStudent.current_level
+                      : 0}
                   </span>
                 </div>
 
@@ -423,28 +488,36 @@ export default function StudentList({
                   <span className="text-slate-500 flex items-center gap-2">
                     <Phone className="w-4 h-4 text-[#014D2F]" /> Số điện thoại:
                   </span>
-                  <span className="font-mono font-semibold text-slate-900">{viewingStudent.phone_number || '---'}</span>
+                  <span className="font-mono font-semibold text-slate-900">
+                    {viewingStudent.phone_number || "---"}
+                  </span>
                 </div>
 
                 <div className="flex justify-between py-1 border-b border-slate-200/60">
                   <span className="text-slate-500 flex items-center gap-2">
                     <Mail className="w-4 h-4 text-[#014D2F]" /> Email:
                   </span>
-                  <span className="font-semibold text-slate-900">{viewingStudent.email || '---'}</span>
+                  <span className="font-semibold text-slate-900">
+                    {viewingStudent.email || "---"}
+                  </span>
                 </div>
 
                 <div className="flex justify-between py-1 border-b border-slate-200/60">
                   <span className="text-slate-500 flex items-center gap-2">
                     <MapPin className="w-4 h-4 text-[#014D2F]" /> Địa chỉ:
                   </span>
-                  <span className="font-semibold text-slate-900">{viewingStudent.current_address || '---'}</span>
+                  <span className="font-semibold text-slate-900">
+                    {viewingStudent.current_address || "---"}
+                  </span>
                 </div>
 
                 <div className="flex justify-between py-1">
                   <span className="text-slate-500 flex items-center gap-2">
                     <FileText className="w-4 h-4 text-[#014D2F]" /> Ghi chú:
                   </span>
-                  <span className="font-medium text-slate-800 text-right max-w-[200px]">{viewingStudent.notes || '---'}</span>
+                  <span className="font-medium text-slate-800 text-right max-w-[200px]">
+                    {viewingStudent.notes || "---"}
+                  </span>
                 </div>
               </div>
             </div>

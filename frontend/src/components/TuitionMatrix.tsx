@@ -225,7 +225,7 @@ export default function TuitionMatrix({
               onChange={(e) => setSelectedMonth(e.target.value)}
               className="w-full pl-8 pr-2 py-2 text-xs sm:text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#014D2F] bg-white font-semibold text-slate-700"
             >
-              <option value="all">Tất cả 12T</option>
+              <option value="all">Tất cả</option>
               {Array.from({ length: 12 }, (_, i) => i + 1).map((m) => (
                 <option key={m} value={m.toString()}>
                   Tháng {m}
@@ -242,7 +242,7 @@ export default function TuitionMatrix({
               onChange={(e) => setScheduleFilter(e.target.value)}
               className="w-full pl-8 pr-2 py-2 text-xs sm:text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#014D2F] bg-white font-semibold text-slate-700"
             >
-              <option value="all">Tất cả ca</option>
+              <option value="all">Tất cả</option>
               <option value="2-4-6">Ca 2-4-6</option>
               <option value="3-5-7">Ca 3-5-7</option>
               <option value="Khác">Ca Khác</option>
@@ -270,9 +270,9 @@ export default function TuitionMatrix({
               Chưa đóng
             </span>
           </div>
-          <div className="text-[10px] text-slate-400 italic md:hidden">
+          {/* <div className="text-[10px] text-slate-400 italic md:hidden">
             ← Vuốt cuộn ngang →
-          </div>
+          </div> */}
         </div>
       </div>
 
