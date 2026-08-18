@@ -10,6 +10,7 @@ export declare class ReceiptsService {
         fullname: any;
         schedule: any;
         phone_number: any;
+        date_of_join: any;
         months: Record<number, any>;
     }[]>;
     create(dto: {

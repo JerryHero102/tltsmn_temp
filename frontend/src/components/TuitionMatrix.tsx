@@ -30,6 +30,7 @@ interface TuitionRow {
   fullname: string;
   schedule: string;
   phone_number: string;
+  date_of_join?: string;
   months: Record<number, MonthData | null>;
 }
 
@@ -61,6 +62,17 @@ function cleanDisplayDate(val?: string | null): string {
   if (parts.length === 3) {
     const [y, m, d] = parts;
     return `${d}/${m}/${y}`;
+  }
+  return dateOnly;
+}
+
+function formatShortDate(val?: string | null): string {
+  if (!val) return "";
+  const dateOnly = val.split("T")[0];
+  const parts = dateOnly.split("-");
+  if (parts.length === 3) {
+    const [, m, d] = parts;
+    return `${d}/${m}`;
   }
   return dateOnly;
 }
@@ -376,9 +388,9 @@ export default function TuitionMatrix({
                       <div className="font-bold text-slate-900 text-xs sm:text-sm truncate">
                         {row.fullname}
                       </div>
-                      <div className="mt-0.5">
+                      <div className="mt-0.5 flex items-center gap-1.5">
                         <span
-                          className={`text-[10px] font-semibold px-1.5 py-0.2 rounded inline-block ${
+                          className={`text-[10px] font-semibold px-1.5 py-0.2 rounded inline-block shrink-0 ${
                             row.schedule === "2-4-6"
                               ? "bg-emerald-100 text-[#014D2F]"
                               : row.schedule === "3-5-7"
@@ -388,6 +400,15 @@ export default function TuitionMatrix({
                         >
                           {row.schedule || "2-4-6"}
                         </span>
+                        {row.date_of_join && (
+                          <span
+                            className="text-[10px] font-medium text-slate-500 bg-slate-100 px-1 py-0.2 rounded inline-flex items-center gap-0.5 shrink-0"
+                            title={`Ngày nhập học: ${cleanDisplayDate(row.date_of_join)}`}
+                          >
+                            <Calendar className="w-2.5 h-2.5 text-slate-400" />
+                            {formatShortDate(row.date_of_join)}
+                          </span>
+                        )}
                       </div>
                     </td>
 

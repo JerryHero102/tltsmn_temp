@@ -9,6 +9,7 @@ export declare class ReceiptsController {
         fullname: any;
         schedule: any;
         phone_number: any;
+        date_of_join: any;
         months: Record<number, any>;
     }[]>;
     uploadImage(base64Image: string): Promise<{

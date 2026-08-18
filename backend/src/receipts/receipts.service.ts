@@ -79,7 +79,7 @@ export class ReceiptsService {
 
   async getTuitionMatrix() {
     const profilesRes = await this.dbService.query(
-      `SELECT p.id, p.fullname, p.schedule, p.phone_number
+      `SELECT p.id, p.fullname, p.schedule, p.phone_number, TO_CHAR(p.date_of_join, 'YYYY-MM-DD') as date_of_join
        FROM profile p
        WHERE p.id_auth IS NULL
        ORDER BY p.fullname ASC`,
@@ -118,6 +118,7 @@ export class ReceiptsService {
         fullname: p.fullname,
         schedule: p.schedule,
         phone_number: p.phone_number,
+        date_of_join: p.date_of_join,
         months,
       };
     });
