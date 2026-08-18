@@ -136,6 +136,8 @@ export default function TuitionMatrix({
     receipt: MonthData;
   } | null>(null);
 
+  const targetMonthNum = Number(selectedMonth);
+
   const filteredMatrix = matrix.filter((row) => {
     const matchesSearch =
       matchSearch(row.fullname, searchTerm) ||
@@ -145,33 +147,13 @@ export default function TuitionMatrix({
     const matchesSchedule =
       scheduleFilter === "all" || (row.schedule || "2-4-6") === scheduleFilter;
 
-    const targetMonth = Number(selectedMonth);
-    const matchesMonth =
-      selectedMonth === "all" ||
-      row.months[targetMonth] !== null ||
-      Object.values(row.months).some(
-        (mObj) =>
-          mObj && getReceiptPaymentMonth(mObj.receipt_date) === targetMonth,
-      );
-
-    return matchesSearch && matchesSchedule && matchesMonth;
+    return matchesSearch && matchesSchedule;
   });
-
-  const targetMonthNum = Number(selectedMonth);
 
   const visibleMonths =
     selectedMonth === "all"
       ? Array.from({ length: 12 }, (_, i) => i + 1)
-      : Array.from({ length: 12 }, (_, i) => i + 1).filter((m) => {
-          if (m === targetMonthNum) return true;
-          return filteredMatrix.some((row) => {
-            const mObj = row.months[m];
-            return (
-              mObj &&
-              getReceiptPaymentMonth(mObj.receipt_date) === targetMonthNum
-            );
-          });
-        });
+      : [targetMonthNum];
 
   const handleResetFilters = () => {
     setSearchTerm("");
