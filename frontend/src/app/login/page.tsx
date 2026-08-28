@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { Lock, User, ArrowRight, Loader2 } from "lucide-react";
 import { toast } from "sonner";
@@ -10,11 +10,21 @@ export default function LoginPage() {
   const [idSystem, setIdSystem] = useState("");
   const [password, setPassword] = useState("");
   const [loadingSubmit, setLoadingSubmit] = useState(false);
+  const [formKey, setFormKey] = useState(() => Date.now());
+  const formRef = useRef<HTMLFormElement>(null);
 
   const { login, user, loading } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
+    // Forcefully reset all input fields and DOM form when landing on the login page
+    setIdSystem("");
+    setPassword("");
+    setFormKey(Date.now());
+    if (formRef.current) {
+      formRef.current.reset();
+    }
+
     // If already logged in, redirect to dashboard immediately
     if (!loading && user) {
       router.replace("/");
@@ -31,6 +41,13 @@ export default function LoginPage() {
     try {
       setLoadingSubmit(true);
       await login(idSystem, password);
+      // Clear fields and reset form state immediately
+      setIdSystem("");
+      setPassword("");
+      setFormKey(Date.now());
+      if (formRef.current) {
+        formRef.current.reset();
+      }
       toast.success("Đăng nhập thành công!");
     } catch (err: any) {
       toast.error(
@@ -78,7 +95,13 @@ export default function LoginPage() {
         </div>
 
         {/* Login Form */}
-        <form onSubmit={handleSubmit} className="space-y-5">
+        <form
+          key={formKey}
+          ref={formRef}
+          onSubmit={handleSubmit}
+          autoComplete="off"
+          className="space-y-5"
+        >
           <div className="space-y-1.5">
             <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider">
               Mã Người Dùng
@@ -89,6 +112,7 @@ export default function LoginPage() {
                 type="tel"
                 inputMode="numeric"
                 pattern="[0-9]*"
+                autoComplete="off"
                 value={idSystem}
                 onChange={(e) => setIdSystem(e.target.value)}
                 className="w-full pl-11 pr-4 py-3 text-base sm:text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#014D2F] bg-slate-50/50 font-mono text-slate-900"
@@ -105,6 +129,7 @@ export default function LoginPage() {
               <Lock className="w-5 h-5 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
               <input
                 type="password"
+                autoComplete="new-password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full pl-11 pr-4 py-3 text-base sm:text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#014D2F] bg-slate-50/50 font-mono text-slate-900"
