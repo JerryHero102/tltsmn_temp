@@ -29,12 +29,12 @@ export class AuthController {
     const user = await this.authService.validateUser(idSys, pass);
     const data = await this.authService.login(user);
 
-    // Cross-origin HttpOnly cookie settings for Vercel -> Cloudflare Tunnel (sameSite: 'none', secure: true, maxAge: 24h)
+    // Cross-origin HttpOnly cookie settings for Vercel -> Cloudflare Tunnel (sameSite: 'none', secure: true, maxAge: 2h)
     res.cookie('access_token', data.access_token, {
       httpOnly: true,
       secure: true,
       sameSite: 'none',
-      maxAge: 24 * 60 * 60 * 1000, // 24 hours
+      maxAge: 2 * 60 * 60 * 1000, // 2 hours
       path: '/',
     });
 

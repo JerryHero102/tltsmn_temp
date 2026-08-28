@@ -66,6 +66,8 @@ export async function apiRequest(path: string, options: RequestInit = {}, isRetr
     if (res.status === 401) {
       if (typeof window !== 'undefined') {
         localStorage.removeItem('access_token');
+        localStorage.removeItem('user_profile');
+        localStorage.removeItem('auth_expires_at');
         if (!window.location.pathname.startsWith('/login')) {
           window.location.href = '/login';
         }
