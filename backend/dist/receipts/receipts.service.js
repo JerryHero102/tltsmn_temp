@@ -61,8 +61,9 @@ let ReceiptsService = class ReceiptsService {
             return fileBase64;
         }
     }
-    async findAll() {
-        const res = await this.dbService.query(`SELECT 
+    async findAll(location) {
+        let query = `
+      SELECT 
         r.id,
         r.amount,
         TO_CHAR(r.receipt_date, 'YYYY-MM-DD') as receipt_date,
@@ -73,20 +74,49 @@ let ReceiptsService = class ReceiptsService {
         r.schedule_note,
         r.image_url,
         r.created_at,
-        pr.id_profile
+        pr.id_profile,
+        p.location
        FROM receipts r
        LEFT JOIN profile_receipts pr ON pr.id_receipt = r.id
-       ORDER BY r.receipt_date DESC, r.created_at DESC`);
+       LEFT JOIN profile p ON p.id = pr.id_profile
+    `;
+        const params = [];
+        if (location === 'tsn') {
+            query += ` WHERE p.location = 'tsn'`;
+        }
+        else if (location === 'mn') {
+            query += ` WHERE (p.location = 'mn' OR p.location IS NULL)`;
+        }
+        else if (location) {
+            params.push(location);
+            query += ` WHERE p.location = $1`;
+        }
+        query += ` ORDER BY r.receipt_date DESC, r.created_at DESC`;
+        const res = await this.dbService.query(query, params);
         return res.rows.map((row) => ({
             ...row,
             image_url: formatCloudinaryOptimizedUrl(row.image_url),
         }));
     }
-    async getTuitionMatrix() {
-        const profilesRes = await this.dbService.query(`SELECT p.id, p.fullname, p.schedule, p.phone_number, TO_CHAR(p.date_of_join, 'YYYY-MM-DD') as date_of_join
-       FROM profile p
-       WHERE p.id_auth IS NULL
-       ORDER BY p.fullname ASC`);
+    async getTuitionMatrix(location) {
+        let profileQuery = `
+      SELECT p.id, p.fullname, p.schedule, p.phone_number, p.location, TO_CHAR(p.date_of_join, 'YYYY-MM-DD') as date_of_join
+      FROM profile p
+      WHERE p.id_auth IS NULL
+    `;
+        const params = [];
+        if (location === 'tsn') {
+            profileQuery += ` AND p.location = 'tsn'`;
+        }
+        else if (location === 'mn') {
+            profileQuery += ` AND (p.location = 'mn' OR p.location IS NULL)`;
+        }
+        else if (location) {
+            params.push(location);
+            profileQuery += ` AND p.location = $1`;
+        }
+        profileQuery += ` ORDER BY p.fullname ASC`;
+        const profilesRes = await this.dbService.query(profileQuery, params);
         const receiptsRes = await this.dbService.query(`SELECT pr.id_profile, r.id as receipt_id, r.month, r.amount, TO_CHAR(r.receipt_date, 'YYYY-MM-DD') as receipt_date, r.image_url
        FROM profile_receipts pr
        JOIN receipts r ON r.id = pr.id_receipt`);
@@ -115,6 +145,7 @@ let ReceiptsService = class ReceiptsService {
                 schedule: p.schedule,
                 phone_number: p.phone_number,
                 date_of_join: p.date_of_join,
+                location: p.location || 'mn',
                 months,
             };
         });

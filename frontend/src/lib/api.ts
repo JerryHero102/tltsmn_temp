@@ -115,8 +115,9 @@ export const api = {
   },
 
   // Students
-  getStudents: async () => {
-    return apiRequest('/students', {
+  getStudents: async (location?: string) => {
+    const query = location ? `?location=${encodeURIComponent(location)}` : '';
+    return apiRequest(`/students${query}`, {
       method: 'GET',
     });
   },
@@ -148,19 +149,20 @@ export const api = {
   },
 
   // Receipts & Matrix
-  getReceipts: async (params: { month?: number; year?: number; student_id?: string } = {}) => {
+  getReceipts: async (params: { month?: number; year?: number; student_id?: string; location?: string } = {}) => {
     const query = new URLSearchParams();
     if (params.month) query.append('month', params.month.toString());
     if (params.year) query.append('year', params.year.toString());
     if (params.student_id) query.append('student_id', params.student_id);
+    if (params.location) query.append('location', params.location);
 
     return apiRequest(`/receipts?${query.toString()}`, {
       method: 'GET',
     });
   },
 
-  getTuitionMatrix: async (year?: number) => {
-    const query = year ? `?year=${year}` : '';
+  getTuitionMatrix: async (location?: string) => {
+    const query = location ? `?location=${encodeURIComponent(location)}` : '';
     return apiRequest(`/receipts/matrix${query}`, {
       method: 'GET',
     });

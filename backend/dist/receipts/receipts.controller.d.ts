@@ -2,14 +2,15 @@ import { ReceiptsService } from './receipts.service';
 export declare class ReceiptsController {
     private readonly receiptsService;
     constructor(receiptsService: ReceiptsService);
-    findAll(): Promise<any[]>;
-    getMatrix(): Promise<{
+    findAll(location?: string): Promise<any[]>;
+    getMatrix(location?: string): Promise<{
         stt: number;
         id_profile: any;
         fullname: any;
         schedule: any;
         phone_number: any;
         date_of_join: any;
+        location: any;
         months: Record<number, any>;
     }[]>;
     uploadImage(base64Image: string): Promise<{

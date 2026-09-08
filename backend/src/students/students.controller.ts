@@ -6,6 +6,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
@@ -17,8 +18,8 @@ export class StudentsController {
   constructor(private readonly studentsService: StudentsService) {}
 
   @Get()
-  findAll() {
-    return this.studentsService.findAll();
+  findAll(@Query('location') location?: string) {
+    return this.studentsService.findAll(location);
   }
 
   @Get(':id')
@@ -37,7 +38,10 @@ export class StudentsController {
       schedule?: string;
       notes?: string;
       email?: string;
+      location?: string;
       current_address?: string;
+      date_of_join?: string;
+      current_level?: number | string;
     },
   ) {
     return this.studentsService.create(createStudentDto);
@@ -55,7 +59,10 @@ export class StudentsController {
       schedule?: string;
       notes?: string;
       email?: string;
+      location?: string;
       current_address?: string;
+      date_of_join?: string;
+      current_level?: number | string;
     },
   ) {
     return this.studentsService.update(id, updateStudentDto);

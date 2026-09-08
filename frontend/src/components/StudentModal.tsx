@@ -10,6 +10,7 @@ interface StudentModalProps {
   onClose: () => void;
   student?: any;
   onSuccess: () => void;
+  defaultLocation?: string;
 }
 
 export default function StudentModal({
@@ -17,6 +18,7 @@ export default function StudentModal({
   onClose,
   student,
   onSuccess,
+  defaultLocation,
 }: StudentModalProps) {
   const [fullname, setFullname] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
@@ -101,6 +103,7 @@ export default function StudentModal({
           notes,
           date_of_join: dateOfJoin,
           current_level: levelNum,
+          location: student?.location || defaultLocation || 'mn',
         });
         toast.success("Cập nhật thông tin học viên thành công!");
       } else {
@@ -115,6 +118,7 @@ export default function StudentModal({
           notes,
           date_of_join: dateOfJoin,
           current_level: levelNum,
+          location: defaultLocation || 'mn',
         });
         toast.success("Thêm học viên mới thành công!");
       }

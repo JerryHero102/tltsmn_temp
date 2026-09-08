@@ -44,6 +44,7 @@ interface StudentListProps {
   onOpenReceiptForStudent: (studentId: string) => void;
   isExternalAddModalOpen?: boolean;
   onCloseExternalAddModal?: () => void;
+  location?: string;
 }
 
 export default function StudentList({
@@ -52,6 +53,7 @@ export default function StudentList({
   onOpenReceiptForStudent,
   isExternalAddModalOpen,
   onCloseExternalAddModal,
+  location,
 }: StudentListProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [scheduleFilter, setScheduleFilter] = useState("all");
@@ -541,6 +543,7 @@ export default function StudentList({
           onClose={() => setIsModalOpen(false)}
           student={editingStudent}
           onSuccess={onRefresh}
+          defaultLocation={location}
         />
       )}
     </div>

@@ -14,16 +14,18 @@ import {
 import UserProfileModal from "./UserProfileModal";
 
 interface SidebarProps {
+  activeLocation: "mn" | "tsn";
   activeTab: "students" | "tuition";
-  setActiveTab: (tab: "students" | "tuition") => void;
+  onNavigate: (location: "mn" | "tsn", tab: "students" | "tuition") => void;
   user: any;
   onLogout: () => void;
   onOpenReceiptModal: () => void;
 }
 
 export default function Sidebar({
+  activeLocation,
   activeTab,
-  setActiveTab,
+  onNavigate,
   user,
   onLogout,
   onOpenReceiptModal,
@@ -46,7 +48,7 @@ export default function Sidebar({
             />
           </div>
           <span className="font-bold text-base tracking-wide">
-            {isAdmin ? "TLTSMN Admin" : "TLTSMN Học Viên"}
+            {isAdmin ? `TLTSMN - ${activeLocation === "mn" ? "Miền Nam" : "Tân Sơn Nhì"}` : "TLTSMN"}
           </span>
         </div>
         <button
@@ -98,46 +100,106 @@ export default function Sidebar({
           </div>
 
           {/* Navigation Links */}
-          <nav className="p-4 space-y-2">
-            <button
-              onClick={() => {
-                setActiveTab("students");
-                setMobileMenuOpen(false);
-              }}
-              className={`w-full flex items-center space-x-3 px-4 py-3 rounded-xl font-medium text-sm transition-all ${
-                activeTab === "students"
-                  ? "bg-white/15 text-white shadow-md border border-white/10 font-semibold"
-                  : "text-emerald-100/80 hover:bg-white/10 hover:text-white"
-              }`}
-            >
-              <Users
-                className={`w-5 h-5 ${activeTab === "students" ? "text-emerald-300" : "text-emerald-200"}`}
-              />
-              <span>
-                {isAdmin ? "Thông tin học viên" : "Thông tin cá nhân"}
-              </span>
-            </button>
+          <nav className="p-4 space-y-4">
+            {/* Mục chính 1: Miền Nam */}
+            <div className="space-y-1">
+              <div className="px-3 py-1 flex items-center justify-between text-xs font-bold uppercase tracking-wider text-emerald-300">
+                <span className="flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
+                  Miền Nam
+                </span>
+                {activeLocation === "mn" && (
+                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-white/20 text-white font-medium lowercase">
+                    đang chọn
+                  </span>
+                )}
+              </div>
+              <button
+                onClick={() => {
+                  onNavigate("mn", "students");
+                  setMobileMenuOpen(false);
+                }}
+                className={`w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl font-medium text-sm transition-all ${
+                  activeLocation === "mn" && activeTab === "students"
+                    ? "bg-white/15 text-white shadow-md border border-white/10 font-semibold"
+                    : "text-emerald-100/80 hover:bg-white/10 hover:text-white"
+                }`}
+              >
+                <Users
+                  className={`w-4 h-4 ${activeLocation === "mn" && activeTab === "students" ? "text-emerald-300" : "text-emerald-200"}`}
+                />
+                <span>Thông tin học viên</span>
+              </button>
 
-            <button
-              onClick={() => {
-                setActiveTab("tuition");
-                setMobileMenuOpen(false);
-              }}
-              className={`w-full flex items-center space-x-3 px-4 py-3 rounded-xl font-medium text-sm transition-all ${
-                activeTab === "tuition"
-                  ? "bg-white/15 text-white shadow-md border border-white/10 font-semibold"
-                  : "text-emerald-100/80 hover:bg-white/10 hover:text-white"
-              }`}
-            >
-              <Receipt
-                className={`w-5 h-5 ${activeTab === "tuition" ? "text-emerald-300" : "text-emerald-200"}`}
-              />
-              <span>{isAdmin ? "Thông tin học phí" : "Học phí cá nhân"}</span>
-            </button>
+              <button
+                onClick={() => {
+                  onNavigate("mn", "tuition");
+                  setMobileMenuOpen(false);
+                }}
+                className={`w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl font-medium text-sm transition-all ${
+                  activeLocation === "mn" && activeTab === "tuition"
+                    ? "bg-white/15 text-white shadow-md border border-white/10 font-semibold"
+                    : "text-emerald-100/80 hover:bg-white/10 hover:text-white"
+                }`}
+              >
+                <Receipt
+                  className={`w-4 h-4 ${activeLocation === "mn" && activeTab === "tuition" ? "text-emerald-300" : "text-emerald-200"}`}
+                />
+                <span>Thông tin học phí</span>
+              </button>
+            </div>
+
+            {/* Mục chính 2: Tân Sơn Nhì */}
+            <div className="space-y-1 pt-2 border-t border-emerald-800/60">
+              <div className="px-3 py-1 flex items-center justify-between text-xs font-bold uppercase tracking-wider text-emerald-300">
+                <span className="flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-blue-400"></span>
+                  Tân Sơn Nhì
+                </span>
+                {activeLocation === "tsn" && (
+                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-white/20 text-white font-medium lowercase">
+                    đang chọn
+                  </span>
+                )}
+              </div>
+              <button
+                onClick={() => {
+                  onNavigate("tsn", "students");
+                  setMobileMenuOpen(false);
+                }}
+                className={`w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl font-medium text-sm transition-all ${
+                  activeLocation === "tsn" && activeTab === "students"
+                    ? "bg-white/15 text-white shadow-md border border-white/10 font-semibold"
+                    : "text-emerald-100/80 hover:bg-white/10 hover:text-white"
+                }`}
+              >
+                <Users
+                  className={`w-4 h-4 ${activeLocation === "tsn" && activeTab === "students" ? "text-emerald-300" : "text-emerald-200"}`}
+                />
+                <span>Thông tin học viên</span>
+              </button>
+
+              <button
+                onClick={() => {
+                  onNavigate("tsn", "tuition");
+                  setMobileMenuOpen(false);
+                }}
+                className={`w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl font-medium text-sm transition-all ${
+                  activeLocation === "tsn" && activeTab === "tuition"
+                    ? "bg-white/15 text-white shadow-md border border-white/10 font-semibold"
+                    : "text-emerald-100/80 hover:bg-white/10 hover:text-white"
+                }`}
+              >
+                <Receipt
+                  className={`w-4 h-4 ${activeLocation === "tsn" && activeTab === "tuition" ? "text-emerald-300" : "text-emerald-200"}`}
+                />
+                <span>Thông tin học phí</span>
+              </button>
+            </div>
 
             {/* Quick Add Receipt Button (Admin Only) */}
             {isAdmin && (
-              <div className="pt-4">
+              <div className="pt-2">
                 <button
                   onClick={() => {
                     onOpenReceiptModal();

@@ -5,10 +5,10 @@ import { DatabaseService } from '../database/database.service';
 export class StudentsService {
   constructor(private readonly dbService: DatabaseService) {}
 
-  async findAll() {
+  async findAll(location?: string) {
     // Student profiles are info-only records created by Admin (id_auth IS NULL)
-    const res = await this.dbService.query(
-      `SELECT 
+    let query = `
+      SELECT 
         p.id as profile_id,
         p.fullname,
         p.birth_year,
@@ -26,8 +26,19 @@ export class StudentsService {
        FROM profile p
        LEFT JOIN auth_sys a ON a.id = p.id_auth
        WHERE p.id_auth IS NULL
-       ORDER BY p.fullname ASC`,
-    );
+    `;
+    const params: any[] = [];
+    if (location === 'tsn') {
+      query += ` AND p.location = 'tsn'`;
+    } else if (location === 'mn') {
+      query += ` AND (p.location = 'mn' OR p.location IS NULL)`;
+    } else if (location) {
+      params.push(location);
+      query += ` AND p.location = $1`;
+    }
+    query += ` ORDER BY p.fullname ASC`;
+
+    const res = await this.dbService.query(query, params);
     return res.rows;
   }
 
@@ -69,14 +80,16 @@ export class StudentsService {
     schedule?: string;
     notes?: string;
     email?: string;
+    location?: string;
     current_address?: string;
     date_of_join?: string;
     current_level?: number | string;
   }) {
+    const loc = createStudentDto.location || 'mn';
     // Save ALL student profile info into PostgreSQL DB profile table
     const res = await this.dbService.query(
-      `INSERT INTO profile (fullname, birth_year, phone_number, gender, schedule, notes, email, current_address, date_of_join, current_level)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+      `INSERT INTO profile (fullname, birth_year, phone_number, gender, schedule, notes, email, location, current_address, date_of_join, current_level)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
        RETURNING *, id as profile_id`,
       [
         createStudentDto.fullname,
@@ -86,6 +99,7 @@ export class StudentsService {
         createStudentDto.schedule || '2-4-6',
         createStudentDto.notes || '',
         createStudentDto.email || '',
+        loc,
         createStudentDto.current_address || '',
         createStudentDto.date_of_join || '2026-01-10',
         createStudentDto.current_level !== undefined && createStudentDto.current_level !== null ? Number(createStudentDto.current_level) : 0,
@@ -105,6 +119,7 @@ export class StudentsService {
       schedule?: string;
       notes?: string;
       email?: string;
+      location?: string;
       current_address?: string;
       date_of_join?: string;
       current_level?: number | string;
@@ -121,8 +136,9 @@ export class StudentsService {
            email = COALESCE($7, email),
            current_address = COALESCE($8, current_address),
            date_of_join = COALESCE($9, date_of_join),
-           current_level = COALESCE($10, current_level)
-       WHERE id = $11
+           current_level = COALESCE($10, current_level),
+           location = COALESCE($11, location)
+       WHERE id = $12
        RETURNING *, id as profile_id`,
       [
         updateStudentDto.fullname,
@@ -135,6 +151,7 @@ export class StudentsService {
         updateStudentDto.current_address,
         updateStudentDto.date_of_join,
         updateStudentDto.current_level !== undefined && updateStudentDto.current_level !== null ? Number(updateStudentDto.current_level) : undefined,
+        updateStudentDto.location,
         id,
       ],
     );

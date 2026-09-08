@@ -2,7 +2,7 @@ import { DatabaseService } from '../database/database.service';
 export declare class StudentsService {
     private readonly dbService;
     constructor(dbService: DatabaseService);
-    findAll(): Promise<any[]>;
+    findAll(location?: string): Promise<any[]>;
     findOne(id: string): Promise<any>;
     create(createStudentDto: {
         fullname: string;
@@ -12,6 +12,7 @@ export declare class StudentsService {
         schedule?: string;
         notes?: string;
         email?: string;
+        location?: string;
         current_address?: string;
         date_of_join?: string;
         current_level?: number | string;
@@ -24,6 +25,7 @@ export declare class StudentsService {
         schedule?: string;
         notes?: string;
         email?: string;
+        location?: string;
         current_address?: string;
         date_of_join?: string;
         current_level?: number | string;

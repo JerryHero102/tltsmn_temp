@@ -21,11 +21,11 @@ let ReceiptsController = class ReceiptsController {
     constructor(receiptsService) {
         this.receiptsService = receiptsService;
     }
-    findAll() {
-        return this.receiptsService.findAll();
+    findAll(location) {
+        return this.receiptsService.findAll(location);
     }
-    getMatrix() {
-        return this.receiptsService.getTuitionMatrix();
+    getMatrix(location) {
+        return this.receiptsService.getTuitionMatrix(location);
     }
     async uploadImage(base64Image) {
         const url = await this.receiptsService.uploadImage(base64Image);
@@ -38,14 +38,16 @@ let ReceiptsController = class ReceiptsController {
 exports.ReceiptsController = ReceiptsController;
 __decorate([
     (0, common_1.Get)(),
+    __param(0, (0, common_1.Query)('location')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)
 ], ReceiptsController.prototype, "findAll", null);
 __decorate([
     (0, common_1.Get)('matrix'),
+    __param(0, (0, common_1.Query)('location')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)
 ], ReceiptsController.prototype, "getMatrix", null);
 __decorate([

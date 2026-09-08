@@ -3,14 +3,15 @@ export declare class ReceiptsService {
     private readonly dbService;
     constructor(dbService: DatabaseService);
     uploadImage(fileBase64: string): Promise<string>;
-    findAll(): Promise<any[]>;
-    getTuitionMatrix(): Promise<{
+    findAll(location?: string): Promise<any[]>;
+    getTuitionMatrix(location?: string): Promise<{
         stt: number;
         id_profile: any;
         fullname: any;
         schedule: any;
         phone_number: any;
         date_of_join: any;
+        location: any;
         months: Record<number, any>;
     }[]>;
     create(dto: {

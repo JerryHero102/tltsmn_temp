@@ -21,8 +21,8 @@ let StudentsController = class StudentsController {
     constructor(studentsService) {
         this.studentsService = studentsService;
     }
-    findAll() {
-        return this.studentsService.findAll();
+    findAll(location) {
+        return this.studentsService.findAll(location);
     }
     findOne(id) {
         return this.studentsService.findOne(id);
@@ -40,8 +40,9 @@ let StudentsController = class StudentsController {
 exports.StudentsController = StudentsController;
 __decorate([
     (0, common_1.Get)(),
+    __param(0, (0, common_1.Query)('location')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)
 ], StudentsController.prototype, "findAll", null);
 __decorate([

@@ -15,6 +15,7 @@ export default function DashboardPage() {
   const { user, loading, logout } = useAuth();
   const router = useRouter();
 
+  const [activeLocation, setActiveLocation] = useState<'mn' | 'tsn'>('mn');
   const [activeTab, setActiveTab] = useState<'students' | 'tuition'>('students');
   const [students, setStudents] = useState<any[]>([]);
   const [tuitionMatrix, setTuitionMatrix] = useState<any[]>([]);
@@ -43,12 +44,13 @@ export default function DashboardPage() {
   const [preselectedStudentId, setPreselectedStudentId] = useState<string | undefined>(undefined);
   const [preselectedMonth, setPreselectedMonth] = useState<number | undefined>(undefined);
 
-  const fetchData = useCallback(async () => {
+  const fetchData = useCallback(async (targetLoc?: 'mn' | 'tsn') => {
+    const loc = targetLoc || activeLocation;
     try {
       setLoadingData(true);
       const [studentsRes, matrixRes] = await Promise.all([
-        api.getStudents(),
-        api.getTuitionMatrix(),
+        api.getStudents(loc),
+        api.getTuitionMatrix(loc),
       ]);
 
       const baseStudents = studentsRes || [];
@@ -88,7 +90,7 @@ export default function DashboardPage() {
     } finally {
       setLoadingData(false);
     }
-  }, []);
+  }, [activeLocation]);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -101,6 +103,15 @@ export default function DashboardPage() {
       });
     }
   }, [user, loading, router, fetchData]);
+
+  const handleNavigate = (loc: 'mn' | 'tsn', tab: 'students' | 'tuition') => {
+    const locChanged = loc !== activeLocation;
+    setActiveLocation(loc);
+    setActiveTab(tab);
+    if (locChanged) {
+      fetchData(loc);
+    }
+  };
 
   const [editingReceiptData, setEditingReceiptData] = useState<any>(null);
 
@@ -127,8 +138,9 @@ export default function DashboardPage() {
     <div className="min-h-screen bg-slate-50 flex flex-col md:flex-row font-sans text-slate-900">
       {/* Left Sidebar */}
       <Sidebar
+        activeLocation={activeLocation}
         activeTab={activeTab}
-        setActiveTab={setActiveTab}
+        onNavigate={handleNavigate}
         user={user}
         onLogout={logout}
         onOpenReceiptModal={() => handleOpenReceiptModal()}
@@ -143,12 +155,34 @@ export default function DashboardPage() {
               {activeTab === 'students' ? (
                 <>
                   <Users className="w-5 h-5 sm:w-6 sm:h-6 text-[#014D2F] shrink-0" />
-                  <span className="truncate">Quản Lý Thông Tin Học Viên</span>
+                  <span className="truncate flex items-center gap-2">
+                    <span>Quản Lý Thông Tin Học Viên</span>
+                    <span
+                      className={`text-xs px-2 py-0.5 rounded-lg font-bold border shrink-0 ${
+                        activeLocation === 'mn'
+                          ? 'bg-emerald-100 text-[#014D2F] border-emerald-200'
+                          : 'bg-blue-100 text-blue-900 border-blue-200'
+                      }`}
+                    >
+                      {activeLocation === 'mn' ? 'Miền Nam' : 'Tân Sơn Nhì'}
+                    </span>
+                  </span>
                 </>
               ) : (
                 <>
                   <ReceiptIcon className="w-5 h-5 sm:w-6 sm:h-6 text-[#014D2F] shrink-0" />
-                  <span className="truncate">Quản Lý Học Phí Hàng Tháng</span>
+                  <span className="truncate flex items-center gap-2">
+                    <span>Quản Lý Học Phí Hàng Tháng</span>
+                    <span
+                      className={`text-xs px-2 py-0.5 rounded-lg font-bold border shrink-0 ${
+                        activeLocation === 'mn'
+                          ? 'bg-emerald-100 text-[#014D2F] border-emerald-200'
+                          : 'bg-blue-100 text-blue-900 border-blue-200'
+                      }`}
+                    >
+                      {activeLocation === 'mn' ? 'Miền Nam' : 'Tân Sơn Nhì'}
+                    </span>
+                  </span>
                 </>
               )}
             </h1>
@@ -193,6 +227,7 @@ export default function DashboardPage() {
             onOpenReceiptForStudent={(stId) => handleOpenReceiptModal(stId)}
             isExternalAddModalOpen={isAddStudentModalOpen}
             onCloseExternalAddModal={() => setIsAddStudentModalOpen(false)}
+            location={activeLocation}
           />
         ) : (
           <TuitionMatrix

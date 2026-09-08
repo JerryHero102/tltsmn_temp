@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
@@ -14,13 +15,13 @@ export class ReceiptsController {
   constructor(private readonly receiptsService: ReceiptsService) {}
 
   @Get()
-  findAll() {
-    return this.receiptsService.findAll();
+  findAll(@Query('location') location?: string) {
+    return this.receiptsService.findAll(location);
   }
 
   @Get('matrix')
-  getMatrix() {
-    return this.receiptsService.getTuitionMatrix();
+  getMatrix(@Query('location') location?: string) {
+    return this.receiptsService.getTuitionMatrix(location);
   }
 
   @Post('upload')

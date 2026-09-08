@@ -1,378 +1,80 @@
-2026-08-26T09:36:08Z INF Starting tunnel tunnelID=cc4d798e-c77d-47fd-ad9b-ce2d92d8d2e2
-2026-08-26T09:36:08Z INF Version 2026.8.2 (Checksum 87ea0dc5b574e5afefbef97f97c42d04b462ae834662bb05e2c442853311cadc)
-2026-08-26T09:36:08Z INF GOOS: linux, GOVersion: go1.26.6-X:nodwarf5, GoArch: amd64
-2026-08-26T09:36:08Z INF Settings: map[p:http2 protocol:http2 token:*****]
-2026-08-26T09:36:08Z INF cloudflared will not automatically update if installed by a package manager.
-2026-08-26T09:36:08Z INF Generated Connector ID: 6106a550-4db9-4e71-99b7-895eac6609ed
-2026-08-26T09:36:08Z INF Initial protocol http2
-2026-08-26T09:36:08Z INF ICMP proxy will use 192.168.1.26 as source for IPv4
-2026-08-26T09:36:08Z INF ICMP proxy will use 2402:800:63aa:f52e:fc69:a21:2615:c032 in zone wlan0 as source for IPv6
-2026-08-26T09:36:09Z INF ICMP proxy will use 192.168.1.26 as source for IPv4
-2026-08-26T09:36:09Z INF ICMP proxy will use 2402:800:63aa:f52e:fc69:a21:2615:c032 in zone wlan0 as source for IPv6
-2026-08-26T09:36:09Z INF Starting metrics server on 127.0.0.1:20242/metrics
-2026-08-26T09:36:09Z INF Tunnel connection curve preferences: [X25519MLKEM768 CurveID(65074) CurveP256] connIndex=0 event=0 ip=2606:4700:a8::5
-2026-08-26T09:36:18Z INF +-----------------------------------------------------------------------------------------------+
-2026-08-26T09:36:18Z INF |                                    CONNECTIVITY PRE-CHECKS                                    |
-2026-08-26T09:36:18Z INF +-----------------------------------------------------------------------------------------------+
-2026-08-26T09:36:18Z INF |  COMPONENT         TARGET                     STATUS  DETAILS                                 |
-2026-08-26T09:36:18Z INF |  DNS Resolution    region1.v2.argotunnel.com  PASS    DNS Resolved successfully               |
-2026-08-26T09:36:18Z INF |  DNS Resolution    region2.v2.argotunnel.com  PASS    DNS Resolved successfully               |
-2026-08-26T09:36:18Z INF |  UDP Connectivity  region1.v2.argotunnel.com  PASS    QUIC connection successful              |
-2026-08-26T09:36:18Z INF |  UDP Connectivity  region2.v2.argotunnel.com  FAIL    QUIC connection failed                  |
-2026-08-26T09:36:18Z INF |  TCP Connectivity  region1.v2.argotunnel.com  PASS    HTTP/2 connection successful            |
-2026-08-26T09:36:18Z INF |  TCP Connectivity  region2.v2.argotunnel.com  PASS    HTTP/2 connection successful            |
-2026-08-26T09:36:18Z INF |  Cloudflare API    api.cloudflare.com:443     PASS    API is reachable                        |
-2026-08-26T09:36:18Z INF |  WARNING: Allow outbound QUIC traffic on port 7844 or use HTTP2.                              |
-2026-08-26T09:36:18Z INF |                                                                                               |
-2026-08-26T09:36:18Z INF |  SUMMARY: Environment ready with degraded transport. cloudflared will proceed using 'http2'.  |
-2026-08-26T09:36:18Z INF +-----------------------------------------------------------------------------------------------+
-2026-08-26T09:36:18Z INF precheck component="DNS Resolution" details="DNS Resolved successfully" run_id=319ec52c-5775-4970-9ac8-ac23af0da0cd status=pass target=region1.v2.argotunnel.com
-2026-08-26T09:36:18Z INF precheck component="DNS Resolution" details="DNS Resolved successfully" run_id=319ec52c-5775-4970-9ac8-ac23af0da0cd status=pass target=region2.v2.argotunnel.com
-2026-08-26T09:36:18Z INF precheck component="UDP Connectivity" details="QUIC connection successful" run_id=319ec52c-5775-4970-9ac8-ac23af0da0cd status=pass target=region1.v2.argotunnel.com
-2026-08-26T09:36:18Z INF precheck component="UDP Connectivity" details="QUIC connection failed" run_id=319ec52c-5775-4970-9ac8-ac23af0da0cd status=fail target=region2.v2.argotunnel.com
-2026-08-26T09:36:18Z INF precheck component="TCP Connectivity" details="HTTP/2 connection successful" run_id=319ec52c-5775-4970-9ac8-ac23af0da0cd status=pass target=region1.v2.argotunnel.com
-2026-08-26T09:36:18Z INF precheck component="TCP Connectivity" details="HTTP/2 connection successful" run_id=319ec52c-5775-4970-9ac8-ac23af0da0cd status=pass target=region2.v2.argotunnel.com
-2026-08-26T09:36:18Z INF precheck component="Cloudflare API" details="API is reachable" run_id=319ec52c-5775-4970-9ac8-ac23af0da0cd status=pass target=api.cloudflare.com:443
-2026-08-26T09:36:18Z INF precheck complete hard_fail=false run_id=319ec52c-5775-4970-9ac8-ac23af0da0cd suggested_protocol=http2
-2026-08-26T09:36:24Z ERR Unable to establish connection with Cloudflare edge error="DialContext error: dial tcp [2606:4700:a8::5]:7844: i/o timeout" connIndex=0 event=0 ip=2606:4700:a8::5
-2026-08-26T09:36:24Z ERR Serve tunnel error error="DialContext error: dial tcp [2606:4700:a8::5]:7844: i/o timeout" connIndex=0 event=0 ip=2606:4700:a8::5
-2026-08-26T09:36:24Z INF Retrying connection in up to 2s connIndex=0 event=0 ip=2606:4700:a8::5
-2026-08-26T09:36:26Z INF Tunnel connection curve preferences: [X25519MLKEM768 CurveID(65074) CurveP256] connIndex=0 event=0 ip=2606:4700:a0::10
-2026-08-26T09:36:28Z ERR Unable to establish connection with Cloudflare edge error="DialContext error: dial tcp [2606:4700:a0::10]:7844: connect: network is unreachable" connIndex=0 event=0 ip=2606:4700:a0::10
-2026-08-26T09:36:28Z ERR Serve tunnel error error="DialContext error: dial tcp [2606:4700:a0::10]:7844: connect: network is unreachable" connIndex=0 event=0 ip=2606:4700:a0::10
-2026-08-26T09:36:28Z INF Retrying connection in up to 4s connIndex=0 event=0 ip=2606:4700:a0::10
-2026-08-26T09:36:29Z INF Tunnel connection curve preferences: [X25519MLKEM768 CurveID(65074) CurveP256] connIndex=0 event=0 ip=198.41.200.53
-2026-08-26T09:36:30Z INF Registered tunnel connection connIndex=0 connection=32b53fb8-86dd-49b8-81c8-8bd1af335ef3 event=0 ip=198.41.200.53 location=sin02 protocol=http2
-2026-08-26T09:36:30Z INF Tunnel connection curve preferences: [X25519MLKEM768 CurveID(65074) CurveP256] connIndex=1 event=0 ip=198.41.192.37
-2026-08-26T09:36:30Z INF Updated to new configuration config="{\"ingress\":[{\"hostname\":\"api.thieulamtaysonmiennam.id.vn\", \"originRequest\":{}, \"service\":\"http://localhost:4000\"}, {\"service\":\"http_status:404\"}], \"warp-routing\":{\"enabled\":false}}" version=1
-2026-08-26T09:36:31Z INF Registered tunnel connection connIndex=1 connection=19ea1b24-2277-41ab-a1db-d0bcbe0bf29b event=0 ip=198.41.192.37 location=sin19 protocol=http2
-2026-08-26T09:36:31Z INF Tunnel connection curve preferences: [X25519MLKEM768 CurveID(65074) CurveP256] connIndex=2 event=0 ip=198.41.200.63
-2026-08-26T09:36:32Z INF Registered tunnel connection connIndex=2 connection=3ee40208-d64d-4abd-84f7-fc7533bf3708 event=0 ip=198.41.200.63 location=sin11 protocol=http2
-2026-08-26T09:36:32Z INF Tunnel connection curve preferences: [X25519MLKEM768 CurveID(65074) CurveP256] connIndex=3 event=0 ip=198.41.192.27
-2026-08-26T09:36:33Z INF Registered tunnel connection connIndex=3 connection=9c4d09f6-049f-47a7-b7c0-452df4be43d8 event=0 ip=198.41.192.27 location=sin17 protocol=http2
-2026-08-26T11:35:35Z INF Lost connection with the edge connIndex=1
-2026-08-26T11:35:35Z WRN Serve tunnel error error="connection with edge closed" connIndex=1 event=0 ip=198.41.192.37
-2026-08-26T11:35:35Z INF Retrying connection in up to 1s connIndex=1 event=0 ip=198.41.192.37
-2026-08-26T11:35:35Z ERR failed to serve incoming request error="Error shutting down control stream: client disconnected"
-2026-08-26T11:35:36Z WRN Connection terminated error="connection with edge closed" connIndex=1
-2026-08-26T11:35:43Z INF Tunnel connection curve preferences: [X25519MLKEM768 CurveID(65074) CurveP256] connIndex=1 event=0 ip=198.41.192.37
-2026-08-26T11:35:44Z INF Registered tunnel connection connIndex=1 connection=3c6019ca-44e7-447c-bad7-e67b22cc5ea6 event=0 ip=198.41.192.37 location=sin18 protocol=http2
-2026-08-26T15:13:01Z INF Lost connection with the edge connIndex=2
-2026-08-26T15:13:01Z WRN Serve tunnel error error="connection with edge closed" connIndex=2 event=0 ip=198.41.200.63
-2026-08-26T15:13:01Z INF Retrying connection in up to 1s connIndex=2 event=0 ip=198.41.200.63
-2026-08-26T15:13:01Z ERR failed to serve incoming request error="Error shutting down control stream: context canceled"
-2026-08-26T15:13:01Z INF Lost connection with the edge connIndex=0
-2026-08-26T15:13:01Z WRN Serve tunnel error error="connection with edge closed" connIndex=0 event=0 ip=198.41.200.53
-2026-08-26T15:13:01Z INF Retrying connection in up to 1s connIndex=0 event=0 ip=198.41.200.53
-2026-08-26T15:13:01Z ERR failed to serve incoming request error="Error shutting down control stream: client disconnected"
-2026-08-26T15:13:03Z WRN Connection terminated error="connection with edge closed" connIndex=2
-2026-08-26T15:13:03Z WRN Connection terminated error="connection with edge closed" connIndex=0
-2026-08-26T15:13:06Z INF Lost connection with the edge connIndex=3
-2026-08-26T15:13:06Z WRN Serve tunnel error error="connection with edge closed" connIndex=3 event=0 ip=198.41.192.27
-2026-08-26T15:13:06Z INF Retrying connection in up to 1s connIndex=3 event=0 ip=198.41.192.27
-2026-08-26T15:13:06Z ERR failed to serve incoming request error="Error shutting down control stream: client disconnected"
-2026-08-26T15:13:07Z WRN Connection terminated error="connection with edge closed" connIndex=3
-2026-08-26T15:13:15Z INF Tunnel connection curve preferences: [X25519MLKEM768 CurveID(65074) CurveP256] connIndex=3 event=0 ip=198.41.192.27
-2026-08-26T15:13:15Z INF Tunnel connection curve preferences: [X25519MLKEM768 CurveID(65074) CurveP256] connIndex=2 event=0 ip=198.41.200.63
-2026-08-26T15:13:15Z INF Tunnel connection curve preferences: [X25519MLKEM768 CurveID(65074) CurveP256] connIndex=0 event=0 ip=198.41.200.53
-2026-08-26T15:13:30Z WRN Unable to establish connection with Cloudflare edge error="DialContext error: dial tcp 198.41.200.63:7844: i/o timeout" connIndex=2 event=0 ip=198.41.200.63
-2026-08-26T15:13:30Z WRN Serve tunnel error error="DialContext error: dial tcp 198.41.200.63:7844: i/o timeout" connIndex=2 event=0 ip=198.41.200.63
-2026-08-26T15:13:30Z INF Retrying connection in up to 4s connIndex=2 event=0 ip=198.41.200.63
-2026-08-26T15:13:30Z WRN Unable to establish connection with Cloudflare edge error="DialContext error: dial tcp 198.41.192.27:7844: i/o timeout" connIndex=3 event=0 ip=198.41.192.27
-2026-08-26T15:13:30Z WRN Unable to establish connection with Cloudflare edge error="DialContext error: dial tcp 198.41.200.53:7844: i/o timeout" connIndex=0 event=0 ip=198.41.200.53
-2026-08-26T15:13:30Z WRN Serve tunnel error error="DialContext error: dial tcp 198.41.200.53:7844: i/o timeout" connIndex=0 event=0 ip=198.41.200.53
-2026-08-26T15:13:30Z WRN Serve tunnel error error="DialContext error: dial tcp 198.41.192.27:7844: i/o timeout" connIndex=3 event=0 ip=198.41.192.27
-2026-08-26T15:13:30Z INF Retrying connection in up to 4s connIndex=0 event=0 ip=198.41.200.53
-2026-08-26T15:13:30Z INF Retrying connection in up to 4s connIndex=3 event=0 ip=198.41.192.27
-2026-08-26T15:13:31Z WRN Connection terminated error="DialContext error: dial tcp 198.41.192.27:7844: i/o timeout" connIndex=3
-2026-08-26T15:13:32Z WRN Connection terminated error="DialContext error: dial tcp 198.41.200.63:7844: i/o timeout" connIndex=2
-2026-08-26T15:13:32Z WRN Connection terminated error="DialContext error: dial tcp 198.41.200.53:7844: i/o timeout" connIndex=0
-2026-08-26T15:13:49Z INF Tunnel connection curve preferences: [X25519MLKEM768 CurveID(65074) CurveP256] connIndex=0 event=0 ip=2606:4700:a8::4
-2026-08-26T15:13:49Z INF Tunnel connection curve preferences: [X25519MLKEM768 CurveID(65074) CurveP256] connIndex=3 event=0 ip=2606:4700:a0::5
-2026-08-26T15:13:49Z INF Tunnel connection curve preferences: [X25519MLKEM768 CurveID(65074) CurveP256] connIndex=2 event=0 ip=2606:4700:a8::7
-2026-08-26T15:13:49Z WRN Unable to establish connection with Cloudflare edge error="DialContext error: dial tcp [2606:4700:a8::4]:7844: connect: network is unreachable" connIndex=0 event=0 ip=2606:4700:a8::4
-2026-08-26T15:13:49Z WRN Serve tunnel error error="DialContext error: dial tcp [2606:4700:a8::4]:7844: connect: network is unreachable" connIndex=0 event=0 ip=2606:4700:a8::4
-2026-08-26T15:13:49Z INF Retrying connection in up to 8s connIndex=0 event=0 ip=2606:4700:a8::4
-2026-08-26T15:13:54Z WRN Connection terminated error="DialContext error: dial tcp [2606:4700:a8::4]:7844: connect: network is unreachable" connIndex=0
-2026-08-26T15:14:00Z WRN Unable to establish connection with Cloudflare edge error="DialContext error: dial tcp [2606:4700:a0::5]:7844: connect: network is unreachable" connIndex=3 event=0 ip=2606:4700:a0::5
-2026-08-26T15:14:00Z WRN Serve tunnel error error="DialContext error: dial tcp [2606:4700:a0::5]:7844: connect: network is unreachable" connIndex=3 event=0 ip=2606:4700:a0::5
-2026-08-26T15:14:00Z INF Retrying connection in up to 8s connIndex=3 event=0 ip=2606:4700:a0::5
-2026-08-26T15:14:00Z WRN Unable to establish connection with Cloudflare edge error="DialContext error: dial tcp [2606:4700:a8::7]:7844: connect: network is unreachable" connIndex=2 event=0 ip=2606:4700:a8::7
-2026-08-26T15:14:00Z WRN Serve tunnel error error="DialContext error: dial tcp [2606:4700:a8::7]:7844: connect: network is unreachable" connIndex=2 event=0 ip=2606:4700:a8::7
-2026-08-26T15:14:00Z INF Retrying connection in up to 8s connIndex=2 event=0 ip=2606:4700:a8::7
-2026-08-26T15:14:00Z WRN Connection terminated error="DialContext error: dial tcp [2606:4700:a8::7]:7844: connect: network is unreachable" connIndex=2
-2026-08-26T15:14:02Z WRN Connection terminated error="DialContext error: dial tcp [2606:4700:a0::5]:7844: connect: network is unreachable" connIndex=3
-2026-08-26T15:14:10Z INF Tunnel connection curve preferences: [X25519MLKEM768 CurveID(65074) CurveP256] connIndex=3 event=0 ip=198.41.192.77
-2026-08-26T15:14:10Z INF Tunnel connection curve preferences: [X25519MLKEM768 CurveID(65074) CurveP256] connIndex=2 event=0 ip=198.41.200.63
-2026-08-26T15:14:10Z INF Tunnel connection curve preferences: [X25519MLKEM768 CurveID(65074) CurveP256] connIndex=0 event=0 ip=198.41.200.73
-2026-08-26T15:14:25Z WRN Unable to establish connection with Cloudflare edge error="DialContext error: dial tcp 198.41.200.63:7844: i/o timeout" connIndex=2 event=0 ip=198.41.200.63
-2026-08-26T15:14:25Z WRN Serve tunnel error error="DialContext error: dial tcp 198.41.200.63:7844: i/o timeout" connIndex=2 event=0 ip=198.41.200.63
-2026-08-26T15:14:25Z INF Retrying connection in up to 16s connIndex=2 event=0 ip=198.41.200.63
-2026-08-26T15:14:25Z WRN Unable to establish connection with Cloudflare edge error="DialContext error: dial tcp 198.41.200.73:7844: i/o timeout" connIndex=0 event=0 ip=198.41.200.73
-2026-08-26T15:14:25Z WRN Unable to establish connection with Cloudflare edge error="DialContext error: dial tcp 198.41.192.77:7844: i/o timeout" connIndex=3 event=0 ip=198.41.192.77
-2026-08-26T15:14:25Z WRN Serve tunnel error error="DialContext error: dial tcp 198.41.192.77:7844: i/o timeout" connIndex=3 event=0 ip=198.41.192.77
-2026-08-26T15:14:25Z INF Retrying connection in up to 16s connIndex=3 event=0 ip=198.41.192.77
-2026-08-26T15:14:25Z WRN Serve tunnel error error="DialContext error: dial tcp 198.41.200.73:7844: i/o timeout" connIndex=0 event=0 ip=198.41.200.73
-2026-08-26T15:14:25Z INF Retrying connection in up to 16s connIndex=0 event=0 ip=198.41.200.73
-2026-08-26T15:14:28Z WRN Connection terminated error="DialContext error: dial tcp 198.41.200.63:7844: i/o timeout" connIndex=2
-2026-08-26T15:14:28Z WRN Connection terminated error="DialContext error: dial tcp 198.41.200.73:7844: i/o timeout" connIndex=0
-2026-08-26T15:14:40Z WRN Connection terminated error="DialContext error: dial tcp 198.41.192.77:7844: i/o timeout" connIndex=3
-2026-08-26T15:15:17Z INF Tunnel connection curve preferences: [X25519MLKEM768 CurveID(65074) CurveP256] connIndex=3 event=0 ip=2606:4700:a0::8
-2026-08-26T15:15:17Z INF Tunnel connection curve preferences: [X25519MLKEM768 CurveID(65074) CurveP256] connIndex=2 event=0 ip=2606:4700:a8::3
-2026-08-26T15:15:17Z INF Tunnel connection curve preferences: [X25519MLKEM768 CurveID(65074) CurveP256] connIndex=0 event=0 ip=2606:4700:a0::5
-2026-08-26T15:15:24Z WRN Unable to establish connection with Cloudflare edge error="DialContext error: dial tcp [2606:4700:a0::8]:7844: connect: network is unreachable" connIndex=3 event=0 ip=2606:4700:a0::8
-2026-08-26T15:15:24Z WRN Serve tunnel error error="DialContext error: dial tcp [2606:4700:a0::8]:7844: connect: network is unreachable" connIndex=3 event=0 ip=2606:4700:a0::8
-2026-08-26T15:15:24Z INF Retrying connection in up to 32s connIndex=3 event=0 ip=2606:4700:a0::8
-2026-08-26T15:15:24Z WRN Unable to establish connection with Cloudflare edge error="DialContext error: dial tcp [2606:4700:a0::5]:7844: connect: network is unreachable" connIndex=0 event=0 ip=2606:4700:a0::5
-2026-08-26T15:15:24Z WRN Serve tunnel error error="DialContext error: dial tcp [2606:4700:a0::5]:7844: connect: network is unreachable" connIndex=0 event=0 ip=2606:4700:a0::5
-2026-08-26T15:15:24Z INF Retrying connection in up to 32s connIndex=0 event=0 ip=2606:4700:a0::5
-2026-08-26T15:15:31Z WRN Connection terminated error="DialContext error: dial tcp [2606:4700:a0::5]:7844: connect: network is unreachable" connIndex=0
-2026-08-26T15:15:32Z WRN Unable to establish connection with Cloudflare edge error="DialContext error: dial tcp [2606:4700:a8::3]:7844: i/o timeout" connIndex=2 event=0 ip=2606:4700:a8::3
-2026-08-26T15:15:32Z WRN Serve tunnel error error="DialContext error: dial tcp [2606:4700:a8::3]:7844: i/o timeout" connIndex=2 event=0 ip=2606:4700:a8::3
-2026-08-26T15:15:32Z INF Retrying connection in up to 32s connIndex=2 event=0 ip=2606:4700:a8::3
-2026-08-26T15:15:32Z WRN Connection terminated error="DialContext error: dial tcp [2606:4700:a0::8]:7844: connect: network is unreachable" connIndex=3
-2026-08-26T15:15:37Z INF Lost connection with the edge connIndex=1
-2026-08-26T15:15:37Z WRN Serve tunnel error error="connection with edge closed" connIndex=1 event=0 ip=198.41.192.37
-2026-08-26T15:15:37Z INF Retrying connection in up to 1s connIndex=1 event=0 ip=198.41.192.37
-2026-08-26T15:15:37Z ERR failed to serve incoming request error="Error shutting down control stream: context canceled"
-2026-08-26T15:15:38Z ERR Connection terminated error="connection with edge closed" connIndex=1
-2026-08-26T15:15:49Z ERR Connection terminated error="DialContext error: dial tcp [2606:4700:a8::3]:7844: i/o timeout" connIndex=2
-2026-08-26T15:16:10Z INF Tunnel connection curve preferences: [X25519MLKEM768 CurveID(65074) CurveP256] connIndex=2 event=0 ip=198.41.200.13
-2026-08-26T15:16:10Z INF Tunnel connection curve preferences: [X25519MLKEM768 CurveID(65074) CurveP256] connIndex=3 event=0 ip=198.41.192.77
-2026-08-26T15:16:10Z INF Tunnel connection curve preferences: [X25519MLKEM768 CurveID(65074) CurveP256] connIndex=0 event=0 ip=2606:4700:a8::7
-2026-08-26T15:16:10Z INF Tunnel connection curve preferences: [X25519MLKEM768 CurveID(65074) CurveP256] connIndex=1 event=0 ip=198.41.192.37
-2026-08-26T15:16:11Z INF Registered tunnel connection connIndex=1 connection=7a30a7a6-c0f5-4bd1-975f-7353b7498592 event=0 ip=198.41.192.37 location=sin09 protocol=http2
-2026-08-26T15:16:11Z INF Registered tunnel connection connIndex=3 connection=99be13e3-2b52-446d-a59c-04229934f98f event=0 ip=198.41.192.77 location=sin17 protocol=http2
-2026-08-26T15:16:11Z INF Registered tunnel connection connIndex=2 connection=6be892a7-b0b1-492b-9b65-30eb00b88c3b event=0 ip=198.41.200.13 location=sin13 protocol=http2
-2026-08-26T15:16:25Z WRN Unable to establish connection with Cloudflare edge error="DialContext error: dial tcp [2606:4700:a8::7]:7844: i/o timeout" connIndex=0 event=0 ip=2606:4700:a8::7
-2026-08-26T15:16:25Z WRN Serve tunnel error error="DialContext error: dial tcp [2606:4700:a8::7]:7844: i/o timeout" connIndex=0 event=0 ip=2606:4700:a8::7
-2026-08-26T15:16:25Z INF Retrying connection in up to 1m4s connIndex=0 event=0 ip=2606:4700:a8::7
-2026-08-26T15:16:42Z WRN Connection terminated error="DialContext error: dial tcp [2606:4700:a8::7]:7844: i/o timeout" connIndex=0
-2026-08-26T15:20:51Z INF Tunnel connection curve preferences: [X25519MLKEM768 CurveID(65074) CurveP256] connIndex=0 event=0 ip=198.41.200.53
-2026-08-26T15:20:52Z INF Registered tunnel connection connIndex=0 connection=8267de2e-27a7-4a86-8578-cb379c568a1e event=0 ip=198.41.200.53 location=sin12 protocol=http2
-2026-08-26T19:01:28Z ERR Failed to refresh DNS local resolver error="lookup region1.v2.argotunnel.com: i/o timeout"
-2026-08-27T15:18:39Z INF Lost connection with the edge connIndex=1
-2026-08-27T15:18:39Z ERR failed to serve incoming request error="Error shutting down control stream: context canceled"
-2026-08-27T15:18:39Z WRN Serve tunnel error error="connection with edge closed" connIndex=1 event=0 ip=198.41.192.37
-2026-08-27T15:18:39Z INF Retrying connection in up to 1s connIndex=1 event=0 ip=198.41.192.37
-2026-08-27T15:18:39Z WRN Connection terminated error="connection with edge closed" connIndex=1
-2026-08-27T15:18:40Z INF Lost connection with the edge connIndex=3
-2026-08-27T15:18:40Z WRN Serve tunnel error error="connection with edge closed" connIndex=3 event=0 ip=198.41.192.77
-2026-08-27T15:18:40Z INF Retrying connection in up to 1s connIndex=3 event=0 ip=198.41.192.77
-2026-08-27T15:18:40Z ERR failed to serve incoming request error="Error shutting down control stream: client disconnected"
-2026-08-27T15:18:40Z WRN Connection terminated error="connection with edge closed" connIndex=3
-2026-08-27T15:18:43Z INF Lost connection with the edge connIndex=2
-2026-08-27T15:18:43Z WRN Serve tunnel error error="connection with edge closed" connIndex=2 event=0 ip=198.41.200.13
-2026-08-27T15:18:43Z INF Retrying connection in up to 1s connIndex=2 event=0 ip=198.41.200.13
-2026-08-27T15:18:43Z ERR failed to serve incoming request error="Error shutting down control stream: context canceled"
-2026-08-27T15:18:43Z WRN Connection terminated error="connection with edge closed" connIndex=2
-2026-08-27T15:18:45Z INF Tunnel connection curve preferences: [X25519MLKEM768 CurveID(65074) CurveP256] connIndex=3 event=0 ip=198.41.192.77
-2026-08-27T15:18:45Z INF Tunnel connection curve preferences: [X25519MLKEM768 CurveID(65074) CurveP256] connIndex=1 event=0 ip=198.41.192.37
-2026-08-27T15:18:45Z INF Tunnel connection curve preferences: [X25519MLKEM768 CurveID(65074) CurveP256] connIndex=2 event=0 ip=198.41.200.13
-2026-08-27T15:18:45Z INF Registered tunnel connection connIndex=3 connection=4117525f-70d6-4e43-b082-b17907a2553e event=0 ip=198.41.192.77 location=sin20 protocol=http2
-2026-08-27T15:18:46Z INF Registered tunnel connection connIndex=2 connection=19ea6798-4a8b-4590-8b76-fbf8ac148639 event=0 ip=198.41.200.13 location=sin12 protocol=http2
-2026-08-27T15:18:46Z INF Registered tunnel connection connIndex=1 connection=ab418d05-de48-4de6-a68c-c2cfaf1c4b2c event=0 ip=198.41.192.37 location=sin21 protocol=http2
-2026-08-27T15:23:21Z INF Lost connection with the edge connIndex=0
-2026-08-27T15:23:21Z ERR failed to serve incoming request error="Error shutting down control stream: context canceled"
-2026-08-27T15:23:21Z WRN Serve tunnel error error="connection with edge closed" connIndex=0 event=0 ip=198.41.200.53
-2026-08-27T15:23:21Z INF Retrying connection in up to 1s connIndex=0 event=0 ip=198.41.200.53
-2026-08-27T15:23:22Z WRN Connection terminated error="connection with edge closed" connIndex=0
-2026-08-27T15:23:26Z INF Tunnel connection curve preferences: [X25519MLKEM768 CurveID(65074) CurveP256] connIndex=0 event=0 ip=198.41.200.53
-2026-08-27T15:23:27Z INF Registered tunnel connection connIndex=0 connection=7390fce2-41c9-486d-b176-0f2dd38fca75 event=0 ip=198.41.200.53 location=sin22 protocol=http2
-2026-08-27T22:00:46Z ERR failed to serve incoming request error="Error shutting down control stream: context canceled"
-2026-08-27T22:00:46Z ERR failed to serve incoming request error="Error shutting down control stream: context canceled"
-2026-08-27T22:00:46Z INF Lost connection with the edge connIndex=1
-2026-08-27T22:00:46Z INF Lost connection with the edge connIndex=0
-2026-08-27T22:00:46Z WRN Serve tunnel error error="connection with edge closed" connIndex=1 event=0 ip=198.41.192.37
-2026-08-27T22:00:46Z WRN Serve tunnel error error="Error shutting down control stream: context canceled" connIndex=3 event=0 ip=198.41.192.77
-2026-08-27T22:00:46Z ERR Serve tunnel error error="connection with edge closed" connIndex=0 event=0 ip=198.41.200.53
-2026-08-27T22:00:46Z INF Retrying connection in up to 1s connIndex=1 event=0 ip=198.41.192.37
-2026-08-27T22:00:46Z INF Retrying connection in up to 1s connIndex=0 event=0 ip=198.41.200.53
-2026-08-27T22:00:46Z ERR failed to serve incoming request error="Error shutting down control stream: client disconnected"
-2026-08-27T22:00:46Z INF Retrying connection in up to 1s connIndex=3 event=0 ip=198.41.192.77
-2026-08-27T22:00:46Z ERR failed to serve incoming request error="Error shutting down control stream: client disconnected"
-2026-08-27T22:00:46Z ERR Serve tunnel error error="Error shutting down control stream: client disconnected" connIndex=2 event=0 ip=198.41.200.13
-2026-08-27T22:00:46Z INF Retrying connection in up to 1s connIndex=2 event=0 ip=198.41.200.13
-2026-08-27T22:00:46Z ERR Connection terminated error="Error shutting down control stream: client disconnected" connIndex=2
-2026-08-27T22:00:47Z ERR Connection terminated error="Error shutting down control stream: context canceled" connIndex=3
-2026-08-27T22:00:47Z ERR Connection terminated error="connection with edge closed" connIndex=1
-2026-08-27T22:00:47Z INF Tunnel connection curve preferences: [X25519MLKEM768 CurveID(65074) CurveP256] connIndex=2 event=0 ip=198.41.200.13
-2026-08-27T22:00:47Z INF Tunnel connection curve preferences: [X25519MLKEM768 CurveID(65074) CurveP256] connIndex=1 event=0 ip=198.41.192.37
-2026-08-27T22:00:47Z ERR Unable to establish connection with Cloudflare edge error="DialContext error: dial tcp 198.41.200.13:7844: connect: network is unreachable" connIndex=2 event=0 ip=198.41.200.13
-2026-08-27T22:00:47Z INF Tunnel connection curve preferences: [X25519MLKEM768 CurveID(65074) CurveP256] connIndex=3 event=0 ip=198.41.192.77
-2026-08-27T22:00:47Z ERR Unable to establish connection with Cloudflare edge error="DialContext error: dial tcp 198.41.192.37:7844: connect: network is unreachable" connIndex=1 event=0 ip=198.41.192.37
-2026-08-27T22:00:47Z ERR Serve tunnel error error="DialContext error: dial tcp 198.41.192.37:7844: connect: network is unreachable" connIndex=1 event=0 ip=198.41.192.37
-2026-08-27T22:00:47Z ERR Unable to establish connection with Cloudflare edge error="DialContext error: dial tcp 198.41.192.77:7844: connect: network is unreachable" connIndex=3 event=0 ip=198.41.192.77
-2026-08-27T22:00:47Z INF Retrying connection in up to 4s connIndex=1 event=0 ip=198.41.192.37
-2026-08-27T22:00:47Z ERR Serve tunnel error error="DialContext error: dial tcp 198.41.192.77:7844: connect: network is unreachable" connIndex=3 event=0 ip=198.41.192.77
-2026-08-27T22:00:47Z INF Retrying connection in up to 4s connIndex=3 event=0 ip=198.41.192.77
-2026-08-27T22:00:47Z ERR Serve tunnel error error="DialContext error: dial tcp 198.41.200.13:7844: connect: network is unreachable" connIndex=2 event=0 ip=198.41.200.13
-2026-08-27T22:00:47Z INF Retrying connection in up to 4s connIndex=2 event=0 ip=198.41.200.13
-2026-08-27T22:00:47Z ERR Connection terminated error="DialContext error: dial tcp 198.41.200.13:7844: connect: network is unreachable" connIndex=2
-2026-08-27T22:00:47Z ERR Connection terminated error="DialContext error: dial tcp 198.41.192.37:7844: connect: network is unreachable" connIndex=1
-2026-08-27T22:00:48Z ERR Connection terminated error="connection with edge closed" connIndex=0
-2026-08-27T22:00:48Z ERR Connection terminated error="DialContext error: dial tcp 198.41.192.77:7844: connect: network is unreachable" connIndex=3
-2026-08-27T22:00:57Z INF Tunnel connection curve preferences: [X25519MLKEM768 CurveID(65074) CurveP256] connIndex=3 event=0 ip=2606:4700:a0::3
-2026-08-27T22:00:57Z INF Tunnel connection curve preferences: [X25519MLKEM768 CurveID(65074) CurveP256] connIndex=1 event=0 ip=2606:4700:a0::6
-2026-08-27T22:00:57Z ERR Unable to establish connection with Cloudflare edge error="DialContext error: dial tcp [2606:4700:a0::3]:7844: connect: network is unreachable" connIndex=3 event=0 ip=2606:4700:a0::3
-2026-08-27T22:00:57Z ERR Unable to establish connection with Cloudflare edge error="DialContext error: dial tcp [2606:4700:a0::6]:7844: connect: network is unreachable" connIndex=1 event=0 ip=2606:4700:a0::6
-2026-08-27T22:00:57Z ERR Serve tunnel error error="DialContext error: dial tcp [2606:4700:a0::6]:7844: connect: network is unreachable" connIndex=1 event=0 ip=2606:4700:a0::6
-2026-08-27T22:00:57Z INF Tunnel connection curve preferences: [X25519MLKEM768 CurveID(65074) CurveP256] connIndex=2 event=0 ip=2606:4700:a8::5
-2026-08-27T22:00:57Z INF Retrying connection in up to 8s connIndex=1 event=0 ip=2606:4700:a0::6
-2026-08-27T22:00:57Z INF Tunnel connection curve preferences: [X25519MLKEM768 CurveID(65074) CurveP256] connIndex=0 event=0 ip=198.41.200.53
-2026-08-27T22:00:57Z ERR Serve tunnel error error="DialContext error: dial tcp [2606:4700:a0::3]:7844: connect: network is unreachable" connIndex=3 event=0 ip=2606:4700:a0::3
-2026-08-27T22:00:57Z INF Retrying connection in up to 8s connIndex=3 event=0 ip=2606:4700:a0::3
-2026-08-27T22:00:57Z ERR Unable to establish connection with Cloudflare edge error="DialContext error: dial tcp [2606:4700:a8::5]:7844: connect: network is unreachable" connIndex=2 event=0 ip=2606:4700:a8::5
-2026-08-27T22:00:57Z ERR Serve tunnel error error="DialContext error: dial tcp [2606:4700:a8::5]:7844: connect: network is unreachable" connIndex=2 event=0 ip=2606:4700:a8::5
-2026-08-27T22:00:57Z INF Retrying connection in up to 8s connIndex=2 event=0 ip=2606:4700:a8::5
-2026-08-27T22:00:57Z ERR Unable to establish connection with Cloudflare edge error="DialContext error: dial tcp 198.41.200.53:7844: connect: network is unreachable" connIndex=0 event=0 ip=198.41.200.53
-2026-08-27T22:00:57Z ERR Serve tunnel error error="DialContext error: dial tcp 198.41.200.53:7844: connect: network is unreachable" connIndex=0 event=0 ip=198.41.200.53
-2026-08-27T22:00:57Z INF Retrying connection in up to 4s connIndex=0 event=0 ip=198.41.200.53
-2026-08-27T22:00:58Z ERR Connection terminated error="DialContext error: dial tcp 198.41.200.53:7844: connect: network is unreachable" connIndex=0
-2026-08-27T22:00:58Z INF Tunnel connection curve preferences: [X25519MLKEM768 CurveID(65074) CurveP256] connIndex=0 event=0 ip=2606:4700:a8::7
-2026-08-27T22:00:58Z ERR Unable to establish connection with Cloudflare edge error="DialContext error: dial tcp [2606:4700:a8::7]:7844: connect: network is unreachable" connIndex=0 event=0 ip=2606:4700:a8::7
-2026-08-27T22:00:58Z ERR Serve tunnel error error="DialContext error: dial tcp [2606:4700:a8::7]:7844: connect: network is unreachable" connIndex=0 event=0 ip=2606:4700:a8::7
-2026-08-27T22:00:58Z INF Retrying connection in up to 8s connIndex=0 event=0 ip=2606:4700:a8::7
-2026-08-27T22:01:00Z ERR Connection terminated error="DialContext error: dial tcp [2606:4700:a8::7]:7844: connect: network is unreachable" connIndex=0
-2026-08-27T22:01:01Z ERR Connection terminated error="DialContext error: dial tcp [2606:4700:a0::3]:7844: connect: network is unreachable" connIndex=3
-2026-08-27T22:01:03Z ERR Connection terminated error="DialContext error: dial tcp [2606:4700:a8::5]:7844: connect: network is unreachable" connIndex=2
-2026-08-27T22:01:05Z ERR Connection terminated error="DialContext error: dial tcp [2606:4700:a0::6]:7844: connect: network is unreachable" connIndex=1
-2026-08-27T22:02:08Z INF Tunnel connection curve preferences: [X25519MLKEM768 CurveID(65074) CurveP256] connIndex=1 event=0 ip=198.41.192.77
-2026-08-27T22:02:08Z INF Tunnel connection curve preferences: [X25519MLKEM768 CurveID(65074) CurveP256] connIndex=3 event=0 ip=198.41.192.167
-2026-08-27T22:02:08Z ERR Unable to establish connection with Cloudflare edge error="DialContext error: dial tcp 198.41.192.77:7844: connect: network is unreachable" connIndex=1 event=0 ip=198.41.192.77
-2026-08-27T22:02:08Z ERR Serve tunnel error error="DialContext error: dial tcp 198.41.192.77:7844: connect: network is unreachable" connIndex=1 event=0 ip=198.41.192.77
-2026-08-27T22:02:08Z INF Retrying connection in up to 16s connIndex=1 event=0 ip=198.41.192.77
-2026-08-27T22:02:08Z ERR Unable to establish connection with Cloudflare edge error="DialContext error: dial tcp 198.41.192.167:7844: connect: network is unreachable" connIndex=3 event=0 ip=198.41.192.167
-2026-08-27T22:02:08Z INF Tunnel connection curve preferences: [X25519MLKEM768 CurveID(65074) CurveP256] connIndex=0 event=0 ip=198.41.200.113
-2026-08-27T22:02:08Z INF Tunnel connection curve preferences: [X25519MLKEM768 CurveID(65074) CurveP256] connIndex=2 event=0 ip=198.41.200.63
-2026-08-27T22:02:08Z ERR Unable to establish connection with Cloudflare edge error="DialContext error: dial tcp 198.41.200.63:7844: connect: network is unreachable" connIndex=2 event=0 ip=198.41.200.63
-2026-08-27T22:02:08Z ERR Unable to establish connection with Cloudflare edge error="DialContext error: dial tcp 198.41.200.113:7844: connect: network is unreachable" connIndex=0 event=0 ip=198.41.200.113
-2026-08-27T22:02:08Z ERR Serve tunnel error error="DialContext error: dial tcp 198.41.200.63:7844: connect: network is unreachable" connIndex=2 event=0 ip=198.41.200.63
-2026-08-27T22:02:08Z ERR Serve tunnel error error="DialContext error: dial tcp 198.41.200.113:7844: connect: network is unreachable" connIndex=0 event=0 ip=198.41.200.113
-2026-08-27T22:02:08Z ERR Serve tunnel error error="DialContext error: dial tcp 198.41.192.167:7844: connect: network is unreachable" connIndex=3 event=0 ip=198.41.192.167
-2026-08-27T22:02:08Z INF Retrying connection in up to 16s connIndex=0 event=0 ip=198.41.200.113
-2026-08-27T22:02:08Z INF Retrying connection in up to 16s connIndex=3 event=0 ip=198.41.192.167
-2026-08-27T22:02:08Z INF Retrying connection in up to 16s connIndex=2 event=0 ip=198.41.200.63
-2026-08-27T22:02:10Z ERR Connection terminated error="DialContext error: dial tcp 198.41.192.77:7844: connect: network is unreachable" connIndex=1
-2026-08-27T22:02:12Z ERR Failed to refresh DNS local resolver error="lookup region1.v2.argotunnel.com on [::1]:53: read udp [::1]:60387->[::1]:53: read: connection refused"
-2026-08-27T22:02:13Z ERR Connection terminated error="DialContext error: dial tcp 198.41.192.167:7844: connect: network is unreachable" connIndex=3
-2026-08-27T22:02:20Z ERR Connection terminated error="DialContext error: dial tcp 198.41.200.63:7844: connect: network is unreachable" connIndex=2
-2026-08-27T22:02:21Z ERR Connection terminated error="DialContext error: dial tcp 198.41.200.113:7844: connect: network is unreachable" connIndex=0
-2026-08-27T22:04:13Z INF Tunnel connection curve preferences: [X25519MLKEM768 CurveID(65074) CurveP256] connIndex=0 event=0 ip=2606:4700:a0::3
-2026-08-27T22:04:13Z INF Tunnel connection curve preferences: [X25519MLKEM768 CurveID(65074) CurveP256] connIndex=1 event=0 ip=2606:4700:a0::2
-2026-08-27T22:04:13Z ERR Unable to establish connection with Cloudflare edge error="DialContext error: dial tcp [2606:4700:a0::2]:7844: connect: network is unreachable" connIndex=1 event=0 ip=2606:4700:a0::2
-2026-08-27T22:04:13Z ERR Serve tunnel error error="DialContext error: dial tcp [2606:4700:a0::2]:7844: connect: network is unreachable" connIndex=1 event=0 ip=2606:4700:a0::2
-2026-08-27T22:04:13Z ERR Unable to establish connection with Cloudflare edge error="DialContext error: dial tcp [2606:4700:a0::3]:7844: connect: network is unreachable" connIndex=0 event=0 ip=2606:4700:a0::3
-2026-08-27T22:04:13Z INF Retrying connection in up to 32s connIndex=1 event=0 ip=2606:4700:a0::2
-2026-08-27T22:04:13Z INF Tunnel connection curve preferences: [X25519MLKEM768 CurveID(65074) CurveP256] connIndex=2 event=0 ip=2606:4700:a8::5
-2026-08-27T22:04:13Z ERR Serve tunnel error error="DialContext error: dial tcp [2606:4700:a0::3]:7844: connect: network is unreachable" connIndex=0 event=0 ip=2606:4700:a0::3
-2026-08-27T22:04:13Z INF Retrying connection in up to 32s connIndex=0 event=0 ip=2606:4700:a0::3
-2026-08-27T22:04:13Z INF Tunnel connection curve preferences: [X25519MLKEM768 CurveID(65074) CurveP256] connIndex=3 event=0 ip=2606:4700:a8::9
-2026-08-27T22:04:13Z ERR Unable to establish connection with Cloudflare edge error="DialContext error: dial tcp [2606:4700:a8::9]:7844: connect: network is unreachable" connIndex=3 event=0 ip=2606:4700:a8::9
-2026-08-27T22:04:13Z ERR Serve tunnel error error="DialContext error: dial tcp [2606:4700:a8::9]:7844: connect: network is unreachable" connIndex=3 event=0 ip=2606:4700:a8::9
-2026-08-27T22:04:13Z ERR Unable to establish connection with Cloudflare edge error="DialContext error: dial tcp [2606:4700:a8::5]:7844: connect: network is unreachable" connIndex=2 event=0 ip=2606:4700:a8::5
-2026-08-27T22:04:13Z INF Retrying connection in up to 32s connIndex=3 event=0 ip=2606:4700:a8::9
-2026-08-27T22:04:13Z ERR Serve tunnel error error="DialContext error: dial tcp [2606:4700:a8::5]:7844: connect: network is unreachable" connIndex=2 event=0 ip=2606:4700:a8::5
-2026-08-27T22:04:13Z INF Retrying connection in up to 32s connIndex=2 event=0 ip=2606:4700:a8::5
-2026-08-27T22:04:23Z ERR Connection terminated error="DialContext error: dial tcp [2606:4700:a0::3]:7844: connect: network is unreachable" connIndex=0
-2026-08-27T22:04:29Z ERR Connection terminated error="DialContext error: dial tcp [2606:4700:a8::5]:7844: connect: network is unreachable" connIndex=2
-2026-08-27T22:04:32Z ERR Connection terminated error="DialContext error: dial tcp [2606:4700:a0::2]:7844: connect: network is unreachable" connIndex=1
-2026-08-27T22:04:39Z ERR Connection terminated error="DialContext error: dial tcp [2606:4700:a8::9]:7844: connect: network is unreachable" connIndex=3
-2026-08-27T22:06:13Z INF Tunnel connection curve preferences: [X25519MLKEM768 CurveID(65074) CurveP256] connIndex=3 event=0 ip=198.41.200.13
-2026-08-27T22:06:13Z ERR Unable to establish connection with Cloudflare edge error="DialContext error: dial tcp 198.41.200.13:7844: connect: network is unreachable" connIndex=3 event=0 ip=198.41.200.13
-2026-08-27T22:06:13Z ERR Serve tunnel error error="DialContext error: dial tcp 198.41.200.13:7844: connect: network is unreachable" connIndex=3 event=0 ip=198.41.200.13
-2026-08-27T22:06:13Z INF Tunnel connection curve preferences: [X25519MLKEM768 CurveID(65074) CurveP256] connIndex=0 event=0 ip=198.41.192.27
-2026-08-27T22:06:13Z INF Retrying connection in up to 1m4s connIndex=3 event=0 ip=198.41.200.13
-2026-08-27T22:06:13Z ERR Unable to establish connection with Cloudflare edge error="DialContext error: dial tcp 198.41.192.27:7844: connect: network is unreachable" connIndex=0 event=0 ip=198.41.192.27
-2026-08-27T22:06:13Z ERR Serve tunnel error error="DialContext error: dial tcp 198.41.192.27:7844: connect: network is unreachable" connIndex=0 event=0 ip=198.41.192.27
-2026-08-27T22:06:13Z INF Tunnel connection curve preferences: [X25519MLKEM768 CurveID(65074) CurveP256] connIndex=1 event=0 ip=198.41.192.37
-2026-08-27T22:06:13Z INF Retrying connection in up to 1m4s connIndex=0 event=0 ip=198.41.192.27
-2026-08-27T22:06:13Z INF Tunnel connection curve preferences: [X25519MLKEM768 CurveID(65074) CurveP256] connIndex=2 event=0 ip=198.41.200.43
-2026-08-27T22:06:13Z ERR Unable to establish connection with Cloudflare edge error="DialContext error: dial tcp 198.41.192.37:7844: connect: network is unreachable" connIndex=1 event=0 ip=198.41.192.37
-2026-08-27T22:06:13Z ERR Unable to establish connection with Cloudflare edge error="DialContext error: dial tcp 198.41.200.43:7844: connect: network is unreachable" connIndex=2 event=0 ip=198.41.200.43
-2026-08-27T22:06:13Z ERR Serve tunnel error error="DialContext error: dial tcp 198.41.192.37:7844: connect: network is unreachable" connIndex=1 event=0 ip=198.41.192.37
-2026-08-27T22:06:13Z ERR Serve tunnel error error="DialContext error: dial tcp 198.41.200.43:7844: connect: network is unreachable" connIndex=2 event=0 ip=198.41.200.43
-2026-08-27T22:06:13Z INF Retrying connection in up to 1m4s connIndex=1 event=0 ip=198.41.192.37
-2026-08-27T22:06:13Z INF Retrying connection in up to 1m4s connIndex=2 event=0 ip=198.41.200.43
-2026-08-27T22:06:14Z ERR Connection terminated error="DialContext error: dial tcp 198.41.200.43:7844: connect: network is unreachable" connIndex=2
-2026-08-27T22:06:26Z INF Tunnel connection curve preferences: [X25519MLKEM768 CurveID(65074) CurveP256] connIndex=2 event=0 ip=2606:4700:a8::7
-2026-08-27T22:06:26Z ERR Unable to establish connection with Cloudflare edge error="DialContext error: dial tcp [2606:4700:a8::7]:7844: connect: network is unreachable" connIndex=2 event=0 ip=2606:4700:a8::7
-2026-08-27T22:06:26Z ERR Serve tunnel error error="DialContext error: dial tcp [2606:4700:a8::7]:7844: connect: network is unreachable" connIndex=2 event=0 ip=2606:4700:a8::7
-2026-08-27T22:06:26Z INF Retrying connection in up to 1m4s connIndex=2 event=0 ip=2606:4700:a8::7
-2026-08-27T22:06:32Z ERR Connection terminated error="DialContext error: dial tcp 198.41.200.13:7844: connect: network is unreachable" connIndex=3
-2026-08-27T22:06:33Z ERR Connection terminated error="DialContext error: dial tcp 198.41.192.27:7844: connect: network is unreachable" connIndex=0
-2026-08-27T22:06:45Z ERR Connection terminated error="DialContext error: dial tcp 198.41.192.37:7844: connect: network is unreachable" connIndex=1
-2026-08-27T22:06:50Z INF Tunnel connection curve preferences: [X25519MLKEM768 CurveID(65074) CurveP256] connIndex=1 event=0 ip=2606:4700:a0::5
-2026-08-27T22:06:50Z INF Tunnel connection curve preferences: [X25519MLKEM768 CurveID(65074) CurveP256] connIndex=3 event=0 ip=2606:4700:a8::3
-2026-08-27T22:06:50Z INF Tunnel connection curve preferences: [X25519MLKEM768 CurveID(65074) CurveP256] connIndex=0 event=0 ip=2606:4700:a0::3
-2026-08-27T22:06:50Z ERR Unable to establish connection with Cloudflare edge error="DialContext error: dial tcp [2606:4700:a0::3]:7844: connect: network is unreachable" connIndex=0 event=0 ip=2606:4700:a0::3
-2026-08-27T22:06:50Z ERR Unable to establish connection with Cloudflare edge error="DialContext error: dial tcp [2606:4700:a8::3]:7844: connect: network is unreachable" connIndex=3 event=0 ip=2606:4700:a8::3
-2026-08-27T22:06:50Z ERR Serve tunnel error error="DialContext error: dial tcp [2606:4700:a0::3]:7844: connect: network is unreachable" connIndex=0 event=0 ip=2606:4700:a0::3
-2026-08-27T22:06:50Z ERR Serve tunnel error error="DialContext error: dial tcp [2606:4700:a8::3]:7844: connect: network is unreachable" connIndex=3 event=0 ip=2606:4700:a8::3
-2026-08-27T22:06:50Z INF Retrying connection in up to 1m4s connIndex=0 event=0 ip=2606:4700:a0::3
-2026-08-27T22:06:50Z INF Retrying connection in up to 1m4s connIndex=3 event=0 ip=2606:4700:a8::3
-2026-08-27T22:06:50Z ERR Unable to establish connection with Cloudflare edge error="DialContext error: dial tcp [2606:4700:a0::5]:7844: connect: network is unreachable" connIndex=1 event=0 ip=2606:4700:a0::5
-2026-08-27T22:06:50Z ERR Serve tunnel error error="DialContext error: dial tcp [2606:4700:a0::5]:7844: connect: network is unreachable" connIndex=1 event=0 ip=2606:4700:a0::5
-2026-08-27T22:06:50Z INF Retrying connection in up to 1m4s connIndex=1 event=0 ip=2606:4700:a0::5
-2026-08-27T22:06:51Z ERR Connection terminated error="DialContext error: dial tcp [2606:4700:a0::5]:7844: connect: network is unreachable" connIndex=1
-2026-08-27T22:06:56Z ERR Connection terminated error="DialContext error: dial tcp [2606:4700:a8::7]:7844: connect: network is unreachable" connIndex=2
-2026-08-27T22:07:12Z ERR Failed to refresh DNS local resolver error="lookup region1.v2.argotunnel.com on [::1]:53: read udp [::1]:36254->[::1]:53: read: connection refused"
-2026-08-27T22:07:14Z ERR Connection terminated error="DialContext error: dial tcp [2606:4700:a0::3]:7844: connect: network is unreachable" connIndex=0
-2026-08-27T22:07:18Z ERR Connection terminated error="DialContext error: dial tcp [2606:4700:a8::3]:7844: connect: network is unreachable" connIndex=3
-2026-08-27T22:10:07Z INF Tunnel connection curve preferences: [X25519MLKEM768 CurveID(65074) CurveP256] connIndex=3 event=0 ip=198.41.192.57
-2026-08-27T22:10:07Z INF Tunnel connection curve preferences: [X25519MLKEM768 CurveID(65074) CurveP256] connIndex=2 event=0 ip=198.41.200.73
-2026-08-27T22:10:07Z ERR Unable to establish connection with Cloudflare edge error="DialContext error: dial tcp 198.41.192.57:7844: connect: network is unreachable" connIndex=3 event=0 ip=198.41.192.57
-2026-08-27T22:10:07Z ERR Serve tunnel error error="DialContext error: dial tcp 198.41.192.57:7844: connect: network is unreachable" connIndex=3 event=0 ip=198.41.192.57
-2026-08-27T22:10:07Z INF Retrying connection in up to 1m4s connIndex=3 event=0 ip=198.41.192.57
-2026-08-27T22:10:07Z ERR Unable to establish connection with Cloudflare edge error="DialContext error: dial tcp 198.41.200.73:7844: connect: network is unreachable" connIndex=2 event=0 ip=198.41.200.73
-2026-08-27T22:10:07Z ERR Serve tunnel error error="DialContext error: dial tcp 198.41.200.73:7844: connect: network is unreachable" connIndex=2 event=0 ip=198.41.200.73
-2026-08-27T22:10:07Z INF Tunnel connection curve preferences: [X25519MLKEM768 CurveID(65074) CurveP256] connIndex=0 event=0 ip=198.41.192.107
-2026-08-27T22:10:07Z INF Retrying connection in up to 1m4s connIndex=2 event=0 ip=198.41.200.73
-2026-08-27T22:10:07Z ERR Unable to establish connection with Cloudflare edge error="DialContext error: dial tcp 198.41.192.107:7844: connect: network is unreachable" connIndex=0 event=0 ip=198.41.192.107
-2026-08-27T22:10:07Z ERR Serve tunnel error error="DialContext error: dial tcp 198.41.192.107:7844: connect: network is unreachable" connIndex=0 event=0 ip=198.41.192.107
-2026-08-27T22:10:07Z INF Retrying connection in up to 1m4s connIndex=0 event=0 ip=198.41.192.107
-2026-08-27T22:10:07Z INF Tunnel connection curve preferences: [X25519MLKEM768 CurveID(65074) CurveP256] connIndex=1 event=0 ip=198.41.200.13
-2026-08-27T22:10:07Z ERR Unable to establish connection with Cloudflare edge error="DialContext error: dial tcp 198.41.200.13:7844: connect: network is unreachable" connIndex=1 event=0 ip=198.41.200.13
-2026-08-27T22:10:07Z ERR Serve tunnel error error="DialContext error: dial tcp 198.41.200.13:7844: connect: network is unreachable" connIndex=1 event=0 ip=198.41.200.13
-2026-08-27T22:10:07Z INF Retrying connection in up to 1m4s connIndex=1 event=0 ip=198.41.200.13
-2026-08-27T22:10:12Z ERR Connection terminated error="DialContext error: dial tcp 198.41.192.57:7844: connect: network is unreachable" connIndex=3
-2026-08-27T22:10:24Z ERR Connection terminated error="DialContext error: dial tcp 198.41.200.73:7844: connect: network is unreachable" connIndex=2
-2026-08-27T22:10:26Z ERR Connection terminated error="DialContext error: dial tcp 198.41.200.13:7844: connect: network is unreachable" connIndex=1
-2026-08-27T22:10:33Z ERR Connection terminated error="DialContext error: dial tcp 198.41.192.107:7844: connect: network is unreachable" connIndex=0
-2026-08-27T22:12:12Z ERR Failed to refresh DNS local resolver error="lookup region1.v2.argotunnel.com on [::1]:53: read udp [::1]:41228->[::1]:53: read: connection refused"
-2026-08-27T22:14:31Z INF Tunnel connection curve preferences: [X25519MLKEM768 CurveID(65074) CurveP256] connIndex=0 event=0 ip=2606:4700:a0::8
-2026-08-27T22:14:31Z INF Tunnel connection curve preferences: [X25519MLKEM768 CurveID(65074) CurveP256] connIndex=2 event=0 ip=2606:4700:a8::3
-2026-08-27T22:14:31Z INF Tunnel connection curve preferences: [X25519MLKEM768 CurveID(65074) CurveP256] connIndex=1 event=0 ip=2606:4700:a8::9
-2026-08-27T22:14:31Z ERR Unable to establish connection with Cloudflare edge error="DialContext error: dial tcp [2606:4700:a8::3]:7844: connect: network is unreachable" connIndex=2 event=0 ip=2606:4700:a8::3
-2026-08-27T22:14:31Z ERR Unable to establish connection with Cloudflare edge error="DialContext error: dial tcp [2606:4700:a0::8]:7844: connect: network is unreachable" connIndex=0 event=0 ip=2606:4700:a0::8
-2026-08-27T22:14:31Z ERR Serve tunnel error error="DialContext error: dial tcp [2606:4700:a8::3]:7844: connect: network is unreachable" connIndex=2 event=0 ip=2606:4700:a8::3
-2026-08-27T22:14:31Z ERR Serve tunnel error error="DialContext error: dial tcp [2606:4700:a0::8]:7844: connect: network is unreachable" connIndex=0 event=0 ip=2606:4700:a0::8
-2026-08-27T22:14:31Z ERR Unable to establish connection with Cloudflare edge error="DialContext error: dial tcp [2606:4700:a8::9]:7844: connect: network is unreachable" connIndex=1 event=0 ip=2606:4700:a8::9
-2026-08-27T22:14:31Z INF Retrying connection in up to 1m4s connIndex=0 event=0 ip=2606:4700:a0::8
-2026-08-27T22:14:31Z INF Tunnel connection curve preferences: [X25519MLKEM768 CurveID(65074) CurveP256] connIndex=3 event=0 ip=2606:4700:a0::6
-2026-08-27T22:14:31Z INF Retrying connection in up to 1m4s connIndex=2 event=0 ip=2606:4700:a8::3
-2026-08-27T22:14:31Z ERR Serve tunnel error error="DialContext error: dial tcp [2606:4700:a8::9]:7844: connect: network is unreachable" connIndex=1 event=0 ip=2606:4700:a8::9
-2026-08-27T22:14:31Z ERR Unable to establish connection with Cloudflare edge error="DialContext error: dial tcp [2606:4700:a0::6]:7844: connect: network is unreachable" connIndex=3 event=0 ip=2606:4700:a0::6
-2026-08-27T22:14:31Z INF Retrying connection in up to 1m4s connIndex=1 event=0 ip=2606:4700:a8::9
-2026-08-27T22:14:31Z ERR Serve tunnel error error="DialContext error: dial tcp [2606:4700:a0::6]:7844: connect: network is unreachable" connIndex=3 event=0 ip=2606:4700:a0::6
-2026-08-27T22:14:31Z INF Retrying connection in up to 1m4s connIndex=3 event=0 ip=2606:4700:a0::6
-2026-08-27T22:14:36Z ERR Connection terminated error="DialContext error: dial tcp [2606:4700:a0::8]:7844: connect: network is unreachable" connIndex=0
-2026-08-27T22:14:37Z ERR Connection terminated error="DialContext error: dial tcp [2606:4700:a0::6]:7844: connect: network is unreachable" connIndex=3
-2026-08-27T22:14:38Z ERR Connection terminated error="DialContext error: dial tcp [2606:4700:a8::9]:7844: connect: network is unreachable" connIndex=1
-2026-08-27T22:14:43Z ERR Connection terminated error="DialContext error: dial tcp [2606:4700:a8::3]:7844: connect: network is unreachable" connIndex=2
-2026-08-27T22:17:12Z ERR Failed to refresh DNS local resolver error="lookup region1.v2.argotunnel.com on [::1]:53: read udp [::1]:41133->[::1]:53: read: connection refused"
-2026-08-27T22:19:19Z INF Tunnel connection curve preferences: [X25519MLKEM768 CurveID(65074) CurveP256] connIndex=2 event=0 ip=198.41.200.113
-2026-08-27T22:19:19Z INF Tunnel connection curve preferences: [X25519MLKEM768 CurveID(65074) CurveP256] connIndex=3 event=0 ip=198.41.200.233
-2026-08-27T22:19:19Z INF Tunnel connection curve preferences: [X25519MLKEM768 CurveID(65074) CurveP256] connIndex=0 event=0 ip=198.41.192.37
-2026-08-27T22:19:19Z INF Tunnel connection curve preferences: [X25519MLKEM768 CurveID(65074) CurveP256] connIndex=1 event=0 ip=198.41.192.77
-2026-08-27T22:19:20Z INF Registered tunnel connection connIndex=3 connection=3c5d4af6-e254-449b-9fc2-8324beac2b60 event=0 ip=198.41.200.233 location=sin11 protocol=http2
-2026-08-27T22:19:20Z INF Registered tunnel connection connIndex=1 connection=a51283f3-dea2-49a8-965b-9b4a3751a17d event=0 ip=198.41.192.77 location=sin17 protocol=http2
-2026-08-27T22:19:20Z INF Registered tunnel connection connIndex=2 connection=e4377aa8-ac23-4109-9802-9f9f84d8db59 event=0 ip=198.41.200.113 location=sin14 protocol=http2
-2026-08-27T22:19:20Z INF Registered tunnel connection connIndex=0 connection=cdc5ae69-bfeb-4042-bbd1-eb56abb0e731 event=0 ip=198.41.192.37 location=sin08 protocol=http2
-2026-08-28T04:39:57Z INF Initiating graceful shutdown due to signal terminated ...
-2026-08-28T04:39:57Z INF Unregistered tunnel connection connIndex=3 event=0 ip=198.41.200.233
-2026-08-28T04:39:57Z INF Retrying connection in up to 1s connIndex=3 event=0 ip=198.41.200.233
-2026-08-28T04:39:57Z ERR Connection terminated connIndex=3
-2026-08-28T04:39:57Z INF Unregistered tunnel connection connIndex=1 event=0 ip=198.41.192.77
-2026-08-28T04:39:58Z INF Retrying connection in up to 1s connIndex=1 event=0 ip=198.41.192.77
-2026-08-28T04:39:58Z ERR Connection terminated connIndex=1
+2026-09-07T09:04:44Z INF Starting tunnel tunnelID=cc4d798e-c77d-47fd-ad9b-ce2d92d8d2e2
+2026-09-07T09:04:44Z INF Version 2026.8.3 (Checksum e7a6566340b9e1b093adbd7048e602995d582cda27888b6e33f6fd0876dfb713)
+2026-09-07T09:04:44Z INF GOOS: linux, GOVersion: go1.27.0-X:nodwarf5, GoArch: amd64
+2026-09-07T09:04:44Z INF Settings: map[p:http2 protocol:http2 token:*****]
+2026-09-07T09:04:44Z INF cloudflared will not automatically update if installed by a package manager.
+2026-09-07T09:04:45Z INF Generated Connector ID: c822722e-4f13-487c-a969-cdf54279ea08
+2026-09-07T09:04:45Z INF Initial protocol http2
+2026-09-07T09:04:45Z INF ICMP proxy will use 192.168.1.26 as source for IPv4
+2026-09-07T09:04:45Z INF ICMP proxy will use 2402:800:63aa:a1ad:5bfe:d2ff:104e:8ae0 in zone wlan0 as source for IPv6
+2026-09-07T09:04:45Z INF ICMP proxy will use 192.168.1.26 as source for IPv4
+2026-09-07T09:04:45Z INF ICMP proxy will use 2402:800:63aa:a1ad:5bfe:d2ff:104e:8ae0 in zone wlan0 as source for IPv6
+2026-09-07T09:04:45Z INF Starting metrics server on 127.0.0.1:20242/metrics
+2026-09-07T09:04:45Z INF Tunnel connection curve preferences: [X25519MLKEM768 CurveID(65074) CurveP256] connIndex=0 event=0 ip=2606:4700:a0::4
+2026-09-07T09:04:46Z ERR Unable to establish connection with Cloudflare edge error="DialContext error: dial tcp [2606:4700:a0::4]:7844: connect: network is unreachable" connIndex=0 event=0 ip=2606:4700:a0::4
+2026-09-07T09:04:46Z ERR Serve tunnel error error="DialContext error: dial tcp [2606:4700:a0::4]:7844: connect: network is unreachable" connIndex=0 event=0 ip=2606:4700:a0::4
+2026-09-07T09:04:46Z INF Retrying connection in up to 2s connIndex=0 event=0 ip=2606:4700:a0::4
+2026-09-07T09:04:48Z INF Tunnel connection curve preferences: [X25519MLKEM768 CurveID(65074) CurveP256] connIndex=0 event=0 ip=2606:4700:a8::2
+2026-09-07T09:04:49Z ERR Unable to establish connection with Cloudflare edge error="DialContext error: dial tcp [2606:4700:a8::2]:7844: connect: network is unreachable" connIndex=0 event=0 ip=2606:4700:a8::2
+2026-09-07T09:04:49Z ERR Serve tunnel error error="DialContext error: dial tcp [2606:4700:a8::2]:7844: connect: network is unreachable" connIndex=0 event=0 ip=2606:4700:a8::2
+2026-09-07T09:04:49Z INF Retrying connection in up to 4s connIndex=0 event=0 ip=2606:4700:a8::2
+2026-09-07T09:04:52Z INF Tunnel connection curve preferences: [X25519MLKEM768 CurveID(65074) CurveP256] connIndex=0 event=0 ip=198.41.192.37
+2026-09-07T09:04:53Z INF Registered tunnel connection connIndex=0 connection=8217df5c-308f-4daa-a282-a3d083a1136d event=0 ip=198.41.192.37 location=sin20 protocol=http2
+2026-09-07T09:04:53Z INF Tunnel connection curve preferences: [X25519MLKEM768 CurveID(65074) CurveP256] connIndex=1 event=0 ip=198.41.200.63
+2026-09-07T09:04:53Z INF Updated to new configuration config="{\"ingress\":[{\"hostname\":\"api.thieulamtaysonmiennam.id.vn\", \"originRequest\":{}, \"service\":\"http://localhost:4000\"}, {\"service\":\"http_status:404\"}], \"warp-routing\":{\"enabled\":false}}" version=1
+2026-09-07T09:04:54Z INF Tunnel connection curve preferences: [X25519MLKEM768 CurveID(65074) CurveP256] connIndex=2 event=0 ip=198.41.192.67
+2026-09-07T09:04:54Z INF Registered tunnel connection connIndex=1 connection=bfbedf98-9237-4036-98d4-f059a690d196 event=0 ip=198.41.200.63 location=sin22 protocol=http2
+2026-09-07T09:04:55Z INF +-----------------------------------------------------------------------------------------------+
+2026-09-07T09:04:55Z INF |                                    CONNECTIVITY PRE-CHECKS                                    |
+2026-09-07T09:04:55Z INF +-----------------------------------------------------------------------------------------------+
+2026-09-07T09:04:55Z INF |  COMPONENT         TARGET                     STATUS  DETAILS                                 |
+2026-09-07T09:04:55Z INF |  DNS Resolution    region1.v2.argotunnel.com  PASS    DNS Resolved successfully               |
+2026-09-07T09:04:55Z INF |  DNS Resolution    region2.v2.argotunnel.com  PASS    DNS Resolved successfully               |
+2026-09-07T09:04:55Z INF |  UDP Connectivity  region1.v2.argotunnel.com  PASS    QUIC connection successful              |
+2026-09-07T09:04:55Z INF |  UDP Connectivity  region2.v2.argotunnel.com  FAIL    QUIC connection failed                  |
+2026-09-07T09:04:55Z INF |  TCP Connectivity  region1.v2.argotunnel.com  PASS    HTTP/2 connection successful            |
+2026-09-07T09:04:55Z INF |  TCP Connectivity  region2.v2.argotunnel.com  PASS    HTTP/2 connection successful            |
+2026-09-07T09:04:55Z INF |  Cloudflare API    api.cloudflare.com:443     PASS    API is reachable                        |
+2026-09-07T09:04:55Z INF |  WARNING: Allow outbound QUIC traffic on port 7844 or use HTTP2.                              |
+2026-09-07T09:04:55Z INF |                                                                                               |
+2026-09-07T09:04:55Z INF |  SUMMARY: Environment ready with degraded transport. cloudflared will proceed using 'http2'.  |
+2026-09-07T09:04:55Z INF +-----------------------------------------------------------------------------------------------+
+2026-09-07T09:04:55Z INF precheck component="DNS Resolution" details="DNS Resolved successfully" run_id=19c08c04-8de2-4b42-b0d2-0d24fc86bc46 status=pass target=region1.v2.argotunnel.com
+2026-09-07T09:04:55Z INF precheck component="DNS Resolution" details="DNS Resolved successfully" run_id=19c08c04-8de2-4b42-b0d2-0d24fc86bc46 status=pass target=region2.v2.argotunnel.com
+2026-09-07T09:04:55Z INF precheck component="UDP Connectivity" details="QUIC connection successful" run_id=19c08c04-8de2-4b42-b0d2-0d24fc86bc46 status=pass target=region1.v2.argotunnel.com
+2026-09-07T09:04:55Z INF precheck component="UDP Connectivity" details="QUIC connection failed" run_id=19c08c04-8de2-4b42-b0d2-0d24fc86bc46 status=fail target=region2.v2.argotunnel.com
+2026-09-07T09:04:55Z INF precheck component="TCP Connectivity" details="HTTP/2 connection successful" run_id=19c08c04-8de2-4b42-b0d2-0d24fc86bc46 status=pass target=region1.v2.argotunnel.com
+2026-09-07T09:04:55Z INF precheck component="TCP Connectivity" details="HTTP/2 connection successful" run_id=19c08c04-8de2-4b42-b0d2-0d24fc86bc46 status=pass target=region2.v2.argotunnel.com
+2026-09-07T09:04:55Z INF precheck component="Cloudflare API" details="API is reachable" run_id=19c08c04-8de2-4b42-b0d2-0d24fc86bc46 status=pass target=api.cloudflare.com:443
+2026-09-07T09:04:55Z INF precheck complete hard_fail=false run_id=19c08c04-8de2-4b42-b0d2-0d24fc86bc46 suggested_protocol=http2
+2026-09-07T09:04:55Z INF Registered tunnel connection connIndex=2 connection=02c3cca8-4c64-4c88-82a1-8d528b39b54a event=0 ip=198.41.192.67 location=sin09 protocol=http2
+2026-09-07T09:04:55Z INF Tunnel connection curve preferences: [X25519MLKEM768 CurveID(65074) CurveP256] connIndex=3 event=0 ip=198.41.200.43
+2026-09-07T09:04:56Z INF Registered tunnel connection connIndex=3 connection=86e2300f-e35b-4e32-bc32-22ef7a45b8a9 event=0 ip=198.41.200.43 location=sin13 protocol=http2
+2026-09-08T07:37:18Z INF Lost connection with the edge connIndex=1
+2026-09-08T07:37:18Z WRN Serve tunnel error error="connection with edge closed" connIndex=1 event=0 ip=198.41.200.63
+2026-09-08T07:37:18Z INF Retrying connection in up to 1s connIndex=1 event=0 ip=198.41.200.63
+2026-09-08T07:37:18Z ERR failed to serve incoming request error="Error shutting down control stream: client disconnected"
+2026-09-08T07:37:19Z INF Lost connection with the edge connIndex=3
+2026-09-08T07:37:19Z WRN Serve tunnel error error="connection with edge closed" connIndex=3 event=0 ip=198.41.200.43
+2026-09-08T07:37:19Z ERR failed to serve incoming request error="Error shutting down control stream: context canceled"
+2026-09-08T07:37:19Z INF Lost connection with the edge connIndex=0
+2026-09-08T07:37:19Z ERR failed to serve incoming request error="Error shutting down control stream: context canceled"
+2026-09-08T07:37:19Z INF Lost connection with the edge connIndex=2
+2026-09-08T07:37:19Z INF Retrying connection in up to 1s connIndex=3 event=0 ip=198.41.200.43
+2026-09-08T07:37:19Z ERR Serve tunnel error error="connection with edge closed" connIndex=2 event=0 ip=198.41.192.67
+2026-09-08T07:37:19Z INF Retrying connection in up to 1s connIndex=2 event=0 ip=198.41.192.67
+2026-09-08T07:37:19Z ERR failed to serve incoming request error="Error shutting down control stream: context canceled"
+2026-09-08T07:37:19Z ERR Serve tunnel error error="connection with edge closed" connIndex=0 event=0 ip=198.41.192.37
+2026-09-08T07:37:19Z INF Retrying connection in up to 1s connIndex=0 event=0 ip=198.41.192.37
+2026-09-08T07:37:19Z ERR Connection terminated error="connection with edge closed" connIndex=3
+2026-09-08T07:37:19Z ERR Connection terminated error="connection with edge closed" connIndex=1
+2026-09-08T07:37:20Z ERR Connection terminated error="connection with edge closed" connIndex=0
+2026-09-08T07:37:20Z ERR Connection terminated error="connection with edge closed" connIndex=2
+2026-09-08T07:37:24Z INF Tunnel connection curve preferences: [X25519MLKEM768 CurveID(65074) CurveP256] connIndex=2 event=0 ip=198.41.192.67
+2026-09-08T07:37:24Z INF Tunnel connection curve preferences: [X25519MLKEM768 CurveID(65074) CurveP256] connIndex=0 event=0 ip=198.41.192.37
+2026-09-08T07:37:24Z INF Tunnel connection curve preferences: [X25519MLKEM768 CurveID(65074) CurveP256] connIndex=3 event=0 ip=198.41.200.43
+2026-09-08T07:37:24Z INF Tunnel connection curve preferences: [X25519MLKEM768 CurveID(65074) CurveP256] connIndex=1 event=0 ip=198.41.200.63
+2026-09-08T07:37:25Z INF Registered tunnel connection connIndex=1 connection=7bc62fb3-83fa-4990-8673-1f99e82c0b04 event=0 ip=198.41.200.63 location=sin12 protocol=http2
+2026-09-08T07:37:25Z INF Registered tunnel connection connIndex=3 connection=3e75bf7e-5bb0-4484-bddb-b0e7d023f4bc event=0 ip=198.41.200.43 location=sin15 protocol=http2
+2026-09-08T07:37:25Z INF Registered tunnel connection connIndex=0 connection=21970f7b-71e6-4442-9930-2d9e89ef2364 event=0 ip=198.41.192.37 location=sin19 protocol=http2
+2026-09-08T07:37:26Z INF Registered tunnel connection connIndex=2 connection=9e1024b9-8a3c-4f3f-9396-f1ae2c43c71a event=0 ip=198.41.192.67 location=sin19 protocol=http2
