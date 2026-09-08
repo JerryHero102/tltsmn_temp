@@ -30,6 +30,7 @@ export default function StudentModal({
   const [notes, setNotes] = useState("");
   const [dateOfJoin, setDateOfJoin] = useState("2026-01-10");
   const [currentLevel, setCurrentLevel] = useState<number | string>(0);
+  const [location, setLocation] = useState<string>(defaultLocation || "mn");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
@@ -39,6 +40,7 @@ export default function StudentModal({
       setBirthYear(student.birth_year || 2012);
       setGender(student.gender || "Nam");
       setSchedule(student.schedule || "2-4-6");
+      setLocation(student.location || defaultLocation || "mn");
       setEmail(student.email || "");
       setAddress(student.current_address || student.address || "");
       setNotes(student.notes || "");
@@ -58,13 +60,14 @@ export default function StudentModal({
       setBirthYear(2000);
       setGender("Nam");
       setSchedule("2-4-6");
+      setLocation(defaultLocation || "mn");
       setEmail("");
       setAddress("");
       setNotes("");
       setDateOfJoin("2026-01-10");
       setCurrentLevel(0);
     }
-  }, [student, isOpen]);
+  }, [student, isOpen, defaultLocation]);
 
   if (!isOpen) return null;
 
@@ -91,6 +94,7 @@ export default function StudentModal({
     try {
       setIsSubmitting(true);
       const levelNum = currentLevel === "" ? 0 : Number(currentLevel);
+      const finalLocation = location || defaultLocation || 'mn';
       if (student) {
         await api.updateStudent(student.profile_id, {
           fullname,
@@ -103,7 +107,7 @@ export default function StudentModal({
           notes,
           date_of_join: dateOfJoin,
           current_level: levelNum,
-          location: student?.location || defaultLocation || 'mn',
+          location: finalLocation,
         });
         toast.success("Cập nhật thông tin học viên thành công!");
       } else {
@@ -118,7 +122,7 @@ export default function StudentModal({
           notes,
           date_of_join: dateOfJoin,
           current_level: levelNum,
-          location: defaultLocation || 'mn',
+          location: finalLocation,
         });
         toast.success("Thêm học viên mới thành công!");
       }
@@ -239,6 +243,21 @@ export default function StudentModal({
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1.5">
               <label className="block text-xs font-semibold text-slate-600 uppercase tracking-wider">
+                Đơn Vị <span className="text-red-500">*</span>
+              </label>
+              <select
+                value={location}
+                onChange={(e) => setLocation(e.target.value)}
+                className="w-full px-3.5 py-2.5 text-base sm:text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#014D2F] font-medium bg-white"
+                required
+              >
+                <option value="mn">1. Miền Nam</option>
+                <option value="tsn">2. Tân Sơn Nhì</option>
+              </select>
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="block text-xs font-semibold text-slate-600 uppercase tracking-wider">
                 Ngày Nhập Học
               </label>
               <input
@@ -248,7 +267,9 @@ export default function StudentModal({
                 className="w-full px-3.5 py-2.5 text-base sm:text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#014D2F] font-medium bg-white"
               />
             </div>
+          </div>
 
+          <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1.5">
               <label className="block text-xs font-semibold text-slate-600 uppercase tracking-wider">
                 Cấp Đai
@@ -268,9 +289,7 @@ export default function StudentModal({
                 className="w-full px-3.5 py-2.5 text-base sm:text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#014D2F] font-medium"
               />
             </div>
-          </div>
 
-          <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1.5">
               <label className="block text-xs font-semibold text-slate-600 uppercase tracking-wider">
                 Email
@@ -283,19 +302,19 @@ export default function StudentModal({
                 className="w-full px-3.5 py-2.5 text-base sm:text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#014D2F] font-medium"
               />
             </div>
+          </div>
 
-            <div className="space-y-1.5">
-              <label className="block text-xs font-semibold text-slate-600 uppercase tracking-wider">
-                Địa Chỉ
-              </label>
-              <input
-                type="text"
-                placeholder="Quận 1, TP.HCM"
-                value={address}
-                onChange={(e) => setAddress(e.target.value)}
-                className="w-full px-3.5 py-2.5 text-base sm:text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#014D2F] font-medium"
-              />
-            </div>
+          <div className="space-y-1.5">
+            <label className="block text-xs font-semibold text-slate-600 uppercase tracking-wider">
+              Địa Chỉ
+            </label>
+            <input
+              type="text"
+              placeholder="Quận 1, TP.HCM"
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
+              className="w-full px-3.5 py-2.5 text-base sm:text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#014D2F] font-medium"
+            />
           </div>
 
           <div className="space-y-1.5">

@@ -53,8 +53,12 @@ export default function DashboardPage() {
         api.getTuitionMatrix(loc),
       ]);
 
-      const baseStudents = studentsRes || [];
-      const baseMatrix = matrixRes || [];
+      const rawStudents = studentsRes || [];
+      const rawMatrix = matrixRes || [];
+
+      // Strictly isolate by location: 'tsn' only gets 'tsn', 'mn' only gets 'mn'
+      const baseStudents = rawStudents.filter((s: any) => (s.location || 'mn') === loc);
+      const baseMatrix = rawMatrix.filter((m: any) => (m.location || 'mn') === loc);
 
       // Merge any pending local receipts from Local Storage into matrix display
       const pendingList = api.getPendingReceiptsLocally();
@@ -96,13 +100,13 @@ export default function DashboardPage() {
     if (!loading && !user) {
       router.replace('/login');
     } else if (user) {
-      fetchData();
+      fetchData(activeLocation);
       // Automatically sync any pending local storage receipts to Cloudinary & DB on load
       api.syncPendingReceipts(() => {
-        fetchData();
+        fetchData(activeLocation);
       });
     }
-  }, [user, loading, router, fetchData]);
+  }, [user, loading, router, activeLocation, fetchData]);
 
   const handleNavigate = (loc: 'mn' | 'tsn', tab: 'students' | 'tuition') => {
     const locChanged = loc !== activeLocation;
