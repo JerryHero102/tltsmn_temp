@@ -75,18 +75,20 @@ export default function StudentModal({
     e.preventDefault();
 
     if (!fullname || !birthYear) {
-      toast.error('Vui lòng nhập Họ tên và Năm sinh');
+      toast.error("Vui lòng nhập Họ tên và Năm sinh");
       return;
     }
 
-    if (phoneNumber && phoneNumber.trim() !== '') {
+    if (phoneNumber && phoneNumber.trim() !== "") {
       const cleanPhone = phoneNumber.trim();
-      if (!cleanPhone.startsWith('0')) {
-        toast.error('Số điện thoại bắt buộc phải bắt đầu bằng số 0');
+      if (!cleanPhone.startsWith("0")) {
+        toast.error("Số điện thoại bắt buộc phải bắt đầu bằng số 0");
         return;
       }
       if (cleanPhone.length !== 10) {
-        toast.error(`Số điện thoại phải có đúng 10 chữ số (Hiện tại: ${cleanPhone.length} số)`);
+        toast.error(
+          `Số điện thoại phải có đúng 10 chữ số (Hiện tại: ${cleanPhone.length} số)`,
+        );
         return;
       }
     }
@@ -94,7 +96,7 @@ export default function StudentModal({
     try {
       setIsSubmitting(true);
       const levelNum = currentLevel === "" ? 0 : Number(currentLevel);
-      const finalLocation = location || defaultLocation || 'mn';
+      const finalLocation = location || defaultLocation || "mn";
       if (student) {
         await api.updateStudent(student.profile_id, {
           fullname,
@@ -202,7 +204,9 @@ export default function StudentModal({
                 maxLength={10}
                 placeholder="0903686779"
                 value={phoneNumber}
-                onChange={(e) => setPhoneNumber(e.target.value.replace(/\D/g, '').slice(0, 10))}
+                onChange={(e) =>
+                  setPhoneNumber(e.target.value.replace(/\D/g, "").slice(0, 10))
+                }
                 className="w-full px-3.5 py-2.5 text-base sm:text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#014D2F] font-medium font-mono"
               />
             </div>
@@ -251,8 +255,8 @@ export default function StudentModal({
                 className="w-full px-3.5 py-2.5 text-base sm:text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#014D2F] font-medium bg-white"
                 required
               >
-                <option value="mn">1. Miền Nam</option>
-                <option value="tsn">2. Tân Sơn Nhì</option>
+                <option value="mn">Miền Nam</option>
+                <option value="tsn">Tân Sơn Nhì</option>
               </select>
             </div>
 
