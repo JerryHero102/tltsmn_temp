@@ -158,7 +158,7 @@ export default function ReceiptModal({
 
   const currentSelectedStudent = students.find((s) => s.profile_id === selectedStudentId);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!selectedStudentId) {
@@ -174,8 +174,8 @@ export default function ReceiptModal({
     try {
       setIsSubmitting(true);
 
-      // STEP 1: Save IMMEDIATELY to Browser Local Storage synchronously
-      api.savePendingReceiptLocally({
+      // Lưu trực tiếp vào CSDL & ổ đĩa máy chủ (không lưu vào LocalStorage/Cookie)
+      await api.createReceipt({
         id_profile: selectedStudentId,
         payer_name: currentSelectedStudent?.fullname || 'Học viên',
         month: Number(month),
@@ -186,22 +186,17 @@ export default function ReceiptModal({
         base64Image: base64Image,
       });
 
-      toast.success('Đã lưu liền vào Local Storage trình duyệt! Đang tự động tải ảnh Cloudinary & lưu CSDL...', {
-        duration: 4000,
-      });
+      toast.success(
+        existingReceipt
+          ? `Cập nhật biên lai Tháng ${month} (${currentSelectedStudent?.fullname}) thành công!`
+          : `Lưu biên lai Tháng ${month} (${currentSelectedStudent?.fullname}) thành công!`
+      );
 
-      // Notify parent to refresh list/matrix immediately from local storage
+      // Cập nhật giao diện mượt mà không cần reload trang
       onSuccess();
       onClose();
-
-      // STEP 2: Automatically trigger background worker to upload image to Cloudinary & save into Postgres DB
-      api.syncPendingReceipts(() => {
-        toast.success(`Đã tự động đồng bộ biên lai Tháng ${month} (${currentSelectedStudent?.fullname}) lên Cloudinary & CSDL!`);
-        onSuccess();
-      });
-
     } catch (err: any) {
-      toast.error(err.message || 'Lỗi khi lưu biên lai vào Local Storage');
+      toast.error(err.message || 'Lỗi khi lưu biên lai');
     } finally {
       setIsSubmitting(false);
       setImagePreview(null);
@@ -222,7 +217,7 @@ export default function ReceiptModal({
             <p className="text-xs text-emerald-100 mt-0.5">
               {existingReceipt
                 ? 'Cập nhật lại số tiền, ngày lập hoặc hình ảnh biên lai'
-                : 'Lưu tức thì vào trình duyệt & Tự động đồng bộ Cloudinary/DB'}
+                : 'Lưu trực tiếp vào hệ thống & CSDL máy chủ'}
             </p>
           </div>
           <button

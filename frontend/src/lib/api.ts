@@ -190,43 +190,9 @@ export const api = {
     });
   },
 
-  // Client-side Local Storage Fallback & Offline Queue
-  savePendingReceiptLocally: (receipt: any) => {
-    if (typeof window === 'undefined') return;
-    const existing = JSON.parse(localStorage.getItem('pending_receipts') || '[]');
-    existing.push({
-      ...receipt,
-      local_id: `local_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
-      created_at: new Date().toISOString(),
-    });
-    localStorage.setItem('pending_receipts', JSON.stringify(existing));
-  },
-
-  getPendingReceiptsLocally: (): any[] => {
-    if (typeof window === 'undefined') return [];
-    return JSON.parse(localStorage.getItem('pending_receipts') || '[]');
-  },
-
-  clearPendingReceiptLocally: (localId: string) => {
-    if (typeof window === 'undefined') return;
-    const existing = JSON.parse(localStorage.getItem('pending_receipts') || '[]');
-    const updated = existing.filter((item: any) => item.local_id !== localId);
-    localStorage.setItem('pending_receipts', JSON.stringify(updated));
-  },
-
-  syncPendingReceipts: async (onProgress?: () => void) => {
-    if (typeof window === 'undefined') return;
-    const pending = api.getPendingReceiptsLocally();
-    if (pending.length === 0) return;
-
-    for (const item of pending) {
-      try {
-        await api.createReceipt(item);
-        api.clearPendingReceiptLocally(item.local_id);
-        if (onProgress) onProgress();
-      } catch (err) {
-        console.error('Lỗi khi đồng bộ biên lai từ Local Storage:', err);
-      }
-    }
-  },
+  // Client-side Local Storage - Không lưu vào LocalStorage nữa
+  savePendingReceiptLocally: (_receipt: any) => {},
+  getPendingReceiptsLocally: (): any[] => [],
+  clearPendingReceiptLocally: (_localId: string) => {},
+  syncPendingReceipts: async () => {},
 };

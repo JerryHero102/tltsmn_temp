@@ -1,56 +1,66 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
-import { v2 as cloudinary } from 'cloudinary';
+import * as fs from 'fs';
+import * as path from 'path';
 import { DatabaseService } from '../database/database.service';
 
-function formatCloudinaryOptimizedUrl(url: string): string {
-  if (!url) return '';
-  if (url.includes('/image/upload/') && !url.includes('/f_auto')) {
-    return url.replace('/image/upload/', '/image/upload/f_auto,q_auto/');
-  }
-  return url;
-}
+const RECEIPTS_DIR = '/home/maivankhanh/Documents/saved_reciepts';
 
 @Injectable()
 export class ReceiptsService {
   constructor(private readonly dbService: DatabaseService) {
-    const rawUrl = process.env.CLOUDINARY_URL || 'cloudinary://244577781153212:cAZDShDf1I95YSzdJjvb5jdbSgU@sxotasqj';
-    
-    let configObj = {
-      cloud_name: 'sxotasqj',
-      api_key: '244577781153212',
-      api_secret: 'cAZDShDf1I95YSzdJjvb5jdbSgU',
-    };
+    if (!fs.existsSync(RECEIPTS_DIR)) {
+      try {
+        fs.mkdirSync(RECEIPTS_DIR, { recursive: true });
+      } catch (err: any) {
+        console.error('Không thể tạo thư mục saved_reciepts:', err.message);
+      }
+    }
+  }
 
-    const match = rawUrl.match(/^cloudinary:\/\/([^:]+):([^@]+)@(.+)$/);
-    if (match) {
-      configObj = {
-        api_key: match[1],
-        api_secret: match[2],
-        cloud_name: match[3],
-      };
+  async saveImageLocally(fileBase64: string): Promise<string> {
+    if (!fileBase64) return '';
+
+    // Nếu đã là đường dẫn hoặc link URL thì giữ nguyên
+    if (
+      !fileBase64.startsWith('data:image') &&
+      !fileBase64.startsWith('/9j/') &&
+      fileBase64.length < 500
+    ) {
+      return fileBase64;
     }
 
-    cloudinary.config({
-      ...configObj,
-      secure: true,
-    });
+    try {
+      if (!fs.existsSync(RECEIPTS_DIR)) {
+        fs.mkdirSync(RECEIPTS_DIR, { recursive: true });
+      }
+
+      let extension = 'jpg';
+      let base64Data = fileBase64;
+
+      const matches = fileBase64.match(/^data:image\/([a-zA-Z0-9+]+);base64,(.+)$/);
+      if (matches) {
+        const mimeSubtype = matches[1].toLowerCase();
+        if (mimeSubtype.includes('png')) extension = 'png';
+        else if (mimeSubtype.includes('webp')) extension = 'webp';
+        else if (mimeSubtype.includes('gif')) extension = 'gif';
+        else extension = 'jpg';
+        base64Data = matches[2];
+      }
+
+      const buffer = Buffer.from(base64Data, 'base64');
+      const filename = `receipt_${Date.now()}_${Math.random().toString(36).substring(2, 8)}.${extension}`;
+      const filePath = path.join(RECEIPTS_DIR, filename);
+
+      await fs.promises.writeFile(filePath, buffer);
+      return `/api/receipts/image/${filename}`;
+    } catch (err: any) {
+      console.error('Lỗi khi lưu ảnh vào ổ đĩa:', err.message || err);
+      return fileBase64;
+    }
   }
 
   async uploadImage(fileBase64: string): Promise<string> {
-    if (!fileBase64) return '';
-
-    try {
-      const res = await cloudinary.uploader.upload(fileBase64, {
-        folder: 'tltsmn_receipts',
-      });
-      return formatCloudinaryOptimizedUrl(res.secure_url);
-    } catch (err: any) {
-      console.warn('Cloudinary upload warning:', err.message || err);
-      if (fileBase64.startsWith('data:image')) {
-        return fileBase64;
-      }
-      return fileBase64;
-    }
+    return this.saveImageLocally(fileBase64);
   }
 
   async findAll(location?: string) {
@@ -86,7 +96,7 @@ export class ReceiptsService {
     const res = await this.dbService.query(query, params);
     return res.rows.map((row) => ({
       ...row,
-      image_url: formatCloudinaryOptimizedUrl(row.image_url),
+      image_url: row.image_url || '',
     }));
   }
 
@@ -125,7 +135,7 @@ export class ReceiptsService {
         receipt_id: r.receipt_id,
         amount: r.amount,
         receipt_date: r.receipt_date,
-        image_url: formatCloudinaryOptimizedUrl(r.image_url),
+        image_url: r.image_url || '',
       };
     }
 
@@ -168,16 +178,14 @@ export class ReceiptsService {
 
       let rawImage = dto.image_url || dto.base64Image || '';
 
-      // Upload base64 image to Cloudinary if not already uploaded
+      // Lưu ảnh base64 trực tiếp vào ổ đĩa máy tính
       if (rawImage && (rawImage.startsWith('data:image') || rawImage.length > 500)) {
         try {
-          rawImage = await this.uploadImage(rawImage);
+          rawImage = await this.saveImageLocally(rawImage);
         } catch (uploadErr) {
-          console.error('Lỗi khi tải ảnh lên Cloudinary:', uploadErr);
+          console.error('Lỗi khi lưu ảnh vào ổ đĩa:', uploadErr);
         }
       }
-
-      const formattedUrl = formatCloudinaryOptimizedUrl(rawImage);
 
       // Check if a receipt already exists for this student and month
       const existingRes = await client.query(
@@ -209,7 +217,7 @@ export class ReceiptsService {
             dto.payer_name,
             dto.payment_content || `Học phí tháng ${dto.month}`,
             dto.schedule_note || '',
-            formattedUrl || '',
+            rawImage || '',
             existingId,
           ],
         );
@@ -227,7 +235,7 @@ export class ReceiptsService {
             dto.payer_name,
             dto.payment_content || `Học phí tháng ${dto.month}`,
             dto.schedule_note || '',
-            formattedUrl || '',
+            rawImage || '',
           ],
         );
 
@@ -243,7 +251,7 @@ export class ReceiptsService {
       await client.query('COMMIT');
       return {
         ...receipt,
-        image_url: formattedUrl,
+        image_url: rawImage,
       };
     } catch (err: any) {
       await client.query('ROLLBACK');

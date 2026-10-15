@@ -60,34 +60,8 @@ export default function DashboardPage() {
       const baseStudents = rawStudents.filter((s: any) => (s.location || 'mn') === loc);
       const baseMatrix = rawMatrix.filter((m: any) => (m.location || 'mn') === loc);
 
-      // Merge any pending local receipts from Local Storage into matrix display
-      const pendingList = api.getPendingReceiptsLocally();
-      if (pendingList.length > 0) {
-        const updatedMatrix = baseMatrix.map((row: any) => {
-          const studentPending = pendingList.filter((p: any) => p.id_profile === row.id_profile);
-          if (studentPending.length === 0) return row;
-
-          const mergedMonths = { ...row.months };
-          for (const pendingItem of studentPending) {
-            if (!mergedMonths[pendingItem.month]) {
-              mergedMonths[pendingItem.month] = {
-                receipt_id: -1,
-                amount: pendingItem.amount,
-                receipt_date: pendingItem.receipt_date,
-                image_url: pendingItem.base64Image,
-                is_pending_local: true,
-              };
-            }
-          }
-          return { ...row, months: mergedMonths };
-        });
-
-        setStudents(baseStudents);
-        setTuitionMatrix(updatedMatrix);
-      } else {
-        setStudents(baseStudents);
-        setTuitionMatrix(baseMatrix);
-      }
+      setStudents(baseStudents);
+      setTuitionMatrix(baseMatrix);
     } catch (err: any) {
       console.error('Failed to load dashboard data', err);
       toast.error('Lỗi khi tải dữ liệu từ máy chủ');
@@ -101,10 +75,6 @@ export default function DashboardPage() {
       router.replace('/login');
     } else if (user) {
       fetchData(activeLocation);
-      // Automatically sync any pending local storage receipts to Cloudinary & DB on load
-      api.syncPendingReceipts(() => {
-        fetchData(activeLocation);
-      });
     }
   }, [user, loading, router, activeLocation, fetchData]);
 
