@@ -194,5 +194,5 @@ export const api = {
   savePendingReceiptLocally: (_receipt: any) => {},
   getPendingReceiptsLocally: (): any[] => [],
   clearPendingReceiptLocally: (_localId: string) => {},
-  syncPendingReceipts: async () => {},
+  syncPendingReceipts: async (_onProgress?: () => void) => {},
 };

@@ -176,12 +176,11 @@ export default function DashboardPage() {
               <button
                 onClick={() => {
                   fetchData();
-                  api.syncPendingReceipts(fetchData);
                 }}
                 disabled={loadingData}
                 className="p-2 sm:p-2.5 rounded-xl bg-white border border-slate-200 text-[#014D2F] hover:bg-emerald-50 hover:border-emerald-300 transition-all shadow-xs shrink-0 flex items-center justify-center active:scale-95"
-                title="Làm mới & Đồng bộ CSDL"
-                aria-label="Đồng bộ CSDL"
+                title="Làm mới dữ liệu"
+                aria-label="Làm mới dữ liệu"
               >
                 <RefreshCw className={`w-5 h-5 sm:w-5.5 sm:h-5.5 ${loadingData ? 'animate-spin' : ''}`} />
               </button>
