@@ -425,7 +425,7 @@ export default function TuitionMatrix({
                                   : "max-w-35 mx-auto"
                               } py-1.5 px-1 rounded-lg text-white font-bold text-xs transition-all shadow-xs flex items-center justify-center gap-1 whitespace-nowrap ${
                                 data.is_pending_local
-                                  ? "bg-amber-500 hover:bg-amber-600 animate-pulse"
+                                  ? "bg-emerald-600 hover:bg-[#014D2F]"
                                   : isEarly
                                     ? "bg-blue-600 hover:bg-blue-700"
                                     : isLate
@@ -434,7 +434,7 @@ export default function TuitionMatrix({
                               }`}
                               title={
                                 data.is_pending_local
-                                  ? "Đã lưu trong máy (Đang tự động đồng bộ CSDL)"
+                                  ? `Đã lưu tức thì trong máy (Đang tự động đồng bộ CSDL ngầm) - Xem biên lai`
                                   : isEarly
                                     ? `Đã đóng sớm vào ngày ${cleanDisplayDate(data.receipt_date)} - Xem biên lai`
                                     : isLate
@@ -444,8 +444,8 @@ export default function TuitionMatrix({
                             >
                               {data.is_pending_local ? (
                                 <>
-                                  <Loader2 className="w-3.5 h-3.5 animate-spin shrink-0" />
-                                  <span>Lưu máy</span>
+                                  <CheckCircle className="w-3.5 h-3.5 shrink-0" />
+                                  <span>Đã lưu</span>
                                 </>
                               ) : isEarly ? (
                                 <>

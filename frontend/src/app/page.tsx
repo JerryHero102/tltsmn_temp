@@ -44,10 +44,10 @@ export default function DashboardPage() {
   const [preselectedStudentId, setPreselectedStudentId] = useState<string | undefined>(undefined);
   const [preselectedMonth, setPreselectedMonth] = useState<number | undefined>(undefined);
 
-  const fetchData = useCallback(async (targetLoc?: 'mn' | 'tsn') => {
+  const fetchData = useCallback(async (targetLoc?: 'mn' | 'tsn', isSilent = false) => {
     const loc = targetLoc || activeLocation;
     try {
-      setLoadingData(true);
+      if (!isSilent) setLoadingData(true);
       const [studentsRes, matrixRes] = await Promise.all([
         api.getStudents(loc),
         api.getTuitionMatrix(loc),
@@ -60,23 +60,100 @@ export default function DashboardPage() {
       const baseStudents = rawStudents.filter((s: any) => (s.location || 'mn') === loc);
       const baseMatrix = rawMatrix.filter((m: any) => (m.location || 'mn') === loc);
 
+      // Merge any pending local receipts from Local Storage into matrix display
+      const pendingList = api.getPendingReceiptsLocally();
+      let mergedMatrix = baseMatrix;
+      if (pendingList.length > 0) {
+        mergedMatrix = baseMatrix.map((row: any) => {
+          const studentPending = pendingList.filter((p: any) => p.id_profile === row.id_profile);
+          if (studentPending.length === 0) return row;
+
+          const mergedMonths = { ...row.months };
+          for (const pendingItem of studentPending) {
+            // Nếu server chưa có bản ghi hoặc bản ghi hiện tại là pending
+            if (!mergedMonths[pendingItem.month] || mergedMonths[pendingItem.month]?.receipt_id === -1) {
+              mergedMonths[pendingItem.month] = {
+                receipt_id: -1,
+                amount: pendingItem.amount,
+                receipt_date: pendingItem.receipt_date,
+                image_url: pendingItem.image_url || pendingItem.base64Image || '',
+                is_pending_local: true,
+              };
+            }
+          }
+          return { ...row, months: mergedMonths };
+        });
+      }
+
       setStudents(baseStudents);
-      setTuitionMatrix(baseMatrix);
+      setTuitionMatrix(mergedMatrix);
     } catch (err: any) {
       console.error('Failed to load dashboard data', err);
-      toast.error('Lỗi khi tải dữ liệu từ máy chủ');
+      if (!isSilent) toast.error('Lỗi khi tải dữ liệu từ máy chủ');
     } finally {
-      setLoadingData(false);
+      if (!isSilent) setLoadingData(false);
     }
   }, [activeLocation]);
+
+  // Cập nhật Optimistic tức thì tại chỗ khi nhấn Lưu
+  const handleSaveOptimistic = useCallback((receiptPayload: any) => {
+    setTuitionMatrix((prevMatrix) => {
+      return prevMatrix.map((row) => {
+        if (row.id_profile !== receiptPayload.id_profile) return row;
+        const updatedMonths = { ...row.months };
+        updatedMonths[receiptPayload.month] = {
+          receipt_id: -1,
+          amount: receiptPayload.amount,
+          receipt_date: receiptPayload.receipt_date,
+          image_url: receiptPayload.image_url || receiptPayload.base64Image || '',
+          is_pending_local: true,
+        };
+        return { ...row, months: updatedMonths };
+      });
+    });
+  }, []);
 
   useEffect(() => {
     if (!loading && !user) {
       router.replace('/login');
     } else if (user) {
       fetchData(activeLocation);
+      // Tự động âm thầm đồng bộ các biên lai pending nếu có khi mới mở app
+      api.syncPendingReceipts(() => {
+        fetchData(activeLocation, true);
+      });
     }
   }, [user, loading, router, activeLocation, fetchData]);
+
+  // Tối ưu cho 3 người sử dụng đồng thời: tự động cập nhật ngầm khi chuyển qua lại tab hoặc định kỳ 30s
+  useEffect(() => {
+    if (!user) return;
+
+    const handleFocus = () => {
+      if (document.visibilityState === 'visible') {
+        api.syncPendingReceipts(() => {
+          fetchData(activeLocation, true);
+        });
+        fetchData(activeLocation, true);
+      }
+    };
+
+    window.addEventListener('visibilitychange', handleFocus);
+    window.addEventListener('focus', handleFocus);
+
+    const interval = setInterval(() => {
+      api.syncPendingReceipts(() => {
+        fetchData(activeLocation, true);
+      });
+      fetchData(activeLocation, true);
+    }, 30000);
+
+    return () => {
+      window.removeEventListener('visibilitychange', handleFocus);
+      window.removeEventListener('focus', handleFocus);
+      clearInterval(interval);
+    };
+  }, [user, activeLocation, fetchData]);
 
   const handleNavigate = (loc: 'mn' | 'tsn', tab: 'students' | 'tuition') => {
     const locChanged = loc !== activeLocation;
@@ -221,7 +298,9 @@ export default function DashboardPage() {
         preselectedStudentId={preselectedStudentId}
         preselectedMonth={preselectedMonth}
         existingReceipt={editingReceiptData}
-        onSuccess={fetchData}
+        onSaveOptimistic={handleSaveOptimistic}
+        onSilentRefresh={() => fetchData(activeLocation, true)}
+        onSuccess={() => fetchData(activeLocation, true)}
       />
 
       {/* Floating Scroll-To-Top Button (Fixed Bottom-Right for all tabs on Laptop & Mobile) */}

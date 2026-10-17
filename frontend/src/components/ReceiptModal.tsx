@@ -26,7 +26,9 @@ interface ReceiptModalProps {
   preselectedStudentId?: string;
   preselectedMonth?: number;
   existingReceipt?: ExistingReceiptData | null;
-  onSuccess: () => void;
+  onSuccess?: () => void;
+  onSaveOptimistic?: (receipt: any) => void;
+  onSilentRefresh?: () => void;
 }
 
 // Client-side image compressor for mobile & desktop to keep Base64 size lightweight (~50-100KB)
@@ -88,6 +90,8 @@ export default function ReceiptModal({
   preselectedMonth,
   existingReceipt,
   onSuccess,
+  onSaveOptimistic,
+  onSilentRefresh,
 }: ReceiptModalProps) {
   const [selectedStudentId, setSelectedStudentId] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
@@ -96,7 +100,6 @@ export default function ReceiptModal({
   const [amount, setAmount] = useState<number>(300000);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [base64Image, setBase64Image] = useState<string | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [isCompressing, setIsCompressing] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -163,7 +166,7 @@ export default function ReceiptModal({
 
   const currentSelectedStudent = students.find((s) => s.profile_id === selectedStudentId);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!selectedStudentId) {
@@ -176,38 +179,48 @@ export default function ReceiptModal({
       return;
     }
 
-    try {
-      setIsSubmitting(true);
+    const payload = {
+      id_profile: selectedStudentId,
+      payer_name: currentSelectedStudent?.fullname || 'Học viên',
+      month: Number(month),
+      receipt_date: receiptDate,
+      amount: Number(amount),
+      schedule_note: currentSelectedStudent?.schedule || '2-4-6',
+      payment_content: `Học phí tháng ${month}`,
+      image_url: base64Image,
+      base64Image: base64Image,
+    };
 
-      // Lưu trực tiếp vào CSDL & ổ đĩa máy chủ (không lưu vào LocalStorage/Cookie)
-      await api.createReceipt({
-        id_profile: selectedStudentId,
-        payer_name: currentSelectedStudent?.fullname || 'Học viên',
-        month: Number(month),
-        receipt_date: receiptDate,
-        amount: Number(amount),
-        schedule_note: currentSelectedStudent?.schedule || '2-4-6',
-        payment_content: `Học phí tháng ${month}`,
-        base64Image: base64Image,
-      });
+    // 1. Lưu tức thì vào LocalStorage của trình duyệt
+    api.savePendingReceiptLocally(payload);
 
-      toast.success(
-        existingReceipt
-          ? `Cập nhật biên lai Tháng ${month} (${currentSelectedStudent?.fullname}) thành công!`
-          : `Lưu biên lai Tháng ${month} (${currentSelectedStudent?.fullname}) thành công!`
-      );
-
-      // Đóng modal ngay lập tức để người dùng thấy phản hồi nhanh chóng
-      onClose();
-      // Cập nhật dữ liệu bảng ở nền mà không cần reload trang
-      onSuccess();
-    } catch (err: any) {
-      toast.error(err.message || 'Lỗi khi lưu biên lai');
-    } finally {
-      setIsSubmitting(false);
-      setImagePreview(null);
-      setBase64Image(null);
+    // 2. Cập nhật giao diện Optimistic ngay tại chỗ (không reload, không spinner)
+    if (onSaveOptimistic) {
+      onSaveOptimistic(payload);
     }
+
+    // 3. Đóng dialog ngay lập tức (0ms - tức thì thiệc)
+    onClose();
+
+    // 4. Thông báo thành công tức thì
+    toast.success(
+      existingReceipt
+        ? `Cập nhật biên lai Tháng ${month} (${currentSelectedStudent?.fullname}) thành công!`
+        : `Đã lưu biên lai Tháng ${month} (${currentSelectedStudent?.fullname}) tức thì!`
+    );
+
+    // Reset form preview
+    setImagePreview(null);
+    setBase64Image(null);
+
+    // 5. Âm thầm đồng bộ lên máy chủ ở chế độ nền (không load lại trang)
+    api.syncPendingReceipts(() => {
+      if (onSilentRefresh) {
+        onSilentRefresh();
+      } else if (onSuccess) {
+        onSuccess();
+      }
+    });
   };
 
   return (
@@ -398,18 +411,10 @@ export default function ReceiptModal({
             </button>
             <button
               type="submit"
-              disabled={isSubmitting || isCompressing || !base64Image}
+              disabled={isCompressing || !base64Image}
               className="px-6 py-2.5 rounded-xl bg-[#014D2F] hover:bg-[#013822] text-white font-semibold text-sm transition-all shadow-md shadow-emerald-900/10 flex items-center gap-2 disabled:opacity-50"
             >
-              {isSubmitting ? (
-                <>
-                  <Loader2 className="w-4 h-4 animate-spin" /> Đang lưu...
-                </>
-              ) : (
-                <>
-                  <Save className="w-4 h-4" /> Lưu Tức Thì
-                </>
-              )}
+              <Save className="w-4 h-4" /> Lưu Tức Thì
             </button>
           </div>
         </form>

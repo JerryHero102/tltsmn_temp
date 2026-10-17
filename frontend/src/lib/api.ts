@@ -194,9 +194,76 @@ export const api = {
     });
   },
 
-  // Client-side Local Storage - Không lưu vào LocalStorage nữa
-  savePendingReceiptLocally: (_receipt: any) => {},
-  getPendingReceiptsLocally: (): any[] => [],
-  clearPendingReceiptLocally: (_localId: string) => {},
-  syncPendingReceipts: async (_onProgress?: () => void) => {},
+  // Client-side Local Storage & Background Sync
+  savePendingReceiptLocally: (receipt: {
+    id_profile: string;
+    payer_name: string;
+    month: number;
+    receipt_date: string;
+    amount: number;
+    schedule_note?: string;
+    payment_content?: string;
+    image_url?: string;
+    base64Image?: string;
+  }) => {
+    if (typeof window === 'undefined') return null;
+    try {
+      const existing: any[] = JSON.parse(localStorage.getItem('pending_receipts') || '[]');
+      // Ghi đè nếu đã có pending cho cùng học viên và tháng
+      const filtered = existing.filter(
+        (p: any) => !(p.id_profile === receipt.id_profile && Number(p.month) === Number(receipt.month))
+      );
+      const newPending = {
+        ...receipt,
+        local_id: `local_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
+        created_at: new Date().toISOString(),
+      };
+      filtered.push(newPending);
+      localStorage.setItem('pending_receipts', JSON.stringify(filtered));
+      return newPending;
+    } catch (e) {
+      console.warn('Lỗi khi lưu vào LocalStorage:', e);
+      return null;
+    }
+  },
+
+  getPendingReceiptsLocally: (): any[] => {
+    if (typeof window === 'undefined') return [];
+    try {
+      return JSON.parse(localStorage.getItem('pending_receipts') || '[]');
+    } catch {
+      return [];
+    }
+  },
+
+  clearPendingReceiptLocally: (localId: string) => {
+    if (typeof window === 'undefined') return;
+    try {
+      const existing: any[] = JSON.parse(localStorage.getItem('pending_receipts') || '[]');
+      const updated = existing.filter((item: any) => item.local_id !== localId);
+      localStorage.setItem('pending_receipts', JSON.stringify(updated));
+    } catch (e) {
+      console.warn('Lỗi khi xóa pending receipt:', e);
+    }
+  },
+
+  syncPendingReceipts: async (onProgress?: () => void) => {
+    if (typeof window === 'undefined') return;
+    const pending = api.getPendingReceiptsLocally();
+    if (pending.length === 0) return;
+
+    for (const item of pending) {
+      try {
+        await api.createReceipt(item);
+        api.clearPendingReceiptLocally(item.local_id);
+        if (onProgress) {
+          onProgress();
+        }
+      } catch (err: any) {
+        console.error(`Lỗi âm thầm đồng bộ biên lai tháng ${item.month} (${item.payer_name}):`, err);
+        // Tạm dừng đồng bộ nếu mạng đứt hoặc máy chủ chưa sẵn sàng để thử lại sau
+        break;
+      }
+    }
+  },
 };
