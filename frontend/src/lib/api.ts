@@ -50,6 +50,7 @@ export async function apiRequest(path: string, options: RequestInit = {}, isRetr
     ...(options.headers as Record<string, string>),
   };
 
+  const controller = new AbortController();
   const isPostOrPut = options.method === 'POST' || options.method === 'PUT';
   const isLargePayload = typeof options.body === 'string' && options.body.length > 20000;
   // 60s cho payload lớn (ảnh), 25s cho POST thường, 15s cho GET
