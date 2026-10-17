@@ -21,6 +21,7 @@ import {
 import StudentModal from "./StudentModal";
 import { useAuth } from "@/context/AuthContext";
 import { matchSearch } from "@/lib/api";
+import { isoToDMY } from "./DateInput";
 
 interface Student {
   profile_id: string;
@@ -333,9 +334,7 @@ export default function StudentList({
                       </span>
                     </td>
                     <td className="py-4 px-4 text-center font-semibold text-slate-700">
-                      {st.date_of_join
-                        ? st.date_of_join.split("-").reverse().join("/")
-                        : "10/01/2026"}
+                      {isoToDMY(st.date_of_join) || "10/01/2026"}
                     </td>
                     <td className="py-4 px-4 text-center font-extrabold text-slate-800">
                       {st.current_level !== undefined &&
@@ -465,12 +464,7 @@ export default function StudentList({
                     học:
                   </span>
                   <span className="font-semibold text-slate-900">
-                    {viewingStudent.date_of_join
-                      ? viewingStudent.date_of_join
-                          .split("-")
-                          .reverse()
-                          .join("/")
-                      : "10/01/2026"}
+                    {isoToDMY(viewingStudent.date_of_join) || "10/01/2026"}
                   </span>
                 </div>
 

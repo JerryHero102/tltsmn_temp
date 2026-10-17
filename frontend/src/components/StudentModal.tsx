@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { X, UserPlus, Save, Loader2 } from "lucide-react";
 import { api } from "@/lib/api";
 import { toast } from "sonner";
+import DateInput from "@/components/DateInput";
 
 interface StudentModalProps {
   isOpen: boolean;
@@ -264,11 +265,10 @@ export default function StudentModal({
               <label className="block text-xs font-semibold text-slate-600 uppercase tracking-wider">
                 Ngày Nhập Học
               </label>
-              <input
-                type="date"
+              <DateInput
                 value={dateOfJoin}
-                onChange={(e) => setDateOfJoin(e.target.value)}
-                className="w-full px-3.5 py-2.5 text-base sm:text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#014D2F] font-medium bg-white"
+                onChange={setDateOfJoin}
+                placeholder="dd/mm/yyyy"
               />
             </div>
           </div>

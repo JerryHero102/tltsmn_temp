@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { X, Upload, Camera, CheckCircle2, Loader2, Search, Save } from 'lucide-react';
 import { api, matchSearch } from '@/lib/api';
 import { toast } from 'sonner';
+import DateInput from '@/components/DateInput';
 
 interface Student {
   profile_id: string;
@@ -317,15 +318,11 @@ export default function ReceiptModal({
               <label className="block text-xs font-semibold text-slate-600 uppercase tracking-wider">
                 Ngày Đóng (Nộp) <span className="text-red-500">*</span>
               </label>
-              <div className="relative">
-                <input
-                  type="date"
-                  value={receiptDate}
-                  onChange={(e) => setReceiptDate(e.target.value)}
-                  className="w-full px-3 py-2.5 text-base sm:text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#014D2F] bg-white font-medium text-slate-900"
-                  required
-                />
-              </div>
+              <DateInput
+                value={receiptDate}
+                onChange={setReceiptDate}
+                required
+              />
             </div>
           </div>
 

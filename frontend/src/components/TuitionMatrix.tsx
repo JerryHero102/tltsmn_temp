@@ -71,8 +71,8 @@ function formatShortDate(val?: string | null): string {
   const dateOnly = val.split("T")[0];
   const parts = dateOnly.split("-");
   if (parts.length === 3) {
-    const [, m, d] = parts;
-    return `${d}/${m}`;
+    const [y, m, d] = parts;
+    return `${d}/${m}/${y}`;
   }
   return dateOnly;
 }
