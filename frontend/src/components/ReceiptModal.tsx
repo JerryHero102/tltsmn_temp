@@ -105,6 +105,7 @@ export default function ReceiptModal({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cameraInputRef = useRef<HTMLInputElement>(null);
 
+  // Chỉ khởi tạo form 1 lần duy nhất khi mở modal (khi isOpen chuyển thành true)
   useEffect(() => {
     if (!isOpen) return;
 
@@ -133,7 +134,8 @@ export default function ReceiptModal({
       setImagePreview(null);
       setBase64Image(null);
     }
-  }, [preselectedStudentId, preselectedMonth, existingReceipt, students, isOpen]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -141,21 +143,30 @@ export default function ReceiptModal({
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (!file.type.startsWith('image/')) {
+    const isImage = file.type.startsWith('image/') || /\.(jpe?g|png|webp|gif|bmp|heic|heif)$/i.test(file.name);
+    if (!isImage) {
       toast.error('Vui lòng chọn tệp hình ảnh hợp lệ (PNG, JPG, WEBP)');
       return;
     }
 
     try {
       setIsCompressing(true);
-      // Automatically compress photo taken from mobile camera to lightweight ~50-100KB
+      // Tự động nén ảnh chụp điện thoại cho dung lượng siêu nhẹ ~50-100KB
       const compressedDataUrl = await compressImage(file, 1000, 0.72);
-      setImagePreview(compressedDataUrl);
-      setBase64Image(compressedDataUrl);
+      if (compressedDataUrl) {
+        setImagePreview(compressedDataUrl);
+        setBase64Image(compressedDataUrl);
+      } else {
+        toast.error('Không thể đọc tệp hình ảnh');
+      }
     } catch {
       toast.error('Lỗi khi xử lý hình ảnh');
     } finally {
       setIsCompressing(false);
+      // Reset input value để có thể chọn lại cùng 1 file
+      if (e.target) {
+        e.target.value = '';
+      }
     }
   };
 

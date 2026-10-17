@@ -130,6 +130,8 @@ export default function DashboardPage() {
     if (!user) return;
 
     const handleFocus = () => {
+      // Đang mở dialog thì không fetch data ngầm để tránh gián đoạn thao tác
+      if (isReceiptModalOpen) return;
       if (document.visibilityState === 'visible') {
         api.syncPendingReceipts(() => {
           fetchData(activeLocation, true);
@@ -142,6 +144,7 @@ export default function DashboardPage() {
     window.addEventListener('focus', handleFocus);
 
     const interval = setInterval(() => {
+      if (isReceiptModalOpen) return;
       api.syncPendingReceipts(() => {
         fetchData(activeLocation, true);
       });
@@ -153,7 +156,7 @@ export default function DashboardPage() {
       window.removeEventListener('focus', handleFocus);
       clearInterval(interval);
     };
-  }, [user, activeLocation, fetchData]);
+  }, [user, activeLocation, fetchData, isReceiptModalOpen]);
 
   const handleNavigate = (loc: 'mn' | 'tsn', tab: 'students' | 'tuition') => {
     const locChanged = loc !== activeLocation;
