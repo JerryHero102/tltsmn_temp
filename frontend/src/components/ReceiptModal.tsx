@@ -247,8 +247,8 @@ export default function ReceiptModal({
             </h3>
             <p className="text-xs text-emerald-100 mt-0.5">
               {existingReceipt
-                ? 'Cập nhật lại số tiền, ngày lập hoặc hình ảnh biên lai'
-                : 'Lưu trực tiếp vào hệ thống & CSDL máy chủ'}
+                ? 'Cập nhật lại ngày lập hoặc hình ảnh biên lai'
+                : 'Lưu tức thì vào máy & Âm thầm đồng bộ lên CSDL'}
             </p>
           </div>
           <button
@@ -326,22 +326,6 @@ export default function ReceiptModal({
             </div>
           </div>
 
-          {/* Amount */}
-          <div className="space-y-1.5">
-            <label className="block text-xs font-semibold text-slate-600 uppercase tracking-wider">
-              Số Tiền (VNĐ) <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="number"
-              inputMode="numeric"
-              pattern="[0-9]*"
-              step="10000"
-              value={amount}
-              onChange={(e) => setAmount(Number(e.target.value))}
-              className="w-full px-3 py-2.5 text-base sm:text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#014D2F] bg-white font-medium text-slate-900"
-              required
-            />
-          </div>
 
           {/* Receipt Image Input (Mandatory) */}
           <div className="space-y-1.5">

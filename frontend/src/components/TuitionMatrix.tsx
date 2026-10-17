@@ -13,6 +13,7 @@ import {
   Filter,
   RotateCcw,
   Edit3,
+  Clock,
 } from "lucide-react";
 import { matchSearch } from "@/lib/api";
 
@@ -425,7 +426,7 @@ export default function TuitionMatrix({
                                   : "max-w-35 mx-auto"
                               } py-1.5 px-1 rounded-lg text-white font-bold text-xs transition-all shadow-xs flex items-center justify-center gap-1 whitespace-nowrap ${
                                 data.is_pending_local
-                                  ? "bg-emerald-600 hover:bg-[#014D2F]"
+                                  ? "bg-amber-500 hover:bg-amber-600 animate-pulse"
                                   : isEarly
                                     ? "bg-blue-600 hover:bg-blue-700"
                                     : isLate
@@ -434,7 +435,7 @@ export default function TuitionMatrix({
                               }`}
                               title={
                                 data.is_pending_local
-                                  ? `Đã lưu tức thì trong máy (Đang tự động đồng bộ CSDL ngầm) - Xem biên lai`
+                                  ? `Chờ lưu lên máy chủ... - Xem biên lai`
                                   : isEarly
                                     ? `Đã đóng sớm vào ngày ${cleanDisplayDate(data.receipt_date)} - Xem biên lai`
                                     : isLate
@@ -444,8 +445,8 @@ export default function TuitionMatrix({
                             >
                               {data.is_pending_local ? (
                                 <>
-                                  <CheckCircle className="w-3.5 h-3.5 shrink-0" />
-                                  <span>Đã lưu</span>
+                                  <Clock className="w-3.5 h-3.5 shrink-0" />
+                                  <span>Chờ lưu</span>
                                 </>
                               ) : isEarly ? (
                                 <>
@@ -544,19 +545,20 @@ export default function TuitionMatrix({
                 <div className="flex justify-between">
                   <span className="text-slate-500">Trạng thái đồng bộ:</span>
                   <span
-                    className={`font-semibold ${
+                    className={`font-semibold flex items-center gap-1 ${
                       selectedReceipt.receipt.is_pending_local
-                        ? "text-amber-600 flex items-center gap-1"
+                        ? "text-amber-600"
                         : "text-emerald-600"
                     }`}
                   >
                     {selectedReceipt.receipt.is_pending_local ? (
                       <>
-                        <Loader2 className="w-3 h-3 animate-spin" /> Đã lưu máy
-                        (Chờ đồng bộ)
+                        <Clock className="w-3.5 h-3.5" /> Chờ lưu
                       </>
                     ) : (
-                      "Đã lưu thành công vào CSDL Postgres"
+                      <>
+                        <CheckCircle className="w-3.5 h-3.5" /> Lưu thành công
+                      </>
                     )}
                   </span>
                 </div>
