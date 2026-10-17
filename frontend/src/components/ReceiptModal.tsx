@@ -217,8 +217,8 @@ export default function ReceiptModal({
     // 4. Thông báo thành công tức thì
     toast.success(
       existingReceipt
-        ? `Cập nhật biên lai Tháng ${month} thành công!`
-        : `Đã lưu biên lai Tháng ${month} thành công!`
+        ? 'Cập nhật biên lai thành công!'
+        : 'Lưu biên lai thành công!'
     );
 
     // Reset form preview
