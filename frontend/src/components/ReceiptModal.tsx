@@ -29,8 +29,8 @@ interface ReceiptModalProps {
   onSuccess: () => void;
 }
 
-// Client-side image compressor for mobile & desktop to keep Base64 size lightweight (~100-200KB)
-function compressImage(file: File, maxWidth = 1200, quality = 0.75): Promise<string> {
+// Client-side image compressor for mobile & desktop to keep Base64 size lightweight (~50-100KB)
+function compressImage(file: File, maxDimension = 1000, quality = 0.72): Promise<string> {
   return new Promise((resolve) => {
     const reader = new FileReader();
     reader.onload = (e) => {
@@ -41,9 +41,14 @@ function compressImage(file: File, maxWidth = 1200, quality = 0.75): Promise<str
         let width = img.width;
         let height = img.height;
 
-        if (width > maxWidth) {
-          height = Math.round((height * maxWidth) / width);
-          width = maxWidth;
+        if (width > maxDimension || height > maxDimension) {
+          if (width > height) {
+            height = Math.round((height * maxDimension) / width);
+            width = maxDimension;
+          } else {
+            width = Math.round((width * maxDimension) / height);
+            height = maxDimension;
+          }
         }
 
         canvas.width = width;
@@ -140,8 +145,8 @@ export default function ReceiptModal({
 
     try {
       setIsCompressing(true);
-      // Automatically compress photo taken from mobile camera to lightweight ~150KB for Local Storage
-      const compressedDataUrl = await compressImage(file, 1200, 0.75);
+      // Automatically compress photo taken from mobile camera to lightweight ~50-100KB
+      const compressedDataUrl = await compressImage(file, 1000, 0.72);
       setImagePreview(compressedDataUrl);
       setBase64Image(compressedDataUrl);
     } catch {
@@ -192,9 +197,10 @@ export default function ReceiptModal({
           : `Lưu biên lai Tháng ${month} (${currentSelectedStudent?.fullname}) thành công!`
       );
 
-      // Cập nhật giao diện mượt mà không cần reload trang
-      onSuccess();
+      // Đóng modal ngay lập tức để người dùng thấy phản hồi nhanh chóng
       onClose();
+      // Cập nhật dữ liệu bảng ở nền mà không cần reload trang
+      onSuccess();
     } catch (err: any) {
       toast.error(err.message || 'Lỗi khi lưu biên lai');
     } finally {

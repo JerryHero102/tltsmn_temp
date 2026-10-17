@@ -50,8 +50,10 @@ export async function apiRequest(path: string, options: RequestInit = {}, isRetr
     ...(options.headers as Record<string, string>),
   };
 
-  const controller = new AbortController();
-  const timeoutMs = options.method === 'POST' ? 12000 : 8000;
+  const isPostOrPut = options.method === 'POST' || options.method === 'PUT';
+  const isLargePayload = typeof options.body === 'string' && options.body.length > 20000;
+  // 60s cho payload lớn (ảnh), 25s cho POST thường, 15s cho GET
+  const timeoutMs = isLargePayload ? 60000 : (isPostOrPut ? 25000 : 15000);
   const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
 
   try {
@@ -83,7 +85,8 @@ export async function apiRequest(path: string, options: RequestInit = {}, isRetr
     return res.json();
   } catch (err: any) {
     clearTimeout(timeoutId);
-    if ((err.name === 'AbortError' || err.name === 'TypeError' || err.message?.includes('fetch')) && !isRetry) {
+    // Chỉ tự động thử lại với lỗi mạng trên request GET (không thử lại trên POST/PUT hoặc khi bị Timeout để tránh trùng lặp)
+    if (!isRetry && !isPostOrPut && (err.name === 'TypeError' || err.message?.includes('fetch'))) {
       return apiRequest(path, options, true);
     }
     if (err.name === 'AbortError') {
@@ -181,8 +184,8 @@ export const api = {
   }) => {
     const payload = {
       ...receiptData,
-      image_url: receiptData.image_url || receiptData.base64Image,
-      base64Image: receiptData.base64Image || receiptData.image_url,
+      image_url: receiptData.base64Image || receiptData.image_url,
+      base64Image: undefined,
     };
     return apiRequest('/receipts', {
       method: 'POST',
