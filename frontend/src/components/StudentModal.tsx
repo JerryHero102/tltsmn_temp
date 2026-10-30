@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { X, UserPlus, Save, Loader2 } from "lucide-react";
+import { X, UserPlus, Save, Loader2, UserMinus } from "lucide-react";
 import { api } from "@/lib/api";
 import { toast } from "sonner";
 import DateInput from "@/components/DateInput";
@@ -111,6 +111,7 @@ export default function StudentModal({
           date_of_join: dateOfJoin,
           current_level: levelNum,
           location: finalLocation,
+          status: student.status || "active",
         });
         toast.success("Cập nhật thông tin học viên thành công!");
       } else {
@@ -126,6 +127,7 @@ export default function StudentModal({
           date_of_join: dateOfJoin,
           current_level: levelNum,
           location: finalLocation,
+          status: "active",
         });
         toast.success("Thêm học viên mới thành công!");
       }
@@ -133,6 +135,35 @@ export default function StudentModal({
       onClose();
     } catch (err: any) {
       toast.error(err.message || "Có lỗi xảy ra khi lưu thông tin học viên");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleToggleResign = async () => {
+    if (!student) return;
+    const isInactive = student.status === "inactive";
+    const confirmMessage = isInactive
+      ? `Bạn có chắc chắn muốn kích hoạt lại cho học viên "${student.fullname}" đi học lại không?`
+      : `Bạn có chắc chắn muốn xác nhận học viên "${student.fullname}" nghỉ học không?\nThông tin học viên sẽ được ẩn khỏi danh sách mặc định.`;
+
+    if (!window.confirm(confirmMessage)) return;
+
+    try {
+      setIsSubmitting(true);
+      const nextStatus = isInactive ? "active" : "inactive";
+      await api.updateStudent(student.profile_id, {
+        status: nextStatus,
+      });
+      toast.success(
+        isInactive
+          ? "Đã kích hoạt lại trạng thái học cho học viên!"
+          : "Đã xác nhận học viên nghỉ học thành công!",
+      );
+      onSuccess();
+      onClose();
+    } catch (err: any) {
+      toast.error(err.message || "Có lỗi xảy ra khi cập nhật trạng thái");
     } finally {
       setIsSubmitting(false);
     }
@@ -334,29 +365,48 @@ export default function StudentModal({
             />
           </div>
 
-          <div className="pt-4 flex items-center justify-end gap-3 border-t border-slate-100">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-4 py-2.5 rounded-xl text-slate-600 hover:bg-slate-100 font-medium text-sm transition-colors"
-            >
-              Hủy
-            </button>
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="px-6 py-2.5 rounded-xl bg-[#014D2F] hover:bg-[#013822] text-white font-semibold text-sm transition-all shadow-md shadow-emerald-900/10 flex items-center gap-2 disabled:opacity-50"
-            >
-              {isSubmitting ? (
-                <>
-                  <Loader2 className="w-4 h-4 animate-spin" /> Đang lưu...
-                </>
-              ) : (
-                <>
-                  <Save className="w-4 h-4" /> Lưu Thông Tin
-                </>
-              )}
-            </button>
+          <div className="pt-4 flex items-center justify-between border-t border-slate-100">
+            {student ? (
+              <button
+                type="button"
+                disabled={isSubmitting}
+                onClick={handleToggleResign}
+                className={`px-4 py-2.5 rounded-xl font-medium text-sm transition-colors flex items-center gap-1.5 ${
+                  student.status === "inactive"
+                    ? "bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200"
+                    : "bg-red-50 text-red-600 hover:bg-red-100 border border-red-200"
+                }`}
+              >
+                <UserMinus className="w-4 h-4" />
+                {student.status === "inactive" ? "Học Lại" : "Nghỉ"}
+              </button>
+            ) : (
+              <div />
+            )}
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={onClose}
+                className="px-4 py-2.5 rounded-xl text-slate-600 hover:bg-slate-100 font-medium text-sm transition-colors"
+              >
+                Hủy
+              </button>
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="px-6 py-2.5 rounded-xl bg-[#014D2F] hover:bg-[#013822] text-white font-semibold text-sm transition-all shadow-md shadow-emerald-900/10 flex items-center gap-2 disabled:opacity-50"
+              >
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" /> Đang lưu...
+                  </>
+                ) : (
+                  <>
+                    <Save className="w-4 h-4" /> Lưu Thông Tin
+                  </>
+                )}
+              </button>
+            </div>
           </div>
         </form>
       </div>

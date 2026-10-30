@@ -39,6 +39,7 @@ export class StudentsController {
       notes?: string;
       email?: string;
       location?: string;
+      status?: string;
       current_address?: string;
       date_of_join?: string;
       current_level?: number | string;
@@ -60,6 +61,7 @@ export class StudentsController {
       notes?: string;
       email?: string;
       location?: string;
+      status?: string;
       current_address?: string;
       date_of_join?: string;
       current_level?: number | string;

@@ -17,6 +17,7 @@ import {
   FileText,
   Filter,
   RotateCcw,
+  UserCheck,
 } from "lucide-react";
 import StudentModal from "./StudentModal";
 import { useAuth } from "@/context/AuthContext";
@@ -37,6 +38,8 @@ interface Student {
   date_of_join?: string;
   current_level?: number | string;
   id_system: string;
+  location?: string;
+  status?: string;
 }
 
 interface StudentListProps {
@@ -58,6 +61,7 @@ export default function StudentList({
 }: StudentListProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [scheduleFilter, setScheduleFilter] = useState("all");
+  const [statusFilter, setStatusFilter] = useState<"active" | "inactive">("active");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingStudent, setEditingStudent] = useState<Student | undefined>(
     undefined,
@@ -78,6 +82,9 @@ export default function StudentList({
   }, [isExternalAddModalOpen, onCloseExternalAddModal]);
 
   const filteredStudents = students.filter((st) => {
+    const studentStatus = st.status || "active";
+    const matchesStatus = studentStatus === statusFilter;
+
     const matchesSearch =
       matchSearch(st.fullname, searchTerm) ||
       matchSearch(st.phone_number, searchTerm) ||
@@ -86,7 +93,7 @@ export default function StudentList({
     const matchesSchedule =
       scheduleFilter === "all" || (st.schedule || "2-4-6") === scheduleFilter;
 
-    return matchesSearch && matchesSchedule;
+    return matchesStatus && matchesSearch && matchesSchedule;
   });
 
   const countTotal = filteredStudents.length;
@@ -110,14 +117,15 @@ export default function StudentList({
   const handleResetFilters = () => {
     setSearchTerm("");
     setScheduleFilter("all");
+    setStatusFilter("active");
   };
 
   return (
     <div className="space-y-4">
-      {/* Search & Schedule Filter Header (1 Single Row) */}
-      <div className="flex flex-row items-center gap-2 bg-white p-2.5 sm:p-3 rounded-2xl shadow-xs border border-slate-100 w-full">
+      {/* Search & Status & Schedule Filter Header (1 Single Row) */}
+      <div className="flex flex-row items-center gap-2 bg-white p-2.5 sm:p-3 rounded-2xl shadow-xs border border-slate-100 w-full overflow-x-auto sm:overflow-visible pb-1 sm:pb-0 scrollbar-none">
         {/* Search Input */}
-        <div className="relative flex-1 min-w-0">
+        <div className="relative flex-1 min-w-32">
           <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
           <input
             type="text"
@@ -128,8 +136,25 @@ export default function StudentList({
           />
         </div>
 
+        {/* Status Filter Dropdown */}
+        <div className="relative w-24 sm:w-32 shrink-0">
+          <UserCheck className="w-3.5 h-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-500 z-10 pointer-events-none" />
+          <select
+            value={statusFilter}
+            onChange={(e) =>
+              setStatusFilter(e.target.value as "active" | "inactive")
+            }
+            className="w-full pl-7 pr-2 py-2 text-xs sm:text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#014D2F] bg-white font-semibold text-slate-700"
+          >
+            <option value="active">Học</option>
+            <option value="inactive">Nghỉ</option>
+          </select>
+        </div>
+
         {/* Reset Filter Button */}
-        {(searchTerm || scheduleFilter !== "all") && (
+        {(searchTerm ||
+          scheduleFilter !== "all" ||
+          statusFilter !== "active") && (
           <button
             onClick={handleResetFilters}
             className="px-2.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 font-semibold text-xs transition-colors shrink-0 flex items-center gap-1"
@@ -141,8 +166,8 @@ export default function StudentList({
         )}
 
         {/* Schedule Filter Dropdown */}
-        <div className="relative w-32 sm:w-44 shrink-0">
-          <Filter className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 z-10" />
+        <div className="relative w-28 sm:w-40 shrink-0">
+          <Filter className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 z-10 pointer-events-none" />
           <select
             value={scheduleFilter}
             onChange={(e) => setScheduleFilter(e.target.value)}
@@ -185,6 +210,11 @@ export default function StudentList({
                   <span className="font-bold text-slate-900 text-sm hover:text-[#014D2F] truncate text-left">
                     {st.fullname}
                   </span>
+                  {st.status === "inactive" && (
+                    <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-red-100 text-red-700 shrink-0">
+                      Nghỉ
+                    </span>
+                  )}
                 </div>
 
                 {/* Mobile action buttons */}
@@ -310,6 +340,11 @@ export default function StudentList({
                       <span className="font-bold text-slate-900 hover:text-[#014D2F] hover:underline text-left">
                         {st.fullname}
                       </span>
+                      {st.status === "inactive" && (
+                        <span className="ml-2 px-1.5 py-0.5 rounded text-[10px] font-bold bg-red-100 text-red-700 inline-block">
+                          Nghỉ
+                        </span>
+                      )}
                       <div className="text-[11px] text-slate-400 font-normal">
                         Giới tính: {st.gender || "Nam"}
                       </div>
@@ -428,6 +463,21 @@ export default function StudentList({
                   </span>
                   <span className="font-bold text-slate-900">
                     {viewingStudent.fullname}
+                  </span>
+                </div>
+
+                <div className="flex justify-between py-1 border-b border-slate-200/60">
+                  <span className="text-slate-500 flex items-center gap-2">
+                    <UserCheck className="w-4 h-4 text-[#014D2F]" /> Trạng thái:
+                  </span>
+                  <span
+                    className={`font-semibold px-2 py-0.5 rounded-full text-xs ${
+                      viewingStudent.status === "inactive"
+                        ? "bg-red-100 text-red-700"
+                        : "bg-emerald-100 text-[#014D2F]"
+                    }`}
+                  >
+                    {viewingStudent.status === "inactive" ? "Nghỉ" : "Đang Học"}
                   </span>
                 </div>
 

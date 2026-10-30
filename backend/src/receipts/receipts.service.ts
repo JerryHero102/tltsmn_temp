@@ -102,7 +102,7 @@ export class ReceiptsService {
 
   async getTuitionMatrix(location?: string) {
     let profileQuery = `
-      SELECT p.id, p.fullname, p.schedule, p.phone_number, p.location, TO_CHAR(p.date_of_join, 'YYYY-MM-DD') as date_of_join
+      SELECT p.id, p.fullname, p.schedule, p.phone_number, p.location, COALESCE(p.status, 'active') as status, TO_CHAR(p.date_of_join, 'YYYY-MM-DD') as date_of_join
       FROM profile p
       WHERE p.id_auth IS NULL
     `;
@@ -154,6 +154,7 @@ export class ReceiptsService {
         phone_number: p.phone_number,
         date_of_join: p.date_of_join,
         location: p.location || 'mn',
+        status: p.status || 'active',
         months,
       };
     });

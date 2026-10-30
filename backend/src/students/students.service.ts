@@ -17,6 +17,7 @@ export class StudentsService {
         p.phone_number,
         p.email,
         p.location,
+        COALESCE(p.status, 'active') as status,
         p.current_address,
         p.permanent_address,
         p.notes,
@@ -53,6 +54,7 @@ export class StudentsService {
         p.phone_number,
         p.email,
         p.location,
+        COALESCE(p.status, 'active') as status,
         p.current_address,
         p.permanent_address,
         p.notes,
@@ -81,15 +83,17 @@ export class StudentsService {
     notes?: string;
     email?: string;
     location?: string;
+    status?: string;
     current_address?: string;
     date_of_join?: string;
     current_level?: number | string;
   }) {
     const loc = createStudentDto.location || 'mn';
+    const status = createStudentDto.status || 'active';
     // Save ALL student profile info into PostgreSQL DB profile table
     const res = await this.dbService.query(
-      `INSERT INTO profile (fullname, birth_year, phone_number, gender, schedule, notes, email, location, current_address, date_of_join, current_level)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+      `INSERT INTO profile (fullname, birth_year, phone_number, gender, schedule, notes, email, location, status, current_address, date_of_join, current_level)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
        RETURNING *, id as profile_id`,
       [
         createStudentDto.fullname,
@@ -100,6 +104,7 @@ export class StudentsService {
         createStudentDto.notes || '',
         createStudentDto.email || '',
         loc,
+        status,
         createStudentDto.current_address || '',
         createStudentDto.date_of_join || '2026-01-10',
         createStudentDto.current_level !== undefined && createStudentDto.current_level !== null ? Number(createStudentDto.current_level) : 0,
@@ -120,6 +125,7 @@ export class StudentsService {
       notes?: string;
       email?: string;
       location?: string;
+      status?: string;
       current_address?: string;
       date_of_join?: string;
       current_level?: number | string;
@@ -137,8 +143,9 @@ export class StudentsService {
            current_address = COALESCE($8, current_address),
            date_of_join = COALESCE($9, date_of_join),
            current_level = COALESCE($10, current_level),
-           location = COALESCE($11, location)
-       WHERE id = $12
+           location = COALESCE($11, location),
+           status = COALESCE($12, status)
+       WHERE id = $13
        RETURNING *, id as profile_id`,
       [
         updateStudentDto.fullname,
@@ -152,6 +159,7 @@ export class StudentsService {
         updateStudentDto.date_of_join,
         updateStudentDto.current_level !== undefined && updateStudentDto.current_level !== null ? Number(updateStudentDto.current_level) : undefined,
         updateStudentDto.location,
+        updateStudentDto.status,
         id,
       ],
     );

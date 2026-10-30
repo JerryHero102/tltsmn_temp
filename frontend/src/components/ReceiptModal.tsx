@@ -11,6 +11,7 @@ interface Student {
   fullname: string;
   phone_number?: string;
   schedule?: string;
+  status?: string;
 }
 
 export interface ExistingReceiptData {
@@ -288,7 +289,7 @@ export default function ReceiptModal({
               <option value="" disabled>-- Chọn học viên --</option>
               {filteredStudents.map((st) => (
                 <option key={st.profile_id} value={st.profile_id}>
-                  {st.fullname} {st.phone_number ? `(${st.phone_number})` : ''} - Ca: {st.schedule || '2-4-6'}
+                  {st.fullname} {st.status === 'inactive' ? '[Nghỉ] ' : ''}{st.phone_number ? `(${st.phone_number})` : ''} - Ca: {st.schedule || '2-4-6'}
                 </option>
               ))}
             </select>

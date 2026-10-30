@@ -1,7 +1,9 @@
+import type { Response } from 'express';
 import { ReceiptsService } from './receipts.service';
 export declare class ReceiptsController {
     private readonly receiptsService;
     constructor(receiptsService: ReceiptsService);
+    serveImage(filename: string, res: Response): void;
     findAll(location?: string): Promise<any[]>;
     getMatrix(location?: string): Promise<{
         stt: number;
@@ -11,6 +13,7 @@ export declare class ReceiptsController {
         phone_number: any;
         date_of_join: any;
         location: any;
+        status: any;
         months: Record<number, any>;
     }[]>;
     uploadImage(base64Image: string): Promise<{

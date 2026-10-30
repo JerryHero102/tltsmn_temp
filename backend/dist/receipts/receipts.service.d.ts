@@ -2,6 +2,7 @@ import { DatabaseService } from '../database/database.service';
 export declare class ReceiptsService {
     private readonly dbService;
     constructor(dbService: DatabaseService);
+    saveImageLocally(fileBase64: string): Promise<string>;
     uploadImage(fileBase64: string): Promise<string>;
     findAll(location?: string): Promise<any[]>;
     getTuitionMatrix(location?: string): Promise<{
@@ -12,6 +13,7 @@ export declare class ReceiptsService {
         phone_number: any;
         date_of_join: any;
         location: any;
+        status: any;
         months: Record<number, any>;
     }[]>;
     create(dto: {

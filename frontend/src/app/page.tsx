@@ -56,17 +56,9 @@ export default function DashboardPage() {
       const rawStudents = studentsRes || [];
       const rawMatrix = matrixRes || [];
 
-      // Strictly isolate by location: 'tsn' only gets 'tsn', 'mn' only gets 'mn' (exclude hidden or resigned)
-      const isHiddenOrResigned = (item: any) => {
-        if (!item) return true;
-        if (item.location === 'hidden') return true;
-        const name = (item.fullname || '').toLowerCase();
-        const notes = (item.notes || '').toLowerCase();
-        return name.includes('nghỉ') || notes.includes('nghỉ');
-      };
-
-      const baseStudents = rawStudents.filter((s: any) => !isHiddenOrResigned(s) && (s.location || 'mn') === loc);
-      const baseMatrix = rawMatrix.filter((m: any) => !isHiddenOrResigned(m) && (m.location || 'mn') === loc);
+      // Strictly isolate by location: 'tsn' only gets 'tsn', 'mn' only gets 'mn'
+      const baseStudents = rawStudents.filter((s: any) => (s.location || 'mn') === loc && s.location !== 'hidden');
+      const baseMatrix = rawMatrix.filter((m: any) => (m.location || 'mn') === loc && m.location !== 'hidden');
 
       // Merge any pending local receipts from Local Storage into matrix display
       const pendingList = api.getPendingReceiptsLocally();

@@ -1,65 +1,106 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ReceiptsService = void 0;
 const common_1 = require("@nestjs/common");
-const cloudinary_1 = require("cloudinary");
+const fs = __importStar(require("fs"));
+const path = __importStar(require("path"));
 const database_service_1 = require("../database/database.service");
-function formatCloudinaryOptimizedUrl(url) {
-    if (!url)
-        return '';
-    if (url.includes('/image/upload/') && !url.includes('/f_auto')) {
-        return url.replace('/image/upload/', '/image/upload/f_auto,q_auto/');
-    }
-    return url;
-}
+const RECEIPTS_DIR = '/home/maivankhanh/Documents/saved_reciepts';
 let ReceiptsService = class ReceiptsService {
     dbService;
     constructor(dbService) {
         this.dbService = dbService;
-        const rawUrl = process.env.CLOUDINARY_URL || 'cloudinary://244577781153212:cAZDShDf1I95YSzdJjvb5jdbSgU@sxotasqj';
-        let configObj = {
-            cloud_name: 'sxotasqj',
-            api_key: '244577781153212',
-            api_secret: 'cAZDShDf1I95YSzdJjvb5jdbSgU',
-        };
-        const match = rawUrl.match(/^cloudinary:\/\/([^:]+):([^@]+)@(.+)$/);
-        if (match) {
-            configObj = {
-                api_key: match[1],
-                api_secret: match[2],
-                cloud_name: match[3],
-            };
+        if (!fs.existsSync(RECEIPTS_DIR)) {
+            try {
+                fs.mkdirSync(RECEIPTS_DIR, { recursive: true });
+            }
+            catch (err) {
+                console.error('Không thể tạo thư mục saved_reciepts:', err.message);
+            }
         }
-        cloudinary_1.v2.config({
-            ...configObj,
-            secure: true,
-        });
     }
-    async uploadImage(fileBase64) {
+    async saveImageLocally(fileBase64) {
         if (!fileBase64)
             return '';
-        try {
-            const res = await cloudinary_1.v2.uploader.upload(fileBase64, {
-                folder: 'tltsmn_receipts',
-            });
-            return formatCloudinaryOptimizedUrl(res.secure_url);
-        }
-        catch (err) {
-            console.warn('Cloudinary upload warning:', err.message || err);
-            if (fileBase64.startsWith('data:image')) {
-                return fileBase64;
-            }
+        if (!fileBase64.startsWith('data:image') &&
+            !fileBase64.startsWith('/9j/') &&
+            fileBase64.length < 500) {
             return fileBase64;
         }
+        try {
+            if (!fs.existsSync(RECEIPTS_DIR)) {
+                fs.mkdirSync(RECEIPTS_DIR, { recursive: true });
+            }
+            let extension = 'jpg';
+            let base64Data = fileBase64;
+            const matches = fileBase64.match(/^data:image\/([a-zA-Z0-9+]+);base64,(.+)$/);
+            if (matches) {
+                const mimeSubtype = matches[1].toLowerCase();
+                if (mimeSubtype.includes('png'))
+                    extension = 'png';
+                else if (mimeSubtype.includes('webp'))
+                    extension = 'webp';
+                else if (mimeSubtype.includes('gif'))
+                    extension = 'gif';
+                else
+                    extension = 'jpg';
+                base64Data = matches[2];
+            }
+            const buffer = Buffer.from(base64Data, 'base64');
+            const filename = `receipt_${Date.now()}_${Math.random().toString(36).substring(2, 8)}.${extension}`;
+            const filePath = path.join(RECEIPTS_DIR, filename);
+            await fs.promises.writeFile(filePath, buffer);
+            return `/api/receipts/image/${filename}`;
+        }
+        catch (err) {
+            console.error('Lỗi khi lưu ảnh vào ổ đĩa:', err.message || err);
+            return fileBase64;
+        }
+    }
+    async uploadImage(fileBase64) {
+        return this.saveImageLocally(fileBase64);
     }
     async findAll(location) {
         let query = `
@@ -95,12 +136,12 @@ let ReceiptsService = class ReceiptsService {
         const res = await this.dbService.query(query, params);
         return res.rows.map((row) => ({
             ...row,
-            image_url: formatCloudinaryOptimizedUrl(row.image_url),
+            image_url: row.image_url || '',
         }));
     }
     async getTuitionMatrix(location) {
         let profileQuery = `
-      SELECT p.id, p.fullname, p.schedule, p.phone_number, p.location, TO_CHAR(p.date_of_join, 'YYYY-MM-DD') as date_of_join
+      SELECT p.id, p.fullname, p.schedule, p.phone_number, p.location, COALESCE(p.status, 'active') as status, TO_CHAR(p.date_of_join, 'YYYY-MM-DD') as date_of_join
       FROM profile p
       WHERE p.id_auth IS NULL
     `;
@@ -129,7 +170,7 @@ let ReceiptsService = class ReceiptsService {
                 receipt_id: r.receipt_id,
                 amount: r.amount,
                 receipt_date: r.receipt_date,
-                image_url: formatCloudinaryOptimizedUrl(r.image_url),
+                image_url: r.image_url || '',
             };
         }
         const matrix = profilesRes.rows.map((p, index) => {
@@ -146,6 +187,7 @@ let ReceiptsService = class ReceiptsService {
                 phone_number: p.phone_number,
                 date_of_join: p.date_of_join,
                 location: p.location || 'mn',
+                status: p.status || 'active',
                 months,
             };
         });
@@ -158,13 +200,12 @@ let ReceiptsService = class ReceiptsService {
             let rawImage = dto.image_url || dto.base64Image || '';
             if (rawImage && (rawImage.startsWith('data:image') || rawImage.length > 500)) {
                 try {
-                    rawImage = await this.uploadImage(rawImage);
+                    rawImage = await this.saveImageLocally(rawImage);
                 }
                 catch (uploadErr) {
-                    console.error('Lỗi khi tải ảnh lên Cloudinary:', uploadErr);
+                    console.error('Lỗi khi lưu ảnh vào ổ đĩa:', uploadErr);
                 }
             }
-            const formattedUrl = formatCloudinaryOptimizedUrl(rawImage);
             const existingRes = await client.query(`SELECT r.id
          FROM receipts r
          JOIN profile_receipts pr ON pr.id_receipt = r.id
@@ -186,7 +227,7 @@ let ReceiptsService = class ReceiptsService {
                     dto.payer_name,
                     dto.payment_content || `Học phí tháng ${dto.month}`,
                     dto.schedule_note || '',
-                    formattedUrl || '',
+                    rawImage || '',
                     existingId,
                 ]);
                 receipt = updateRes.rows[0];
@@ -201,7 +242,7 @@ let ReceiptsService = class ReceiptsService {
                     dto.payer_name,
                     dto.payment_content || `Học phí tháng ${dto.month}`,
                     dto.schedule_note || '',
-                    formattedUrl || '',
+                    rawImage || '',
                 ]);
                 receipt = receiptRes.rows[0];
                 await client.query(`INSERT INTO profile_receipts (id_profile, id_receipt)
@@ -210,7 +251,7 @@ let ReceiptsService = class ReceiptsService {
             await client.query('COMMIT');
             return {
                 ...receipt,
-                image_url: formattedUrl,
+                image_url: rawImage,
             };
         }
         catch (err) {
