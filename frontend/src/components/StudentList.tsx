@@ -137,31 +137,31 @@ export default function StudentList({
         </div>
 
         {/* Filter Controls Row */}
-        <div className="flex items-center gap-2 w-full sm:w-auto">
+        <div className="flex items-center gap-1.5 sm:gap-2 w-full sm:w-auto">
           {/* Status Filter Dropdown */}
-          <div className="relative flex-1 sm:w-32 shrink-0">
-            <UserCheck className="w-3.5 h-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-500 z-10 pointer-events-none" />
+          <div className="relative flex-1 sm:w-28 shrink-0">
+            <UserCheck className="w-3.5 h-3.5 absolute left-2 top-1/2 -translate-y-1/2 text-slate-500 z-10 pointer-events-none" />
             <select
               value={statusFilter}
               onChange={(e) =>
                 setStatusFilter(e.target.value as "active" | "inactive")
               }
-              className="w-full pl-7 pr-2 py-2 text-base sm:text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#014D2F] bg-white font-semibold text-slate-700"
+              className="w-full pl-6 pr-2 py-2 text-xs sm:text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#014D2F] bg-white font-semibold text-slate-700"
             >
-              <option value="active">Đang Học</option>
-              <option value="inactive">Đã Nghỉ</option>
+              <option value="active">Học</option>
+              <option value="inactive">Nghỉ</option>
             </select>
           </div>
 
           {/* Schedule Filter Dropdown */}
-          <div className="relative flex-1 sm:w-36 shrink-0">
-            <Filter className="w-3.5 h-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-500 z-10 pointer-events-none" />
+          <div className="relative flex-1 sm:w-32 shrink-0">
+            <Filter className="w-3.5 h-3.5 absolute left-2 top-1/2 -translate-y-1/2 text-slate-500 z-10 pointer-events-none" />
             <select
               value={scheduleFilter}
               onChange={(e) => setScheduleFilter(e.target.value)}
-              className="w-full pl-7 pr-2 py-2 text-base sm:text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#014D2F] bg-white font-semibold text-slate-700"
+              className="w-full pl-6 pr-2 py-2 text-xs sm:text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#014D2F] bg-white font-semibold text-slate-700"
             >
-              <option value="all">Tất cả ca</option>
+              <option value="all">Ca</option>
               <option value="2-4-6">Ca 2-4-6</option>
               <option value="3-5-7">Ca 3-5-7</option>
               <option value="Khác">Ca Khác</option>

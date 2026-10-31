@@ -205,14 +205,15 @@ export default function DashboardPage() {
         {/* Header Title with Sync Button & Add Student Button on the far right of title line */}
         <div className="border-b border-slate-200/80 pb-3">
           <div className="flex items-center justify-between gap-3">
-            <h1 className="text-lg sm:text-xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2 min-w-0">
+            <h1 className="text-base sm:text-xl font-extrabold text-slate-900 tracking-tight flex items-center gap-1.5 sm:gap-2 min-w-0">
               {activeTab === 'students' ? (
                 <>
                   <Users className="w-5 h-5 sm:w-6 sm:h-6 text-[#014D2F] shrink-0" />
-                  <span className="truncate flex items-center gap-2">
-                    <span>Quản Lý Thông Tin Học Viên</span>
+                  <span className="flex items-center gap-1.5 sm:gap-2 min-w-0">
+                    <span className="hidden sm:inline truncate">Quản Lý Thông Tin Học Viên</span>
+                    <span className="sm:hidden font-bold">Học Viên</span>
                     <span
-                      className={`text-xs px-2 py-0.5 rounded-lg font-bold border shrink-0 ${
+                      className={`text-[11px] sm:text-xs px-2 py-0.5 rounded-lg font-bold border shrink-0 ${
                         activeLocation === 'mn'
                           ? 'bg-emerald-100 text-[#014D2F] border-emerald-200'
                           : 'bg-blue-100 text-blue-900 border-blue-200'
@@ -225,10 +226,11 @@ export default function DashboardPage() {
               ) : (
                 <>
                   <ReceiptIcon className="w-5 h-5 sm:w-6 sm:h-6 text-[#014D2F] shrink-0" />
-                  <span className="truncate flex items-center gap-2">
-                    <span>Quản Lý Học Phí Hàng Tháng</span>
+                  <span className="flex items-center gap-1.5 sm:gap-2 min-w-0">
+                    <span className="hidden sm:inline truncate">Quản Lý Học Phí Hàng Tháng</span>
+                    <span className="sm:hidden font-bold">Học Phí</span>
                     <span
-                      className={`text-xs px-2 py-0.5 rounded-lg font-bold border shrink-0 ${
+                      className={`text-[11px] sm:text-xs px-2 py-0.5 rounded-lg font-bold border shrink-0 ${
                         activeLocation === 'mn'
                           ? 'bg-emerald-100 text-[#014D2F] border-emerald-200'
                           : 'bg-blue-100 text-blue-900 border-blue-200'

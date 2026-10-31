@@ -6,6 +6,7 @@ import {
   Receipt,
   LogOut,
   PlusCircle,
+  Plus,
   Shield,
   Menu,
   X,
@@ -317,14 +318,11 @@ export default function Sidebar({
                   onOpenReceiptModal();
                   setMobileMenuOpen(false);
                 }}
-                className="w-13 h-13 rounded-full bg-[#014D2F] hover:bg-[#013822] text-white flex flex-col items-center justify-center shadow-lg shadow-emerald-900/30 border-4 border-white active:scale-90 transition-transform"
+                className="w-13 h-13 rounded-full bg-[#014D2F] hover:bg-[#013822] text-white flex items-center justify-center shadow-lg shadow-emerald-900/30 border-4 border-white active:scale-90 transition-transform"
                 title="Thêm Biên Lai"
                 aria-label="Thêm Biên Lai"
               >
-                <PlusCircle className="w-6 h-6 text-emerald-300" />
-                <span className="text-[8px] font-black uppercase tracking-tighter -mt-0.5 text-emerald-100">
-                  + Thu
-                </span>
+                <Plus className="w-7 h-7 text-white stroke-[2.5]" />
               </button>
             </div>
           )}
