@@ -1,10 +1,11 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { X, UserPlus, Save, Loader2, UserMinus } from "lucide-react";
+import { X, UserPlus, Save, Loader2, UserMinus, UserCheck } from "lucide-react";
 import { api } from "@/lib/api";
 import { toast } from "sonner";
 import DateInput from "@/components/DateInput";
+import ConfirmDialog from "@/components/ConfirmDialog";
 
 interface StudentModalProps {
   isOpen: boolean;
@@ -33,8 +34,10 @@ export default function StudentModal({
   const [currentLevel, setCurrentLevel] = useState<number | string>(0);
   const [location, setLocation] = useState<string>(defaultLocation || "mn");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
 
   useEffect(() => {
+    setIsConfirmOpen(false);
     if (student) {
       setFullname(student.fullname || "");
       setPhoneNumber(student.phone_number || "");
@@ -140,14 +143,13 @@ export default function StudentModal({
     }
   };
 
-  const handleToggleResign = async () => {
+  const handleOpenConfirm = () => {
+    setIsConfirmOpen(true);
+  };
+
+  const handleConfirmToggleResign = async () => {
     if (!student) return;
     const isInactive = student.status === "inactive";
-    const confirmMessage = isInactive
-      ? `Bạn có chắc chắn muốn kích hoạt lại cho học viên "${student.fullname}" đi học lại không?`
-      : `Bạn có chắc chắn muốn xác nhận học viên "${student.fullname}" nghỉ học không?\nThông tin học viên sẽ được ẩn khỏi danh sách mặc định.`;
-
-    if (!window.confirm(confirmMessage)) return;
 
     try {
       setIsSubmitting(true);
@@ -160,6 +162,7 @@ export default function StudentModal({
           ? "Đã kích hoạt lại trạng thái học cho học viên!"
           : "Đã xác nhận học viên nghỉ học thành công!",
       );
+      setIsConfirmOpen(false);
       onSuccess();
       onClose();
     } catch (err: any) {
@@ -370,15 +373,24 @@ export default function StudentModal({
               <button
                 type="button"
                 disabled={isSubmitting}
-                onClick={handleToggleResign}
+                onClick={handleOpenConfirm}
                 className={`px-4 py-2.5 rounded-xl font-medium text-sm transition-colors flex items-center gap-1.5 ${
                   student.status === "inactive"
                     ? "bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200"
                     : "bg-red-50 text-red-600 hover:bg-red-100 border border-red-200"
                 }`}
               >
-                <UserMinus className="w-4 h-4" />
-                {student.status === "inactive" ? "Học Lại" : "Nghỉ"}
+                {student.status === "inactive" ? (
+                  <>
+                    <UserCheck className="w-4 h-4" />
+                    Học Lại
+                  </>
+                ) : (
+                  <>
+                    <UserMinus className="w-4 h-4" />
+                    Nghỉ
+                  </>
+                )}
               </button>
             ) : (
               <div />
@@ -410,6 +422,44 @@ export default function StudentModal({
           </div>
         </form>
       </div>
+
+      {student && (
+        <ConfirmDialog
+          isOpen={isConfirmOpen}
+          onClose={() => setIsConfirmOpen(false)}
+          onConfirm={handleConfirmToggleResign}
+          title={
+            student.status === "inactive"
+              ? "Xác nhận học lại"
+              : "Xác nhận nghỉ học"
+          }
+          message={
+            student.status === "inactive" ? (
+              <span>
+                Bạn có chắc chắn muốn kích hoạt lại cho học viên{" "}
+                <strong className="text-slate-900 font-bold">&quot;{student.fullname}&quot;</strong> đi
+                học lại không? Học viên sẽ được đưa về danh sách đang học.
+              </span>
+            ) : (
+              <span>
+                Bạn có chắc chắn muốn chuyển học viên{" "}
+                <strong className="text-slate-900 font-bold">&quot;{student.fullname}&quot;</strong> sang
+                trạng thái <span className="text-red-600 font-semibold">Nghỉ</span> không?
+                <br />
+                <span className="text-slate-500 text-xs mt-1 block">
+                  Học viên sẽ được ẩn khỏi danh sách lớp mặc định.
+                </span>
+              </span>
+            )
+          }
+          confirmText={
+            student.status === "inactive" ? "Xác nhận học lại" : "Xác nhận nghỉ"
+          }
+          cancelText="Hủy"
+          confirmVariant={student.status === "inactive" ? "success" : "danger"}
+          isLoading={isSubmitting}
+        />
+      )}
     </div>
   );
 }
