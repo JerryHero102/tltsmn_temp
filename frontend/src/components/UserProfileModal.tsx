@@ -15,10 +15,10 @@ export default function UserProfileModal({ isOpen, onClose, user }: UserProfileM
   const isAdmin = user.role === 'admin';
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 animate-in fade-in duration-200">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden border border-slate-100 transform transition-all">
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-xs p-0 sm:p-4 overflow-y-auto animate-in fade-in duration-200">
+      <div className="bg-white rounded-t-3xl sm:rounded-2xl shadow-2xl w-full max-w-md overflow-hidden border border-slate-100 max-h-[90vh] flex flex-col my-0 sm:my-8 animate-in slide-in-from-bottom-4 sm:slide-in-from-bottom-0 duration-200">
         {/* Header with primary color #014D2F */}
-        <div className="bg-[#014D2F] px-6 py-5 text-white flex justify-between items-center relative">
+        <div className="bg-[#014D2F] px-5 py-4 sm:px-6 sm:py-5 text-white flex justify-between items-center relative shrink-0">
           <div className="flex items-center space-x-3">
             <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center font-bold text-xl backdrop-blur-md">
               {user.fullname ? user.fullname.charAt(0).toUpperCase() : 'U'}
@@ -39,7 +39,7 @@ export default function UserProfileModal({ isOpen, onClose, user }: UserProfileM
         </div>
 
         {/* Content Body */}
-        <div className="p-6 space-y-4 text-sm text-slate-700">
+        <div className="p-5 sm:p-6 space-y-4 text-sm text-slate-700 overflow-y-auto flex-1 overscroll-contain">
           <div className="bg-slate-50 p-4 rounded-xl space-y-3 border border-slate-100">
             <div className="flex items-center justify-between py-1 border-b border-slate-200/60">
               <span className="text-slate-500 flex items-center gap-2">
@@ -105,10 +105,10 @@ export default function UserProfileModal({ isOpen, onClose, user }: UserProfileM
         </div>
 
         {/* Footer */}
-        <div className="bg-slate-50 px-6 py-4 border-t border-slate-100 flex justify-end">
+        <div className="bg-slate-50 px-6 py-4 border-t border-slate-100 flex justify-end shrink-0 pb-safe">
           <button
             onClick={onClose}
-            className="px-5 py-2 rounded-xl bg-[#014D2F] hover:bg-[#013822] text-white font-medium text-sm transition-all shadow-md shadow-emerald-900/10"
+            className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-[#014D2F] hover:bg-[#013822] text-white font-semibold text-sm transition-all shadow-md shadow-emerald-900/10 active:scale-95"
           >
             Đóng
           </button>

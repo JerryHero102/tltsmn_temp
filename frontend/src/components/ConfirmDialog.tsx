@@ -38,13 +38,13 @@ export default function ConfirmDialog({
 
   return (
     <div
-      className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 animate-in fade-in duration-150"
+      className="fixed inset-0 z-[60] flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-xs p-0 sm:p-4 animate-in fade-in duration-150"
       onClick={() => {
         if (!isLoading) onClose();
       }}
     >
       <div
-        className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden border border-slate-100 animate-in zoom-in-95 duration-150"
+        className="bg-white rounded-t-3xl sm:rounded-2xl shadow-2xl w-full max-w-md overflow-hidden border border-slate-100 p-5 sm:p-6 space-y-4 animate-in slide-in-from-bottom-4 sm:slide-in-from-bottom-0 duration-150 pb-safe"
         role="dialog"
         aria-modal="true"
         onClick={(e) => e.stopPropagation()}

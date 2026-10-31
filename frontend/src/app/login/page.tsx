@@ -67,7 +67,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-900 flex items-center justify-center p-4 relative overflow-hidden font-sans">
+    <div className="min-h-screen bg-slate-900 flex items-center justify-center p-4 sm:p-6 py-8 pb-safe pt-safe relative overflow-hidden font-sans">
       {/* Background Glow Overlay */}
       <div className="absolute -top-40 -left-40 w-96 h-96 bg-[#014D2F] rounded-full blur-3xl opacity-50" />
       <div className="absolute -bottom-40 -right-40 w-96 h-96 bg-emerald-600 rounded-full blur-3xl opacity-30" />

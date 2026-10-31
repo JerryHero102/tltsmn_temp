@@ -13,6 +13,8 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 1,
   userScalable: false,
+  viewportFit: 'cover',
+  themeColor: '#014D2F',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -21,7 +23,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="min-h-screen bg-slate-50 text-slate-900 antialiased selection:bg-[#014D2F] selection:text-white">
         <AuthProvider>
           {children}
-          <Toaster position="top-right" richColors />
+          <Toaster position="top-center" richColors closeButton toastOptions={{ style: { borderRadius: '16px', fontSize: '13px' } }} />
         </AuthProvider>
       </body>
     </html>

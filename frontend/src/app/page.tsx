@@ -200,8 +200,8 @@ export default function DashboardPage() {
         onOpenReceiptModal={() => handleOpenReceiptModal()}
       />
 
-      {/* Main Right Content - p-4 padding around context */}
-      <main className="flex-1 p-4 max-w-7xl mx-auto w-full space-y-4">
+      {/* Main Right Content - p-3 sm:p-4 padding around context, pb-28 on mobile for bottom bar */}
+      <main className="flex-1 p-3 sm:p-4 max-w-7xl mx-auto w-full space-y-4 pb-28 md:pb-6">
         {/* Header Title with Sync Button & Add Student Button on the far right of title line */}
         <div className="border-b border-slate-200/80 pb-3">
           <div className="flex items-center justify-between gap-3">

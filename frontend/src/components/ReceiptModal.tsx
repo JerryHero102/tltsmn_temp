@@ -237,12 +237,12 @@ export default function ReceiptModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 overflow-y-auto animate-in fade-in duration-200">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden border border-slate-100 my-8">
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-xs p-0 sm:p-4 overflow-y-auto animate-in fade-in duration-200">
+      <div className="bg-white rounded-t-3xl sm:rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden border border-slate-100 max-h-[92vh] sm:max-h-[90vh] flex flex-col my-0 sm:my-8 animate-in slide-in-from-bottom-4 sm:slide-in-from-bottom-0 duration-200">
         {/* Header */}
-        <div className="bg-[#014D2F] px-6 py-5 text-white flex justify-between items-center">
+        <div className="bg-[#014D2F] px-5 py-4 sm:px-6 sm:py-5 text-white flex justify-between items-center shrink-0">
           <div>
-            <h3 className="text-lg font-bold flex items-center gap-2">
+            <h3 className="text-base sm:text-lg font-bold flex items-center gap-2">
               <Save className="w-5 h-5 text-emerald-200" />
               <span>{existingReceipt ? 'Chỉnh Sửa Biên Lai Học Phí' : 'Thêm Biên Lai Học Phí'}</span>
             </h3>
@@ -261,7 +261,8 @@ export default function ReceiptModal({
         </div>
 
         {/* Form Body */}
-        <form onSubmit={handleSubmit} className="p-6 space-y-4 text-slate-800">
+        <form onSubmit={handleSubmit} className="flex flex-col flex-1 overflow-hidden">
+          <div className="p-5 sm:p-6 space-y-4 text-slate-800 overflow-y-auto flex-1 overscroll-contain">
           {/* Student Search & Select */}
           <div className="space-y-1.5">
             <label className="block text-xs font-semibold text-slate-600 uppercase tracking-wider">
@@ -392,20 +393,21 @@ export default function ReceiptModal({
               </div>
             )}
           </div>
+        </div>
 
           {/* Action Buttons */}
-          <div className="pt-4 flex items-center justify-end gap-3 border-t border-slate-100">
+          <div className="p-4 sm:px-6 sm:py-4 flex items-center justify-end gap-3 border-t border-slate-100 bg-white shrink-0 pb-safe">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2.5 rounded-xl text-slate-600 hover:bg-slate-100 font-medium text-sm transition-colors"
+              className="px-4 py-2.5 rounded-xl text-slate-600 hover:bg-slate-100 font-medium text-sm transition-colors active:scale-95"
             >
               Hủy
             </button>
             <button
               type="submit"
               disabled={isCompressing || !base64Image}
-              className="px-6 py-2.5 rounded-xl bg-[#014D2F] hover:bg-[#013822] text-white font-semibold text-sm transition-all shadow-md shadow-emerald-900/10 flex items-center gap-2 disabled:opacity-50"
+              className="px-6 py-2.5 rounded-xl bg-[#014D2F] hover:bg-[#013822] text-white font-semibold text-sm transition-all shadow-md shadow-emerald-900/10 flex items-center gap-2 disabled:opacity-50 active:scale-95"
             >
               <Save className="w-4 h-4" /> Lưu Tức Thì
             </button>

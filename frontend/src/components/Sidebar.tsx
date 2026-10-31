@@ -10,6 +10,7 @@ import {
   Menu,
   X,
   User,
+  Building2,
 } from "lucide-react";
 import UserProfileModal from "./UserProfileModal";
 
@@ -260,6 +261,113 @@ export default function Sidebar({
           </button>
         </div>
       </aside>
+
+      {/* Mobile Bottom Navigation Bar */}
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-30 bg-white/95 backdrop-blur-md border-t border-slate-200/90 shadow-[0_-4px_20px_rgba(0,0,0,0.06)] px-2 pt-1 pb-[max(0.5rem,env(safe-area-inset-bottom))]">
+        <div className="flex items-center justify-around max-w-lg mx-auto">
+          {/* Tab 1: Học Viên */}
+          <button
+            onClick={() => {
+              onNavigate(activeLocation, "students");
+              setMobileMenuOpen(false);
+            }}
+            className={`flex flex-col items-center justify-center flex-1 py-1 px-1 rounded-xl transition-all active:scale-95 ${
+              activeTab === "students"
+                ? "text-[#014D2F] font-bold"
+                : "text-slate-400 hover:text-slate-600 font-medium"
+            }`}
+          >
+            <div
+              className={`p-1 rounded-xl transition-colors ${
+                activeTab === "students" ? "bg-emerald-100/70" : ""
+              }`}
+            >
+              <Users className="w-5 h-5" />
+            </div>
+            <span className="text-[10px] mt-0.5 tracking-tight">Học Viên</span>
+          </button>
+
+          {/* Tab 2: Học Phí */}
+          <button
+            onClick={() => {
+              onNavigate(activeLocation, "tuition");
+              setMobileMenuOpen(false);
+            }}
+            className={`flex flex-col items-center justify-center flex-1 py-1 px-1 rounded-xl transition-all active:scale-95 ${
+              activeTab === "tuition"
+                ? "text-[#014D2F] font-bold"
+                : "text-slate-400 hover:text-slate-600 font-medium"
+            }`}
+          >
+            <div
+              className={`p-1 rounded-xl transition-colors ${
+                activeTab === "tuition" ? "bg-emerald-100/70" : ""
+              }`}
+            >
+              <Receipt className="w-5 h-5" />
+            </div>
+            <span className="text-[10px] mt-0.5 tracking-tight">Học Phí</span>
+          </button>
+
+          {/* Center Action Button: Thêm Biên Lai (Admin only) */}
+          {isAdmin && (
+            <div className="flex-1 flex justify-center -mt-5">
+              <button
+                onClick={() => {
+                  onOpenReceiptModal();
+                  setMobileMenuOpen(false);
+                }}
+                className="w-13 h-13 rounded-full bg-[#014D2F] hover:bg-[#013822] text-white flex flex-col items-center justify-center shadow-lg shadow-emerald-900/30 border-4 border-white active:scale-90 transition-transform"
+                title="Thêm Biên Lai"
+                aria-label="Thêm Biên Lai"
+              >
+                <PlusCircle className="w-6 h-6 text-emerald-300" />
+                <span className="text-[8px] font-black uppercase tracking-tighter -mt-0.5 text-emerald-100">
+                  + Thu
+                </span>
+              </button>
+            </div>
+          )}
+
+          {/* Tab 3: Chuyển Cơ sở (MN ⇄ TSN) */}
+          <button
+            onClick={() => {
+              const nextLoc = activeLocation === "mn" ? "tsn" : "mn";
+              onNavigate(nextLoc, activeTab);
+              setMobileMenuOpen(false);
+            }}
+            className="flex flex-col items-center justify-center flex-1 py-1 px-1 rounded-xl transition-all active:scale-95 text-slate-600 hover:text-[#014D2F]"
+            title={`Chuyển sang cơ sở ${
+              activeLocation === "mn" ? "Tân Sơn Nhì" : "Miền Nam"
+            }`}
+          >
+            <div className="p-1 rounded-xl bg-slate-100 flex items-center justify-center relative">
+              <Building2 className="w-5 h-5 text-slate-700" />
+              <span
+                className={`absolute -top-1 -right-1 text-[8px] font-black px-1 rounded-full text-white ${
+                  activeLocation === "mn" ? "bg-emerald-600" : "bg-blue-600"
+                }`}
+              >
+                {activeLocation.toUpperCase()}
+              </span>
+            </div>
+            <span className="text-[10px] mt-0.5 font-bold tracking-tight text-slate-700">
+              {activeLocation === "mn" ? "CS Miền Nam" : "CS TSN"}
+            </span>
+          </button>
+
+          {/* Tab 4: Menu */}
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="flex flex-col items-center justify-center flex-1 py-1 px-1 rounded-xl transition-all active:scale-95 text-slate-400 hover:text-slate-600 font-medium"
+          >
+            <div className="p-1 rounded-xl">
+              <Menu className="w-5 h-5" />
+            </div>
+            <span className="text-[10px] mt-0.5 tracking-tight">Menu</span>
+          </button>
+        </div>
+      </nav>
 
       {/* Modal Profile Info */}
       <UserProfileModal
