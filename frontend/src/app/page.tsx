@@ -22,6 +22,9 @@ export default function DashboardPage() {
   const [loadingData, setLoadingData] = useState(true);
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [isAddStudentModalOpen, setIsAddStudentModalOpen] = useState(false);
+  const [hasDomModalOpen, setHasDomModalOpen] = useState(false);
+  const [isStudentListModalOpen, setIsStudentListModalOpen] = useState(false);
+  const [isTuitionMatrixModalOpen, setIsTuitionMatrixModalOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -35,6 +38,31 @@ export default function DashboardPage() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Universal modal detector to hide floating buttons & prevent background body scroll
+  useEffect(() => {
+    const checkModal = () => {
+      if (typeof document === 'undefined') return;
+      const modalEl = document.querySelector(
+        '[data-modal="true"], [role="dialog"], .fixed.inset-0.z-50, .fixed.inset-0.z-\\[60\\]'
+      );
+      setHasDomModalOpen(!!modalEl);
+    };
+
+    checkModal();
+    const observer = new MutationObserver(() => {
+      checkModal();
+    });
+
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ['class', 'style', 'data-modal'],
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -43,6 +71,25 @@ export default function DashboardPage() {
   const [isReceiptModalOpen, setIsReceiptModalOpen] = useState(false);
   const [preselectedStudentId, setPreselectedStudentId] = useState<string | undefined>(undefined);
   const [preselectedMonth, setPreselectedMonth] = useState<number | undefined>(undefined);
+
+  const isAnyModalActive =
+    hasDomModalOpen ||
+    isReceiptModalOpen ||
+    isAddStudentModalOpen ||
+    isStudentListModalOpen ||
+    isTuitionMatrixModalOpen;
+
+  useEffect(() => {
+    if (typeof document === 'undefined') return;
+    if (isAnyModalActive) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isAnyModalActive]);
 
   const fetchData = useCallback(async (targetLoc?: 'mn' | 'tsn', isSilent = false) => {
     const loc = targetLoc || activeLocation;
@@ -283,11 +330,13 @@ export default function DashboardPage() {
             isExternalAddModalOpen={isAddStudentModalOpen}
             onCloseExternalAddModal={() => setIsAddStudentModalOpen(false)}
             location={activeLocation}
+            onModalChange={setIsStudentListModalOpen}
           />
         ) : (
           <TuitionMatrix
             matrix={tuitionMatrix}
             onOpenReceiptModal={handleOpenReceiptModal}
+            onModalChange={setIsTuitionMatrixModalOpen}
           />
         )}
       </main>
@@ -308,11 +357,11 @@ export default function DashboardPage() {
         onSuccess={() => fetchData(activeLocation, true)}
       />
 
-      {/* Floating Scroll-To-Top Button (Fixed Bottom-Right for all tabs on Laptop & Mobile) */}
-      {showScrollTop && (
+      {/* Floating Scroll-To-Top Button (Above Bottom Nav on Mobile, Bottom-Right on Laptop, Hidden when any Modal is open) */}
+      {showScrollTop && !isAnyModalActive && (
         <button
           onClick={scrollToTop}
-          className="fixed bottom-6 right-6 z-50 p-3 sm:p-3.5 rounded-full bg-[#014D2F] text-white shadow-2xl hover:bg-[#013822] hover:scale-110 active:scale-95 transition-all flex items-center justify-center border-2 border-white/20 animate-in fade-in zoom-in duration-200"
+          className="fixed bottom-[calc(4.75rem+env(safe-area-inset-bottom,0px))] md:bottom-6 right-4 md:right-6 z-20 p-3 sm:p-3.5 rounded-full bg-[#014D2F] text-white shadow-2xl hover:bg-[#013822] hover:scale-110 active:scale-95 transition-all flex items-center justify-center border-2 border-white/20 animate-in fade-in zoom-in duration-200"
           title="Lên đầu trang"
           aria-label="Lên đầu trang"
         >

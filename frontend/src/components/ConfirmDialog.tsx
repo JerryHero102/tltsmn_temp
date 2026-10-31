@@ -38,6 +38,7 @@ export default function ConfirmDialog({
 
   return (
     <div
+      data-modal="true"
       className="fixed inset-0 z-[60] flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-xs p-0 sm:p-4 animate-in fade-in duration-150"
       onClick={() => {
         if (!isLoading) onClose();

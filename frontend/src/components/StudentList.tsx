@@ -49,6 +49,7 @@ interface StudentListProps {
   isExternalAddModalOpen?: boolean;
   onCloseExternalAddModal?: () => void;
   location?: string;
+  onModalChange?: (isOpen: boolean) => void;
 }
 
 export default function StudentList({
@@ -58,6 +59,7 @@ export default function StudentList({
   isExternalAddModalOpen,
   onCloseExternalAddModal,
   location,
+  onModalChange,
 }: StudentListProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [scheduleFilter, setScheduleFilter] = useState("all");
@@ -67,6 +69,10 @@ export default function StudentList({
     undefined,
   );
   const [viewingStudent, setViewingStudent] = useState<Student | null>(null);
+
+  useEffect(() => {
+    onModalChange?.(isModalOpen || !!viewingStudent);
+  }, [isModalOpen, viewingStudent, onModalChange]);
 
   const { user } = useAuth();
   const isAdmin = user?.role === "admin";
@@ -439,7 +445,12 @@ export default function StudentList({
 
       {/* Full Student Details Modal (View all fields stored in DB) */}
       {viewingStudent && (
-        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-xs p-0 sm:p-4 overflow-y-auto animate-in fade-in duration-200">
+        <div
+          role="dialog"
+          aria-modal="true"
+          data-modal="true"
+          className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-xs p-0 sm:p-4 overflow-y-auto animate-in fade-in duration-200"
+        >
           <div className="bg-white rounded-t-3xl sm:rounded-2xl shadow-2xl w-full max-w-md overflow-hidden border border-slate-100 max-h-[90vh] flex flex-col my-0 sm:my-8 animate-in slide-in-from-bottom-4 sm:slide-in-from-bottom-0 duration-200">
             <div className="bg-[#014D2F] px-5 py-4 sm:px-6 sm:py-5 text-white flex justify-between items-center shrink-0">
               <div className="flex items-center space-x-3">

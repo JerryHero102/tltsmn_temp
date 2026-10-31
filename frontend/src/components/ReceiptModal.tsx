@@ -237,7 +237,12 @@ export default function ReceiptModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-xs p-0 sm:p-4 overflow-y-auto animate-in fade-in duration-200">
+    <div
+      role="dialog"
+      aria-modal="true"
+      data-modal="true"
+      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-xs p-0 sm:p-4 overflow-y-auto animate-in fade-in duration-200"
+    >
       <div className="bg-white rounded-t-3xl sm:rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden border border-slate-100 max-h-[92vh] sm:max-h-[90vh] flex flex-col my-0 sm:my-8 animate-in slide-in-from-bottom-4 sm:slide-in-from-bottom-0 duration-200">
         {/* Header */}
         <div className="bg-[#014D2F] px-5 py-4 sm:px-6 sm:py-5 text-white flex justify-between items-center shrink-0">
