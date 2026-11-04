@@ -8,7 +8,7 @@ import StudentList from '@/components/StudentList';
 import TuitionMatrix from '@/components/TuitionMatrix';
 import ReceiptModal from '@/components/ReceiptModal';
 import { api } from '@/lib/api';
-import { Loader2, RefreshCw, Users, Receipt as ReceiptIcon, ArrowUp, UserPlus } from 'lucide-react';
+import { Loader2, RefreshCw, ArrowUp, UserPlus } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function DashboardPage() {
@@ -247,15 +247,23 @@ export default function DashboardPage() {
         onOpenReceiptModal={() => handleOpenReceiptModal()}
       />
 
-      {/* Main Right Content - p-3 sm:p-4 padding around context, pb-28 on mobile for bottom bar */}
-      <main className="flex-1 p-3 sm:p-4 max-w-7xl mx-auto w-full space-y-4 pb-28 md:pb-6">
-        {/* Header Title with Sync Button & Add Student Button on the far right of title line */}
+      {/* Main Right Content - pt-[max(0.75rem,env(safe-area-inset-top))] on mobile, pb-28 on mobile for bottom bar */}
+      <main className="flex-1 px-3 pt-[max(0.75rem,env(safe-area-inset-top))] sm:p-4 pb-28 md:pb-6 max-w-7xl mx-auto w-full space-y-4">
+        {/* Header Title with Logo, Sync Button & Add Student Button */}
         <div className="border-b border-slate-200/80 pb-3">
-          <div className="flex items-center justify-between gap-3">
-            <h1 className="text-base sm:text-xl font-extrabold text-slate-900 tracking-tight flex items-center gap-1.5 sm:gap-2 min-w-0">
-              {activeTab === 'students' ? (
-                <>
-                  <Users className="w-5 h-5 sm:w-6 sm:h-6 text-[#014D2F] shrink-0" />
+          <div className="flex items-center justify-between gap-2.5 sm:gap-3">
+            {/* Left: Logo & Title */}
+            <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+              <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl overflow-hidden shadow-xs border border-slate-200/80 shrink-0 bg-white flex items-center justify-center">
+                <img
+                  src="https://res.cloudinary.com/sxotasqj/image/upload/v1786467529/logo_yyeqco.jpg"
+                  alt="TLTSMN Logo"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+
+              <h1 className="text-base sm:text-xl font-extrabold text-slate-900 tracking-tight flex items-center gap-1.5 sm:gap-2 min-w-0">
+                {activeTab === 'students' ? (
                   <span className="flex items-center gap-1.5 sm:gap-2 min-w-0">
                     <span className="hidden sm:inline truncate">Quản Lý Thông Tin Học Viên</span>
                     <span className="sm:hidden font-bold">Học Viên</span>
@@ -269,10 +277,7 @@ export default function DashboardPage() {
                       {activeLocation === 'mn' ? 'Miền Nam' : 'Tân Sơn Nhì'}
                     </span>
                   </span>
-                </>
-              ) : (
-                <>
-                  <ReceiptIcon className="w-5 h-5 sm:w-6 sm:h-6 text-[#014D2F] shrink-0" />
+                ) : (
                   <span className="flex items-center gap-1.5 sm:gap-2 min-w-0">
                     <span className="hidden sm:inline truncate">Quản Lý Học Phí Hàng Tháng</span>
                     <span className="sm:hidden font-bold">Học Phí</span>
@@ -286,19 +291,20 @@ export default function DashboardPage() {
                       {activeLocation === 'mn' ? 'Miền Nam' : 'Tân Sơn Nhì'}
                     </span>
                   </span>
-                </>
-              )}
-            </h1>
+                )}
+              </h1>
+            </div>
 
-            <div className="flex items-center gap-2 shrink-0">
+            {/* Right: Add Student Button (icon only) & Sync Button */}
+            <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
               {activeTab === 'students' && user?.role === 'admin' && (
                 <button
                   onClick={() => setIsAddStudentModalOpen(true)}
-                  className="px-3 py-2 sm:px-3.5 sm:py-2 rounded-xl bg-[#014D2F] hover:bg-[#013822] text-white font-bold text-xs sm:text-sm transition-all shadow-xs flex items-center gap-1.5 shrink-0 active:scale-95"
+                  className="p-2 sm:p-2.5 rounded-xl bg-[#014D2F] hover:bg-[#013822] text-white transition-all shadow-xs flex items-center justify-center active:scale-95 shrink-0"
                   title="Thêm học viên mới"
+                  aria-label="Thêm học viên mới"
                 >
-                  <UserPlus className="w-4 h-4" />
-                  <span>Thêm</span>
+                  <UserPlus className="w-5 h-5 sm:w-5.5 sm:h-5.5" />
                 </button>
               )}
 

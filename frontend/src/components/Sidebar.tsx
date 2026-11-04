@@ -39,32 +39,6 @@ export default function Sidebar({
 
   return (
     <>
-      {/* Mobile Top Header */}
-      <div className="md:hidden bg-[#014D2F] text-white px-4 py-3 flex items-center justify-between sticky top-0 z-30 shadow-md">
-        <div className="flex items-center space-x-2.5">
-          <div className="w-8 h-8 rounded-lg overflow-hidden flex items-center justify-center bg-white shadow-xs">
-            <img
-              src="https://res.cloudinary.com/sxotasqj/image/upload/v1786467529/logo_yyeqco.jpg"
-              alt="TLTSMN Logo"
-              className="w-full h-full object-cover"
-            />
-          </div>
-          <span className="font-bold text-base tracking-wide">
-            {isAdmin ? `TLTSMN - ${activeLocation === "mn" ? "Miền Nam" : "Tân Sơn Nhì"}` : "TLTSMN"}
-          </span>
-        </div>
-        <button
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="p-1.5 rounded-lg bg-emerald-800/60 hover:bg-emerald-800 text-white transition-colors"
-        >
-          {mobileMenuOpen ? (
-            <X className="w-6 h-6" />
-          ) : (
-            <Menu className="w-6 h-6" />
-          )}
-        </button>
-      </div>
-
       {/* Backdrop for Mobile */}
       {mobileMenuOpen && (
         <div
@@ -83,22 +57,33 @@ export default function Sidebar({
       >
         {/* Top Logo & Title */}
         <div>
-          <div className="p-6 border-b border-emerald-800/80 flex items-center space-x-3">
-            <div className="w-10 h-10 rounded-xl overflow-hidden shadow-md flex items-center justify-center bg-white border border-white/20">
-              <img
-                src="https://res.cloudinary.com/sxotasqj/image/upload/v1786467529/logo_yyeqco.jpg"
-                alt="TLTSMN Logo"
-                className="w-full h-full object-cover"
-              />
+          <div className="p-6 border-b border-emerald-800/80 flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <div className="w-10 h-10 rounded-xl overflow-hidden shadow-md flex items-center justify-center bg-white border border-white/20">
+                <img
+                  src="https://res.cloudinary.com/sxotasqj/image/upload/v1786467529/logo_yyeqco.jpg"
+                  alt="TLTSMN Logo"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div>
+                <h1 className="font-extrabold text-lg tracking-tight text-white leading-tight">
+                  TLTSMN
+                </h1>
+                <p className="text-[11px] text-emerald-200 uppercase tracking-wider font-medium">
+                  {isAdmin ? "Quản Lý Học Viên" : "Trang Học Viên"}
+                </p>
+              </div>
             </div>
-            <div>
-              <h1 className="font-extrabold text-lg tracking-tight text-white leading-tight">
-                TLTSMN
-              </h1>
-              <p className="text-[11px] text-emerald-200 uppercase tracking-wider font-medium">
-                {isAdmin ? "Quản Lý Học Viên" : "Trang Học Viên"}
-              </p>
-            </div>
+            {/* Close button for mobile drawer */}
+            <button
+              onClick={() => setMobileMenuOpen(false)}
+              className="md:hidden p-1.5 rounded-lg bg-emerald-800/60 hover:bg-emerald-800 text-white transition-colors"
+              title="Đóng menu"
+              aria-label="Đóng menu"
+            >
+              <X className="w-5 h-5" />
+            </button>
           </div>
 
           {/* Navigation Links */}
